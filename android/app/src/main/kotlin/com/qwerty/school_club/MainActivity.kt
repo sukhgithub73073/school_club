@@ -1,5 +1,6 @@
-package com.qwerty.school_club
+package com.qwerty.fl_school
 
 import io.flutter.embedding.android.FlutterActivity
 
-class MainActivity: FlutterActivity()
+class MainActivity: FlutterActivity() {
+}
