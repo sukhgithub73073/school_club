@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "253819113740",
+    "project_id": "schoolclub-712ea",
+    "storage_bucket": "schoolclub-712ea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:253819113740:android:a805541f5ab22755deb929",
+        "android_client_info": {
+          "package_name": "com.qwerty.school_club"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbETPnlODEAw31aoZqLT_pnirbIjVsdFY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

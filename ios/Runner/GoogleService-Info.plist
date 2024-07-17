@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyBnWBmjsEuhI9IEz3_U4LfV-PErusd1OLM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>253819113740</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.qwerty.schoolClub</string>
+	<key>PROJECT_ID</key>
+	<string>schoolclub-712ea</string>
+	<key>STORAGE_BUCKET</key>
+	<string>schoolclub-712ea.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:253819113740:ios:cda5ede1e081909fdeb929</string>
+</dict>
+</plist>
