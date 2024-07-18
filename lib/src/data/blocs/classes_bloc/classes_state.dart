@@ -20,10 +20,10 @@ class ClassesGetLoadingDismiss extends ClassesState {
 }
 
 class ClassesGetSuccess extends ClassesState {
-  final ResponseModel responseModel ;
-  ClassesGetSuccess({required this.responseModel});
+  final List<Datum> data;
+  ClassesGetSuccess({required this.data});
   @override
-  List<Object> get props => [responseModel];
+  List<Object> get props => [data];
 }
 class ClassesGetError extends ClassesState {
   final String error ;

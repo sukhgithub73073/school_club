@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:school_club/src/data/models/group_class_model.dart';
 import 'package:school_club/src/data/models/response_model.dart';
 import 'package:school_club/src/data/network/api_status_code.dart';
 import 'package:school_club/src/data/repository/classes_repo.dart';
@@ -26,7 +27,9 @@ class ClassesBloc extends Bloc<ClassesEvent, ClassesState> {
       emit(ClassesGetLoading());
       var responseModel = await classesRepository.getClassesApi(event.map);
       emit(ClassesGetLoadingDismiss());
-      emit(ClassesGetSuccess(responseModel: responseModel));
+      GroupClassModel groupClassModel =
+          GroupClassModel.fromJson(responseModel.data);
+      emit(ClassesGetSuccess(data: groupClassModel.data));
     } catch (e) {
       emit(ClassesGetError(error: e.toString()));
     }
@@ -38,11 +41,12 @@ class ClassesBloc extends Bloc<ClassesEvent, ClassesState> {
       emit(ClassesGetLoading());
       var responseModel = await classesRepository.getClassesApi(event.map);
       emit(ClassesGetLoadingDismiss());
-      emit(ClassesGetSuccess(responseModel: responseModel));
+      GroupClassModel groupClassModel =
+          GroupClassModel.fromJson(responseModel.data);
+      emit(ClassesGetSuccess(data: groupClassModel.data));
     } catch (e) {
       emit(ClassesGetError(error: e.toString()));
     }
-
   }
 
   Future<FutureOr<void>> _createClassesApi(

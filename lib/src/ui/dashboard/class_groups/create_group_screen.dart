@@ -141,7 +141,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                     context.back();
                                     context.back();
                                   },
-                                  message: "${state.responseModel.message}",
+                                  message: "Suuuuuuuu",
                                 ));
                           } else if (state is GroupsError) {
                             printLog("listener>>>>>>>>>>>GroupsError");

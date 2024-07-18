@@ -45,9 +45,6 @@ class RegisterClassScreen extends StatefulWidget {
 }
 
 class _RegisterClassScreenState extends State<RegisterClassScreen> {
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,8 +77,6 @@ class _RegisterClassScreenState extends State<RegisterClassScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               spaceVertical(space: 10.h),
-
-
               CustomTextField(
                   controller: StudentData.previosSchoolCtrl,
                   textInputAction: TextInputAction.next,
@@ -94,8 +89,6 @@ class _RegisterClassScreenState extends State<RegisterClassScreen> {
                   hintFontWeight: FontWeight.w400,
                   hintTextColor: colorGray.withOpacity(0.6)),
               spaceVertical(space: 20.h),
-
-
               BlocConsumer<GroupsBloc, GroupsState>(
                 listener: (context, state) {},
                 builder: (context, state) {
@@ -103,10 +96,9 @@ class _RegisterClassScreenState extends State<RegisterClassScreen> {
                     printLog(
                         "builder >>>>>>>>>>>>>>>>>${state is GroupsSuccess}");
                     List<DropListModel> list = [];
-                    state.responseModel.data.forEach((element) {
+                    state.data.forEach((element) {
                       list.add(DropListModel(
-                          id: "${element["group_id"]}",
-                          name: "${element["group_name"]}"));
+                          id: "${element.id}", name: "${element.groupName}"));
                     });
                     return CustomDropdown<DropListModel>.search(
                       hintText: tr("selectGroup"),
@@ -115,12 +107,12 @@ class _RegisterClassScreenState extends State<RegisterClassScreen> {
                       decoration: customDropdownDecoration,
                       onChanged: (item) {
                         StudentData.selectedGroup = item;
-                        context
-                            .read<ClassesBloc>()
-                            .add(GetClassesByGroupEvent(map: {
-                          "school_code": "GSSS19543",
-                          "group_id": item?.id ?? "",
-                        }));
+                        context.read<ClassesBloc>().add(GetClassesByGroupEvent(
+                                map: {
+                                  'college_id': '15',
+                                  'session': '2023',
+                                  'class_group_id': '${item?.id ?? ""}'
+                                }));
                       },
                     );
                   } else {
@@ -136,10 +128,10 @@ class _RegisterClassScreenState extends State<RegisterClassScreen> {
                     printLog(
                         "builder >>>>>>>>>>>>>>>>>${state is GroupsSuccess}");
                     List<DropListModel> list = [];
-                    state.responseModel.data.forEach((element) {
+                    state.data.forEach((element) {
                       list.add(DropListModel(
-                          id: "${element["class_id"]}",
-                          name: "${element["class_name"]}"));
+                          id: "${element.id}",
+                          name: "${element.className}"));
                     });
                     return CustomDropdown<DropListModel>.search(
                       hintText: tr("selectClass"),
@@ -156,10 +148,8 @@ class _RegisterClassScreenState extends State<RegisterClassScreen> {
                 },
               ),
               spaceVertical(space: 20.h),
-
-
               CustomTextField(
-                  controller:  StudentData.timeCtrl,
+                  controller: StudentData.timeCtrl,
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.number,
                   paddingHorizontal: 20.0,
@@ -174,8 +164,6 @@ class _RegisterClassScreenState extends State<RegisterClassScreen> {
                   hintFontWeight: FontWeight.w400,
                   hintTextColor: colorGray.withOpacity(0.6)),
               spaceVertical(space: 20.h),
-
-
               BlocConsumer<RegisterBloc, RegisterState>(
                 listener: (context, state) {
                   if (state is RegisterSuccess) {
@@ -208,7 +196,7 @@ class _RegisterClassScreenState extends State<RegisterClassScreen> {
                     decoration: BoxDecoration(color: colorPrimary),
                     child: AppSimpleButton(
                       onDoneFuction: () async {
-                        context.pushScreen(nextScreen: RegisterBankScreen()) ;
+                        context.pushScreen(nextScreen: RegisterBankScreen());
                       },
                       buttonBackgroundColor: colorPrimary,
                       nameText: "submit",

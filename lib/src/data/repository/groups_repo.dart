@@ -1,37 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_club/src/data/models/response_model.dart';
 import 'package:school_club/src/data/network/api_status_code.dart';
+import 'package:school_club/src/data/network/http_service.dart';
 import 'package:school_club/src/utility/firestore_table.dart';
 
 abstract class GroupsRepository {
   Future<ResponseModel> groupsApi(Map<String, dynamic> map);
+
   Future<ResponseModel> addGroupsApi(Map<String, dynamic> map);
 }
 
 class GroupsRepositoryImp extends GroupsRepository {
   @override
   Future<ResponseModel> groupsApi(Map<String, dynamic> map) async {
-    var responseModel = await ResponseModel(status: "",data: null,errors: null,message: "");
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection(tblGroup)
-        .where("school_code", isEqualTo: map["school_code"])
+    var res = await HttpService().postRequest(
+        fullUrl: ApisEndpoints.getGroupUrl,
+        useTokenInBody: true,
+        body: map);
 
-        .get();
-    if (querySnapshot.docs.isNotEmpty) {
-      responseModel.status = "${RepoResponseStatus.success}";
-      responseModel.message = "Groups Successful!";
-      responseModel.data = querySnapshot.docs;
-    } else {
-      responseModel.status = "${RepoResponseStatus.error}";
-      responseModel.message = "No Group available in this school";
-      responseModel.data = {};
-    }
-    return responseModel;
+    return res;
   }
 
   @override
   Future<ResponseModel> addGroupsApi(Map<String, dynamic> map) async {
-    var responseModel = await ResponseModel(status: "",data: null,errors: null,message: "");
+    var responseModel =
+        await ResponseModel(status: "", data: null, errors: null, message: "");
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection(tblGroup)
         .where("school_code", isEqualTo: map["school_code"])
@@ -46,17 +39,12 @@ class GroupsRepositoryImp extends GroupsRepository {
       responseModel.status = "${RepoResponseStatus.success}";
       responseModel.message = "Groups Created Successful!";
       responseModel.data = querySnapshot.docs;
-    }else{
-
+    } else {
       responseModel.status = "${RepoResponseStatus.error}";
       responseModel.message =
-      "Group name already exists! Please use a different name.";
+          "Group name already exists! Please use a different name.";
       responseModel.data = {};
-
     }
-
-
-
 
     return responseModel;
   }

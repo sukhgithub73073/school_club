@@ -67,10 +67,10 @@ class _ClassesScreenState extends State<ClassesScreen> {
                           printLog(
                               "builder >>>>>>>>>>>>>>>>>${state is GroupsSuccess}");
                           List<DropListModel> list = [];
-                          state.responseModel.data.forEach((element) {
+                          state.data.forEach((element) {
                             list.add(DropListModel(
-                                id: "${element["group_id"]}",
-                                name: "${element["group_name"]}"));
+                                id: "${element.id}",
+                                name: "${element.groupName}"));
                           });
                           return CustomDropdown<DropListModel>.search(
                             hintText: tr("selectGroup"),
@@ -105,7 +105,7 @@ class _ClassesScreenState extends State<ClassesScreen> {
                       },
                       builder: (context, state) {
                         if (state is ClassesGetSuccess) {
-                          return state.responseModel.data.isEmpty
+                          return state.data.isEmpty
                               ? Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 40),
@@ -122,7 +122,7 @@ class _ClassesScreenState extends State<ClassesScreen> {
                               : ListView.builder(
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
-                                  itemCount: state.responseModel.data.length,
+                                  itemCount: state.data.length,
                                   itemBuilder: (c, i) {
                                     return Card(
                                       elevation: 10.h,
@@ -136,7 +136,7 @@ class _ClassesScreenState extends State<ClassesScreen> {
                                           children: [
                                             TextView(
                                               text:
-                                                  "${state.responseModel.data[i]["class_name"]}",
+                                                  "${state.data[i].className}",
                                               color: colorPrimary,
                                               textSize: 15.sp,
                                               textAlign: TextAlign.start,

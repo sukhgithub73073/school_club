@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:school_club/src/data/models/group_class_model.dart';
 import 'package:school_club/src/data/models/response_model.dart';
 import 'package:school_club/src/data/network/api_status_code.dart';
 import 'package:school_club/src/data/repository/groups_repo.dart';
@@ -25,7 +26,8 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
       emit(GroupsLoaderShow());
       var responseModel = await groupsRepository.groupsApi(event.map);
       emit(GroupsLoaderDismiss());
-      emit(GroupsSuccess(responseModel: responseModel));
+      GroupClassModel groupClassModel = GroupClassModel.fromJson(responseModel.data) ;
+      emit(GroupsSuccess(data: groupClassModel.data));
     } catch (e) {
       emit(GroupsError(error: e.toString()));
     }
@@ -39,7 +41,7 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
       emit(GroupsCreateLoaderDissmiss());
 
       if (responseModel.status == "${RepoResponseStatus.success}") {
-        emit(GroupsSuccess(responseModel: responseModel));
+       // emit(GroupsSuccess(responseModel: responseModel));
       } else {
         emit(GroupsError(error: responseModel.message));
       }

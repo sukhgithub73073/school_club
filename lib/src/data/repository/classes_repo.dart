@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_club/src/data/models/response_model.dart';
 import 'package:school_club/src/data/network/api_status_code.dart';
+import 'package:school_club/src/data/network/http_service.dart';
 import 'package:school_club/src/utility/app_util.dart';
 import 'package:school_club/src/utility/firestore_table.dart';
 
@@ -13,38 +14,15 @@ abstract class ClassesRepository {
 class ClassesRepositoryImp extends ClassesRepository {
   @override
   Future<ResponseModel> getClassesApi(Map<String, dynamic> map) async {
-    var responseModel = await ResponseModel(status: "",data: null,errors: null,message: "");
-    CollectionReference collectionRef = FirebaseFirestore.instance.collection(tblClass);
-
-    Query query = collectionRef.where("school_code", isEqualTo: map["school_code"]);
-    if (map.containsKey("group_id")) {
-      query = query.where("group_id", isEqualTo: map["group_id"]);
-    }
-
-
-    QuerySnapshot querySnapshot = await query.get();
-
-
-    // if (map.containsKey("group_id")) {
-    //   query.where("group_id", isEqualTo: map["group_id"]);
-    // } else {
-    //   query.where("school_code", isEqualTo: map["school_code"]);
-    // }
-
-
-
-
-
-    printLog("getClassesApi>>>>>>>>${querySnapshot.docs.length}") ;
-    responseModel.status = "${RepoResponseStatus.success}";
-    responseModel.message = "Class Successful!";
-    responseModel.data = querySnapshot.docs;
-    return responseModel;
+    var res = await HttpService().postRequest(
+        fullUrl: ApisEndpoints.getClassUrl, useTokenInBody: true, body: map);
+    return res;
   }
 
   @override
   Future<ResponseModel> createClassApi(Map<String, dynamic> map) async {
-    var responseModel = await ResponseModel(status: "",data: null,errors: null,message: "");
+    var responseModel =
+        await ResponseModel(status: "", data: null, errors: null, message: "");
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection(tblClass)
         .where("school_code", isEqualTo: map["school_code"])

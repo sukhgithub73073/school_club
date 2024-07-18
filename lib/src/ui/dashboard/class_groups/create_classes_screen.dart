@@ -124,10 +124,10 @@ class _CreateClassesScreenState extends State<CreateClassesScreen> {
                             printLog(
                                 "builder >>>>>>>>>>>>>>>>>${state is GroupsSuccess}");
                             List<DropListModel> list = [];
-                            state.responseModel.data.forEach((element) {
+                            state.data.forEach((element) {
                               list.add(DropListModel(
-                                  id: "${element["group_id"]}",
-                                  name: "${element["group_name"]}"));
+                                  id: "${element.id}",
+                                  name: "${element.groupName}"));
                             });
                             return CustomDropdown<DropListModel>.search(
                               hintText: tr("selectGroup"),

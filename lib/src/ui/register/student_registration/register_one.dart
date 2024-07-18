@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:school_club/src/data/blocs/cast_bloc/cast_bloc.dart';
 import 'package:school_club/src/data/blocs/login_bloc/login_bloc.dart';
+import 'package:school_club/src/data/models/cast_model.dart';
 import 'package:school_club/src/ui/register/student_registration/register_parent.dart';
 import 'package:school_club/src/ui/register/student_registration/student_data.dart';
 import 'package:school_club/src/ui/register/student_registration/take_image_screen.dart';
@@ -15,6 +17,7 @@ import 'package:school_club/src/core/drop_down/drop_list_model.dart';
 
 import 'package:school_club/src/data/blocs/image_pick_bloc/image_pick_bloc.dart';
 import 'package:school_club/src/data/blocs/register_bloc/register_bloc.dart';
+import 'package:school_club/src/utility/app_data.dart';
 import 'package:school_club/src/utility/app_util.dart';
 import 'package:school_club/src/utility/decoration_util.dart';
 import 'package:flutter/cupertino.dart';
@@ -42,6 +45,14 @@ class RegisterOne extends StatefulWidget {
 }
 
 class _RegisterOneState extends State<RegisterOne> {
+  @override
+  void initState() {
+    super.initState();
+    context
+        .read<CastBloc>()
+        .add(GetCastEvent());
+
+  }
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -293,56 +304,50 @@ class _RegisterOneState extends State<RegisterOne> {
                             onChanged: (item) {},
                           ),
                           spaceVertical(space: 20.h),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: CustomDropdown<DropListModel>.search(
-                                  hintText: tr("selectCaste"),
-                                  items: getCasteList(),
-                                  decoration: customDropdownDecoration,
-                                  excludeSelected: false,
-                                  onChanged: (item) {},
-                                ),
-                              ),
-                              spaceHorizontal(space: 10.w),
-                              Expanded(
-                                child: CustomDropdown<DropListModel>.search(
-                                  hintText: tr("selectSubCaste"),
-                                  items: getSubCasteList(),
-                                  decoration: customDropdownDecoration,
-                                  excludeSelected: false,
-                                  onChanged: (item) {},
-                                ),
-                              ),
-                            ],
+                          BlocConsumer<CastBloc, CastState>(
+                            listener: (context, state) {
+                              print(">>>>>>>>>>>>>>>>>>>>>>>>>>.${state.toString()}");
+                            },
+                            builder: (context, state) {
+                              return state is CastLoaded
+                                  ? Row(
+                                      children: [
+                                        Expanded(
+                                          child: CustomDropdown<Caste>(
+                                            hintText: tr("selectCaste"),
+                                            items: state.casteModel.data.caste,
+                                            decoration:
+                                                customDropdownDecoration,
+                                            excludeSelected: false,
+                                            onChanged: (item) {
+                                              AppData.subCastList.clear();
+                                              AppData.subCastList.addAll(state
+                                                  .casteModel.data.subCaste
+                                                  .where((s) =>
+                                                      s.casteId == item!.id));
+                                            },
+                                          ),
+                                        ),
+                                        spaceHorizontal(space: 10.w),
+                                        Expanded(
+                                          child: CustomDropdown<
+                                              Caste>.search(
+                                            hintText: tr("selectSubCaste"),
+                                            items: AppData.subCastList,
+                                            decoration:
+                                                customDropdownDecoration,
+                                            excludeSelected: false,
+                                            onChanged: (item) {},
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : SizedBox.shrink();
+                            },
                           ),
                           spaceVertical(space: 20.h),
                           spaceVertical(space: 30.h),
                           BlocConsumer<RegisterBloc, RegisterState>(
-                            listener: (context, state) {
-                              if (state is RegisterSuccess) {
-                                appDialog(
-                                    context: context,
-                                    child: SuccessDailog(
-                                      title: "successfully",
-                                      onTap: () {
-                                        context.back();
-                                        context.back();
-                                      },
-                                      message: "${state.userModel.message}",
-                                    ));
-                              } else if (state is RegisterError) {
-                                appDialog(
-                                    context: context,
-                                    child: ErrorDailog(
-                                      title: "error",
-                                      onTap: () {
-                                        context.back();
-                                      },
-                                      message: "${state.error}",
-                                    ));
-                              }
-                            },
                             builder: (context, state) {
                               return Container(
                                 height: 40.h,
@@ -350,13 +355,6 @@ class _RegisterOneState extends State<RegisterOne> {
                                 decoration: BoxDecoration(color: colorPrimary),
                                 child: AppSimpleButton(
                                   onDoneFuction: () async {
-                                    var loginState =
-                                        context.read<LoginBloc>().state;
-                                    if (loginState is LoginSuccess) {
-                                      print(loginState.responseModel.toJson());
-                                    }else{
-                                      print("dfsdfdsdffs");
-                                    }
                                     context.pushScreen(
                                         nextScreen: RegisterParent());
                                   },
@@ -366,6 +364,8 @@ class _RegisterOneState extends State<RegisterOne> {
                                 ),
                               );
                             },
+                            listener:
+                                (BuildContext context, RegisterState state) {},
                           ),
                           spaceVertical(space: 10.h),
                         ],

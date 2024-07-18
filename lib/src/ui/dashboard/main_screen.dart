@@ -49,8 +49,9 @@ class _MainScreenState extends State<MainScreen> {
           "school_code": "GSSS19543",
         }));
     context.read<GroupsBloc>().add(GetGroupsEvent(map: {
-          "school_code": "GSSS19543",
-        }));
+      'college_id': '15',
+      'session': '2023'
+    }));
     context.read<ClassesBloc>().add(GetClassesEvent(map: {
           "school_code": "GSSS19543",
         }));
@@ -238,7 +239,7 @@ class _MainScreenState extends State<MainScreen> {
                       builder: (context, groupsState) {
                         return TextView(
                           text: groupsState is GroupsSuccess
-                              ? "${tr("groups")} (${groupsState.responseModel.data.length})"
+                              ? "${tr("groups")} (${groupsState.data.length})"
                               : "${tr("groups")} (--)",
                           color: colorPrimary,
                           textSize: 15.sp,
@@ -283,7 +284,7 @@ class _MainScreenState extends State<MainScreen> {
                       builder: (context, groupsState) {
                         return TextView(
                           text: groupsState is ClassesGetSuccess
-                              ? "${tr("classes")} (${groupsState.responseModel.data.length})"
+                              ? "${tr("classes")} (${groupsState.data.length})"
                               : "${tr("classes")} (--)",
                           color: colorPrimary,
                           textSize: 15.sp,

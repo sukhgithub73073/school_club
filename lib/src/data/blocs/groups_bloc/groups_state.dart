@@ -34,12 +34,12 @@ class GroupsCreateLoaderDissmiss extends GroupsState {
 
 
 class GroupsSuccess extends GroupsState {
-  final ResponseModel responseModel;
+  final List<Datum> data;
 
-  GroupsSuccess({required this.responseModel});
+  GroupsSuccess({required this.data});
 
   @override
-  List<Object> get props => [responseModel];
+  List<Object> get props => [data];
 }
 
 class GroupsError extends GroupsState {

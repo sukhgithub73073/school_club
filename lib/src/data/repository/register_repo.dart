@@ -6,6 +6,8 @@ import 'package:school_club/src/data/network/http_service.dart';
 abstract class RegisterRepository {
   Future<ResponseModel> registerApi(Map<String, dynamic> body);
 
+  Future<ResponseModel> getDisablity(Map<String, dynamic> body);
+
   Future<ResponseModel> getCastListApi();
 }
 
@@ -37,10 +39,17 @@ class RegisterRepositoryImp extends RegisterRepository {
 
   @override
   Future<ResponseModel> getCastListApi() async {
-    var responseModel =
-        await ResponseModel(status: "", data: null, errors: null, message: "");
-    responseModel = await HttpService()
-        .getRequest(fullUrl: ApisEndpoints.getCasteUrl,useTokenInBody: true);
-    return responseModel;
+    var res = await HttpService()
+        .getRequest(fullUrl: ApisEndpoints.getCasteUrl, useTokenInBody: true);
+
+    return res;
+  }
+
+  @override
+  Future<ResponseModel> getDisablity(Map<String, dynamic> body) async {
+    var res = await HttpService()
+        .getRequest(fullUrl: ApisEndpoints.getDisabilityUrl, useTokenInBody: true);
+
+    return res;
   }
 }

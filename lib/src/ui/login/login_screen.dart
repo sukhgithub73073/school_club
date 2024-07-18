@@ -4,6 +4,7 @@ import 'package:school_club/src/core/app_image_view.dart';
 import 'package:school_club/src/core/app_loader.dart';
 import 'package:school_club/src/core/app_strings.dart';
 import 'package:school_club/src/core/dialog_widgets/failure_message_dialog.dart';
+import 'package:school_club/src/data/blocs/cast_bloc/cast_bloc.dart';
 import 'package:school_club/src/data/blocs/groups_bloc/groups_bloc.dart';
 import 'package:school_club/src/data/blocs/role_bloc/role_bloc.dart';
 import 'package:school_club/src/enums/role_enum.dart';
@@ -28,6 +29,7 @@ import 'package:school_club/src/data/blocs/login_bloc/login_bloc.dart';
 import 'package:school_club/src/extension/app_extension.dart';
 import 'package:school_club/src/ui/dashboard/main_screen.dart';
 import 'package:school_club/src/ui/register/register_screen.dart';
+import 'package:school_club/src/utility/app_data.dart';
 import 'package:school_club/src/utility/validation_util.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -149,6 +151,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             appLoader(context);
                           } else if (state is LoginSuccess) {
                             context.dissmissLoading();
+                            AppData.authToken = state
+                                .responseModel.data["token"];
+                            print(AppData.authToken);
+
 
                             context.pushReplacementScreen(
                                 nextScreen: MainScreen());

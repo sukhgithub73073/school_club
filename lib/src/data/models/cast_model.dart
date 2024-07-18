@@ -70,7 +70,15 @@ class Caste {
     required this.updatedAt,
     this.casteId,
   });
+  @override
+  String toString() {
+    return name;
+  }
 
+  @override
+  bool filter(String query) {
+    return name.toLowerCase().contains(query.toLowerCase());
+  }
   factory Caste.fromJson(Map<String, dynamic> json) => Caste(
     id: json["id"],
     name: json["name"],

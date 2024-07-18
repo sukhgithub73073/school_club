@@ -25,6 +25,15 @@ class GroupsScreen extends StatefulWidget {
 
 class _GroupsScreenState extends State<GroupsScreen> {
   @override
+  void initState() {
+    super.initState();
+    context.read<GroupsBloc>().add(GetGroupsEvent(map: {
+      'college_id': '15',
+      'session': '2023'
+    }));
+
+  }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
@@ -59,17 +68,13 @@ class _GroupsScreenState extends State<GroupsScreen> {
                     spaceVertical(space: 20.h),
                     BlocConsumer<GroupsBloc, GroupsState>(
                       listener: (context, state) {
-                        if (state is GroupsLoaderShow) {
-                          printLog(
-                              "Create listener>>>>>>>>>>>GroupsLoaderShow");
-                         // appLoader(context);
-                        } else if (state is GroupsLoaderDismiss) {
-                          // context.dissmissLoading();
-                        }
+                        printLog(
+                            "GroupsBloc listener>>>>>>>>>>>${state.toString()}");
+
                       },
                       builder: (context, state) {
                         if (state is GroupsSuccess) {
-                          return state.responseModel.data.isEmpty
+                          return state.data.isEmpty
                               ? Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 40),
@@ -86,7 +91,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                               : ListView.builder(
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
-                                  itemCount: state.responseModel.data.length,
+                                  itemCount: state.data.length,
                                   itemBuilder: (c, i) {
                                     return Card(
                                       elevation: 10.h,
@@ -96,7 +101,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                                         padding: const EdgeInsets.all(20.0),
                                         child: TextView(
                                           text:
-                                              "${state.responseModel.data[i]["group_name"]}",
+                                              "${state.data[i].groupName}",
                                           color: colorPrimary,
                                           textSize: 15.sp,
                                           textAlign: TextAlign.start,

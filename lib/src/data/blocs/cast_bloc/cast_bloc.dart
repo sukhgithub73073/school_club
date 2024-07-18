@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:school_club/src/data/models/cast_model.dart';
+import 'package:school_club/src/data/network/api_status_code.dart';
 import 'package:school_club/src/data/repository/register_repo.dart';
 import 'package:get_it/get_it.dart';
 
@@ -17,10 +19,12 @@ class CastBloc extends Bloc<CastEvent, CastState> {
     on<GetCastEvent>(_getCastApi);
   }
 
-  FutureOr<void> _getCastApi(GetCastEvent event, Emitter<CastState> emit) {
+  Future<FutureOr<void>> _getCastApi(
+      GetCastEvent event, Emitter<CastState> emit) async {
     try {
       emit(CastLoading());
-
+      var responseModel = await registerRepository.getCastListApi();
+      emit(CastLoaded(casteModel: CasteModel.fromJson(responseModel.data)));
     } catch (e) {
       emit(CastError(error: e.toString()));
     }

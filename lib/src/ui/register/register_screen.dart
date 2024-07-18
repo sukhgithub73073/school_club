@@ -225,10 +225,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 printLog(
                                     "builder >>>>>>>>>>>>>>>>>${state is GroupsSuccess}");
                                 List<DropListModel> list = [];
-                                state.responseModel.data.forEach((element) {
+                                state.data.forEach((element) {
                                   list.add(DropListModel(
-                                      id: "${element["group_id"]}",
-                                      name: "${element["group_name"]}"));
+                                      id: "${element.id}",
+                                      name: "${element.groupName}"));
                                 });
                                 return CustomDropdown<DropListModel>.search(
                                   hintText: tr("selectGroup"),
@@ -258,10 +258,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 printLog(
                                     "builder >>>>>>>>>>>>>>>>>${state is GroupsSuccess}");
                                 List<DropListModel> list = [];
-                                state.responseModel.data.forEach((element) {
+                                state.data.forEach((element) {
                                   list.add(DropListModel(
-                                      id: "${element["class_id"]}",
-                                      name: "${element["class_name"]}"));
+                                      id: "${element.id}",
+                                      name: "${element.className}"));
                                 });
                                 return CustomDropdown<DropListModel>.search(
                                   hintText: tr("selectClass"),
