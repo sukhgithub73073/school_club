@@ -6,6 +6,7 @@ import 'package:school_club/src/data/models/response_model.dart';
 import 'package:school_club/src/data/network/api_status_code.dart';
 import 'package:school_club/src/data/repository/register_repo.dart';
 import 'package:get_it/get_it.dart';
+import 'package:school_club/src/ui/register/student_registration/student_data.dart';
 
 part 'register_event.dart';
 
@@ -16,6 +17,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
   RegisterBloc() : super(RegisterInitial()) {
     on<DoRegisterEvent>(_doRegister);
+    on<GetSerialNoEvent>(_getSerialNoApi);
   }
 
   Future<FutureOr<void>> _doRegister(
@@ -31,5 +33,13 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     } catch (e) {
       emit(RegisterError(error: e.toString()));
     }
+  }
+
+  Future<FutureOr<void>> _getSerialNoApi(
+      GetSerialNoEvent event, Emitter<RegisterState> emit) async {
+    var responseModel = await registerRepository.getSerialNoApi();
+    StudentData.srnoController.text = "${responseModel.data["data"]}" ;
+
+
   }
 }

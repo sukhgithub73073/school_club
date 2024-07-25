@@ -48,11 +48,10 @@ class _RegisterOneState extends State<RegisterOne> {
   @override
   void initState() {
     super.initState();
-    context
-        .read<CastBloc>()
-        .add(GetCastEvent());
-
+    context.read<CastBloc>().add(GetCastEvent());
+    context.read<RegisterBloc>().add(GetSerialNoEvent());
   }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -221,20 +220,32 @@ class _RegisterOneState extends State<RegisterOne> {
                             ),
                           ),
                           spaceVertical(space: 20.h),
-                          if (StudentData.admissionType == "old") ...[
-                            CustomTextField(
-                                controller: StudentData.srnoController,
-                                textInputAction: TextInputAction.next,
-                                keyboardType: TextInputType.text,
-                                paddingHorizontal: 20.0,
-                                hasViewHight: false,
-                                labelText: "srNo",
-                                hintText: "srNoHere",
-                                numberOfLines: 1,
-                                hintFontWeight: FontWeight.w400,
-                                hintTextColor: colorGray.withOpacity(0.6)),
-                            spaceVertical(space: 20.h),
-                          ],
+                          CustomTextField(
+                              controller: StudentData.srnoController,
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.text,
+                              paddingHorizontal: 20.0,
+                              hasViewHight: false,
+                              labelText: "srNo",
+                              hintText: "srNoHere",
+                              numberOfLines: 1,
+                              enabled: false,
+                              hintFontWeight: FontWeight.w400,
+                              hintTextColor: colorGray.withOpacity(0.6)),
+                          spaceVertical(space: 20.h),
+                          CustomTextField(
+                              controller: StudentData.rollNoController,
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.text,
+                              paddingHorizontal: 20.0,
+                              hasViewHight: false,
+                              labelText: "rollNo",
+                              hintText: "rollNoHere",
+                              numberOfLines: 1,
+
+                              hintFontWeight: FontWeight.w400,
+                              hintTextColor: colorGray.withOpacity(0.6)),
+                          spaceVertical(space: 20.h),
                           CustomTextField(
                               controller: StudentData.nameController,
                               textInputAction: TextInputAction.next,
@@ -263,26 +274,56 @@ class _RegisterOneState extends State<RegisterOne> {
                               hintFontWeight: FontWeight.w400,
                               hintTextColor: colorGray.withOpacity(0.6)),
                           spaceVertical(space: 20.h),
-                          CustomTextField(
-                              controller: StudentData.dobController,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(12),
-                              ],
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.number,
-                              paddingHorizontal: 20.0,
-                              hasViewHight: false,
-                              labelText: "dob",
-                              hintText: "dobHere",
-                              numberOfLines: 1,
-                              hintFontWeight: FontWeight.w400,
-                              hintTextColor: colorGray.withOpacity(0.6)),
+                          TapWidget(
+                            onTap: () async {
+                              DateTime? selectedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(1900),
+                                  lastDate: DateTime.now(),
+                                  builder:
+                                      (BuildContext context, Widget? child) {
+                                    return Theme(
+                                      data: ThemeData.light().copyWith(
+                                        primaryColor: colorPrimary,
+                                        colorScheme: ColorScheme.light(
+                                            primary: colorPrimary),
+                                        buttonTheme: ButtonThemeData(
+                                          textTheme: ButtonTextTheme.primary,
+                                        ),
+                                      ),
+                                      child: child!,
+                                    );
+                                  });
+                              if (selectedDate != null) {
+                                String formattedDate =
+                                    "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
+                                StudentData.dobController.text =
+                                    formattedDate; // Uprdate the text field with the selected date
+                              }
+                            },
+                            child: CustomTextField(
+                                controller: StudentData.dobController,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(12),
+                                ],
+                                textInputAction: TextInputAction.next,
+                                keyboardType: TextInputType.number,
+                                paddingHorizontal: 20.0,
+                                hasViewHight: false,
+                                labelText: "dob",
+                                hintText: "dobHere",
+                                numberOfLines: 1,
+                                enabled: false,
+                                hintFontWeight: FontWeight.w400,
+                                hintTextColor: colorGray.withOpacity(0.6)),
+                          ),
                           spaceVertical(space: 20.h),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: RadioGroup(
-                              controller: StudentData.myController,
+                              controller: StudentData.genderCtrl,
                               values: [tr("male"), tr("female"), tr("other")],
                               indexOfDefault: 0,
                               orientation: RadioGroupOrientation.horizontal,
@@ -301,12 +342,15 @@ class _RegisterOneState extends State<RegisterOne> {
                             items: getReligionList(),
                             decoration: customDropdownDecoration,
                             excludeSelected: false,
-                            onChanged: (item) {},
+                            onChanged: (item) {
+                              StudentData.selectedReligion = item;
+                            },
                           ),
                           spaceVertical(space: 20.h),
                           BlocConsumer<CastBloc, CastState>(
                             listener: (context, state) {
-                              print(">>>>>>>>>>>>>>>>>>>>>>>>>>.${state.toString()}");
+                              print(
+                                  ">>>>>>>>>>>>>>>>>>>>>>>>>>.${state.toString()}");
                             },
                             builder: (context, state) {
                               return state is CastLoaded
@@ -320,24 +364,25 @@ class _RegisterOneState extends State<RegisterOne> {
                                                 customDropdownDecoration,
                                             excludeSelected: false,
                                             onChanged: (item) {
+                                              StudentData.selectedCast = item;
                                               AppData.subCastList.clear();
-                                              AppData.subCastList.addAll(state
-                                                  .casteModel.data.subCaste
-                                                  .where((s) =>
-                                                      s.casteId == item!.id));
+                                              AppData.subCastList
+                                                  .addAll(item?.subCaste ?? []);
                                             },
                                           ),
                                         ),
                                         spaceHorizontal(space: 10.w),
                                         Expanded(
-                                          child: CustomDropdown<
-                                              Caste>.search(
+                                          child: CustomDropdown<Caste>.search(
                                             hintText: tr("selectSubCaste"),
                                             items: AppData.subCastList,
                                             decoration:
                                                 customDropdownDecoration,
                                             excludeSelected: false,
-                                            onChanged: (item) {},
+                                            onChanged: (item) {
+                                              StudentData.selectedSubCast =
+                                                  item;
+                                            },
                                           ),
                                         ),
                                       ],
@@ -347,26 +392,23 @@ class _RegisterOneState extends State<RegisterOne> {
                           ),
                           spaceVertical(space: 20.h),
                           spaceVertical(space: 30.h),
-                          BlocConsumer<RegisterBloc, RegisterState>(
-                            builder: (context, state) {
-                              return Container(
-                                height: 40.h,
-                                width: double.infinity,
-                                decoration: BoxDecoration(color: colorPrimary),
-                                child: AppSimpleButton(
-                                  onDoneFuction: () async {
-                                    context.pushScreen(
-                                        nextScreen: RegisterParent());
-                                  },
-                                  buttonBackgroundColor: colorPrimary,
-                                  nameText: "submit",
-                                  textSize: 18.sp,
-                                ),
-                              );
-                            },
-                            listener:
-                                (BuildContext context, RegisterState state) {},
+
+                          Container(
+                            height: 40.h,
+                            width: double.infinity,
+                            decoration: BoxDecoration(color: colorPrimary),
+                            child: AppSimpleButton(
+                              onDoneFuction: () async {
+                                context.pushScreen(
+                                    nextScreen: RegisterParent());
+                              },
+                              buttonBackgroundColor: colorPrimary,
+                              nameText: "submit",
+                              textSize: 18.sp,
+                            ),
                           ),
+
+
                           spaceVertical(space: 10.h),
                         ],
                       ),

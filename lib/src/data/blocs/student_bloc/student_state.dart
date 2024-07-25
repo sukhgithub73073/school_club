@@ -20,12 +20,13 @@ class StudentGetLoadingDismiss extends StudentState {
 }
 
 class StudentGetSuccess extends StudentState {
-  final ResponseModel responseModel;
 
-  StudentGetSuccess({required this.responseModel});
+  final List<Datum> studentsList;
+
+  StudentGetSuccess({required this.studentsList});
 
   @override
-  List<Object> get props => [responseModel];
+  List<Object> get props => [studentsList];
 }
 
 class StudentGetError extends StudentState {

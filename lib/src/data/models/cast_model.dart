@@ -38,21 +38,17 @@ class CasteModel {
 
 class Data {
   List<Caste> caste;
-  List<Caste> subCaste;
 
   Data({
     required this.caste,
-    required this.subCaste,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     caste: List<Caste>.from(json["caste"].map((x) => Caste.fromJson(x))),
-    subCaste: List<Caste>.from(json["subCaste"].map((x) => Caste.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
     "caste": List<dynamic>.from(caste.map((x) => x.toJson())),
-    "subCaste": List<dynamic>.from(subCaste.map((x) => x.toJson())),
   };
 }
 
@@ -61,6 +57,7 @@ class Caste {
   String name;
   dynamic createdAt;
   dynamic updatedAt;
+  List<Caste>? subCaste;
   int? casteId;
 
   Caste({
@@ -68,8 +65,10 @@ class Caste {
     required this.name,
     required this.createdAt,
     required this.updatedAt,
+    this.subCaste,
     this.casteId,
   });
+
   @override
   String toString() {
     return name;
@@ -79,11 +78,13 @@ class Caste {
   bool filter(String query) {
     return name.toLowerCase().contains(query.toLowerCase());
   }
+
   factory Caste.fromJson(Map<String, dynamic> json) => Caste(
     id: json["id"],
     name: json["name"],
     createdAt: json["created_at"],
     updatedAt: json["updated_at"],
+    subCaste: json["sub_caste"] == null ? [] : List<Caste>.from(json["sub_caste"]!.map((x) => Caste.fromJson(x))),
     casteId: json["caste_id"],
   );
 
@@ -92,6 +93,7 @@ class Caste {
     "name": name,
     "created_at": createdAt,
     "updated_at": updatedAt,
+    "sub_caste": subCaste == null ? [] : List<dynamic>.from(subCaste!.map((x) => x.toJson())),
     "caste_id": casteId,
   };
 }

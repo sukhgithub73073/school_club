@@ -1,0 +1,140 @@
+import 'package:flutter/material.dart';
+import 'package:school_club/src/core/app_assets.dart';
+import 'package:school_club/src/core/app_image_view.dart';
+import 'package:school_club/src/data/models/students_model.dart';
+
+class StudentDetailScreen extends StatefulWidget {
+  final Datum student;
+
+  StudentDetailScreen({required this.student});
+
+  @override
+  State<StudentDetailScreen> createState() => _StudentDetailScreenState();
+}
+
+class _StudentDetailScreenState extends State<StudentDetailScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Student Details'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            Center(
+              child: Column(
+                children: [
+                  ImageView(
+                    size: 150,
+                    url: AppAssets.logo,
+                    imageType: ImageType.asset,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    widget.student.name ?? "",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
+            _buildSectionHeader('Personal Information'),
+            _buildInfoTable([
+              ['Date of Birth', widget.student.dob.toLocal().toString()],
+              ['Gender', widget.student.gender ?? ""],
+              ['Mobile No', widget.student.mobileNo ?? ""],
+              ['Alternate Mobile No', widget.student.alternateMobileNo ?? ""],
+              ['Aadhaar Number', widget.student.aadhaarNumber ?? ""],
+              ['Religion', widget.student.religion ?? ""],
+            ]),
+            _buildSectionHeader('Parent Information'),
+            _buildInfoTable([
+              ['Father\'s Name', widget.student.father ?? ""],
+              ['Father\'s Occupation', widget.student.fatherOccupation ?? ""],
+              ['Mother\'s Name', widget.student.mother ?? ""],
+              ['Mother\'s Occupation', widget.student.motherOccupation ?? ""],
+            ]),
+            _buildSectionHeader('Guardian Information'),
+            _buildInfoTable([
+              ['Guardian Name', widget.student.guardian.guardianName ?? ""],
+              ['Guardian Mobile', widget.student.guardian.guardianMobile ?? ""],
+              ['Guardian Alternate Mobile', widget.student.guardian.guardianAlternateMobile ?? ""],
+              ['Relationship with Student', widget.student.guardian.relationshipWithStudent ?? ""],
+              ['Guardian Address', widget.student.guardian.guardianAddress ?? ""],
+            ]),
+            _buildSectionHeader('Academic Details'),
+            _buildInfoTable([
+              ['College ID', widget.student.collegeId.toString()],
+              ['Class', widget.student.finalClassName ?? ""],
+              ['Group', widget.student.finalClassGroupName ?? ""],
+              ['Previous School', widget.student.previousSchool ?? ""],
+              ['Last Academic Result', widget.student.latestPromotion ?? ""],
+              ['Obtained Marks', 'N/A'],
+              ['Attended Days', 'N/A'],
+            ]),
+            _buildSectionHeader('Health Details'),
+            _buildInfoTable([
+              ['Blood Group', widget.student.details.studentBloodGroup ?? ""],
+              ['Weight', '${widget.student.details.studentWeight ?? ""} kg'],
+              ['Height', '${widget.student.details.studentHeight ?? ""} cm'],
+              ['Disability Status', widget.student.details.disabilityStatus == 0 ? 'No' : 'Yes'],
+              // Uncomment these if data is available
+              // ['Disability Type', widget.student.disabilityType ?? ""],
+              // ['Disability Percentage', widget.student.disabilityPercentage.toString()],
+            ]),
+            _buildSectionHeader('Contact Details'),
+            _buildInfoTable([
+              ['District', widget.student.district ?? ""],
+              ['State', widget.student.state ?? ""],
+              ['Tehsil', widget.student.tehsil ?? ""],
+              ['Village/Mohalla', widget.student.villageMohalla ?? ""],
+              ['Pin Code', widget.student.pinCode ?? ""],
+            ]),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.blueAccent,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoTable(List<List<String>> data) {
+    return Table(
+      columnWidths: {
+        0: IntrinsicColumnWidth(),
+        1: FlexColumnWidth(),
+      },
+      border: TableBorder.all(color: Colors.grey),
+      children: data.map((row) {
+        return TableRow(
+          children: row.map((cell) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                cell,
+                style: TextStyle(fontSize: 16),
+              ),
+            );
+          }).toList(),
+        );
+      }).toList(),
+    );
+  }
+}

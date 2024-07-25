@@ -17,8 +17,11 @@ import 'package:school_club/src/data/blocs/student_bloc/student_bloc.dart';
 import 'package:school_club/src/extension/app_extension.dart';
 import 'package:school_club/src/ui/dashboard/drawer/drawer_screen.dart';
 import 'package:school_club/src/ui/dashboard/drawer/student_filter_drawer.dart';
+import 'package:school_club/src/ui/dashboard/students/student_detail_screen.dart';
 import 'package:school_club/src/ui/register/register_screen.dart';
 import 'package:school_club/src/ui/register/student_registration/register_one.dart';
+import 'package:school_club/src/ui/register/student_registration/student_register_screen.dart';
+import 'package:school_club/src/utility/app_data.dart';
 import 'package:school_club/src/utility/app_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,9 +38,17 @@ class StudentScreen extends StatefulWidget {
 class _StudentScreenState extends State<StudentScreen> {
   @override
   void initState() {
-    context.read<StudentBloc>().add(GetStudentEvent(map: {
-          "school_code": "GSSS19543",
-        }));
+
+    AppData.studentMap["college_id"] = AppData.userModel.data?.data.college.id??"" ;
+    AppData.studentMap["session"] = "2024" ;
+
+    // context.read<StudentBloc>().add(GetStudentEvent(map: {
+    //   'class_group_id': '135',
+    //   'class_id': '405',
+    //   'session': '2023',
+    //   'college_id': '${AppData.userModel.data?.data.college.id??""}'
+    //     }));
+
     super.initState();
   }
 
@@ -101,112 +112,12 @@ class _StudentScreenState extends State<StudentScreen> {
           ),
         ),
 
-        // Row(
-        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //   children: [
-        //     Container(
-        //       width: (size.width / 2) - 5,
-        //       child: BlocConsumer<GroupsBloc, GroupsState>(
-        //         listener: (context, state) {},
-        //         builder: (context, state) {
-        //           if (state is GroupsSuccess) {
-        //             printLog(
-        //                 "builder >>>>>>>>>>>>>>>>>${state is GroupsSuccess}");
-        //             List<OptionItem> list = [];
-        //             state.responseModel.data.forEach((element) {
-        //               list.add(OptionItem(
-        //                   id: "${element["group_id"]}",
-        //                   title: "${element["group_name"]}"));
-        //             });
-        //
-        //             return Padding(
-        //               padding: EdgeInsets.symmetric(horizontal: 10.0),
-        //               child: DropdownSearch<OptionItem>(
-        //                 popupProps: PopupProps.menu(
-        //                     showSearchBox: true,
-        //                     searchDelay: Duration.zero,
-        //                     searchFieldProps: TextFieldProps(
-        //                         decoration: InputDecoration(
-        //                       isDense: true,
-        //                       border: OutlineInputBorder(
-        //                           gapPadding: 1,
-        //                           borderSide: BorderSide(color: Colors.red),
-        //                           borderRadius: BorderRadius.circular(5.r)),
-        //                       hintText: "Enter to search",
-        //                     ))),
-        //                 items: list,
-        //                 itemAsString: (OptionItem u) => u.title,
-        //                 onChanged: (item) {
-        //                   printLog(
-        //                       "onSelectonSelect>>>>>>>>>>>>>>>>>>>>>>${item?.id}");
-        //                   context
-        //                       .read<ClassesBloc>()
-        //                       .add(GetClassesByGroupEvent(map: {
-        //                         "school_code": "GSSS19543",
-        //                         "group_id": item?.id ?? "",
-        //                       }));
-        //                 },
-        //               ),
-        //             );
-        //           } else {
-        //             return SizedBox.shrink();
-        //           }
-        //         },
-        //       ),
-        //     ),
-        //     Container(
-        //       width: (size.width / 2) - 5,
-        //       child: BlocConsumer<ClassesBloc, ClassesState>(
-        //         listener: (context, state) {},
-        //         builder: (context, state) {
-        //           if (state is ClassesGetSuccess) {
-        //             printLog(
-        //                 "builder >>>>>>>>>>>>>>>>>${state is ClassesGetSuccess}");
-        //             List<OptionItem> list = [];
-        //             state.responseModel.data.forEach((element) {
-        //               list.add(OptionItem(
-        //                   id: "${element["class_id"]}",
-        //                   title: "${element["class_name"]}"));
-        //             });
-        //
-        //             return Padding(
-        //               padding: EdgeInsets.symmetric(horizontal: 10.0),
-        //               child: DropdownSearch<OptionItem>(
-        //                 popupProps: PopupProps.menu(
-        //                     showSearchBox: true,
-        //                     searchDelay: Duration.zero,
-        //                     searchFieldProps: TextFieldProps(
-        //                         decoration: InputDecoration(
-        //                       isDense: true,
-        //                       border: OutlineInputBorder(
-        //                           gapPadding: 1,
-        //                           borderSide: BorderSide(color: Colors.red),
-        //                           borderRadius: BorderRadius.circular(5.r)),
-        //                       hintText: "Enter to search",
-        //                     ))),
-        //                 items: list,
-        //                 itemAsString: (OptionItem u) => u.title,
-        //                 onChanged: (item) {
-        //                   printLog(
-        //                       "onSelectonSelect>>>>>>>>>>>>>>>>>>>>>>${item?.id}");
-        //                   context.read<StudentBloc>().add(GetStudentEvent(map: {
-        //                         "school_code": "GSSS19543",
-        //                       }));
-        //                 },
-        //               ),
-        //             );
-        //           } else {
-        //             return SizedBox.shrink();
-        //           }
-        //         },
-        //       ),
-        //     )
-        //   ],
-        // ),
+
         BlocConsumer<StudentBloc, StudentState>(
           listener: (context, state) {
+            printLog("Create listener>>>>>>>>>>>${state.toString()}");
+
             if (state is StudentGetLoading) {
-              printLog("Create listener>>>>>>>>>>>StudentLoaderShow");
               // appLoader(context);
             } else if (state is StudentGetLoadingDismiss) {
               // context.dissmissLoading();
@@ -214,7 +125,7 @@ class _StudentScreenState extends State<StudentScreen> {
           },
           builder: (context, state) {
             if (state is StudentGetSuccess) {
-              return state.responseModel.data.isEmpty
+              return state.studentsList.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.symmetric(vertical: 40),
                       child: TextView(
@@ -230,82 +141,90 @@ class _StudentScreenState extends State<StudentScreen> {
                   : Expanded(
                       child: ListView.builder(
                           shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: state.responseModel.data.length,
+                          physics: BouncingScrollPhysics(),
+                          itemCount: state.studentsList.length,
                           itemBuilder: (c, i) {
-                            return Card(
-                              elevation: 10.h,
-                              margin: EdgeInsets.all(10.r),
-                              shadowColor: colorPrimary,
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 100,
-                                      height: 100,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(50),
-                                        border: Border.all(
-                                          style: BorderStyle.solid,
-                                          color: colorPrimary,
-                                          // Specify the border color
-                                          width: 2, // Specify the border width
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: ImageView(
-                                          size: 70,
-                                          url: AppAssets.logo,
-                                          imageType: ImageType.asset,
-                                        ),
-                                      ),
-                                    ),
-                                    spaceHorizontal(space: 10.w),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          TextView(
-                                            text:
-                                                "${state.responseModel.data[i]["name"]}",
+                            return TapWidget(
+                              onTap: (){
+                                context.pushScreen(nextScreen: StudentDetailScreen(student: state.studentsList[i],));
+
+                              },
+                              child: Card(
+                                elevation: 10.h,
+                                margin: EdgeInsets.all(10.r),
+                                shadowColor: colorPrimary,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 100,
+                                        height: 100,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(50),
+                                          border: Border.all(
+                                            style: BorderStyle.solid,
                                             color: colorPrimary,
-                                            textSize: 15.sp,
-                                            textAlign: TextAlign.start,
-                                            style: AppTextStyleEnum.bold,
-                                            fontFamily: Family.medium,
-                                            lineHeight: 1.3,
+                                            // Specify the border color
+                                            width: 2, // Specify the border width
                                           ),
-                                          spaceVertical(space: 5.h),
-                                          TextView(
-                                            text:
-                                                "${state.responseModel.data[i]["email"]}",
-                                            color: colorBlack.withOpacity(0.6),
-                                            textSize: 13.sp,
-                                            textAlign: TextAlign.start,
-                                            style: AppTextStyleEnum.medium,
-                                            fontFamily: Family.medium,
-                                            lineHeight: 1.3,
+                                        ),
+                                        child: Center(
+                                          child: ImageView(
+                                            size: 70,
+                                            url: AppAssets.logo,
+                                            imageType: ImageType.asset,
                                           ),
-                                          TextView(
-                                            text:
-                                                "${state.responseModel.data[i]["address"]} dropdown button lets the user",
-                                            color: colorBlack.withOpacity(0.4),
-                                            textSize: 10.sp,
-                                            maxlines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            textAlign: TextAlign.start,
-                                            style: AppTextStyleEnum.medium,
-                                            fontFamily: Family.medium,
-                                            lineHeight: 1.3,
-                                          ),
-                                        ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                      spaceHorizontal(space: 10.w),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            TextView(
+                                              text:
+                                                  "${state.studentsList[i].name} (${state.studentsList[i].mobileNo})",
+                                              color: colorPrimary,
+                                              textSize: 15.sp,
+                                              textAlign: TextAlign.start,
+                                              style: AppTextStyleEnum.bold,
+                                              fontFamily: Family.medium,
+                                              lineHeight: 1.3,
+                                            ),
+                                            spaceVertical(space: 5.h),
+                                            TextView(
+                                              text:
+                                                  "${state.studentsList[i].father}",
+                                              color: colorBlack.withOpacity(0.6),
+                                              textSize: 13.sp,
+                                              textAlign: TextAlign.start,
+                                              style: AppTextStyleEnum.medium,
+                                              fontFamily: Family.medium,
+                                              lineHeight: 1.3,
+                                            ),
+
+
+                                            TextView(
+                                              text:
+                                                  "${state.studentsList[i].finalClassGroupName} ( ${state.studentsList[i].finalClassName} )",
+                                              color: colorBlack.withOpacity(0.4),
+                                              textSize: 10.sp,
+                                              maxlines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              textAlign: TextAlign.start,
+                                              style: AppTextStyleEnum.medium,
+                                              fontFamily: Family.medium,
+                                              lineHeight: 1.3,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );
@@ -318,7 +237,7 @@ class _StudentScreenState extends State<StudentScreen> {
       ]),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.pushScreen(nextScreen: RegisterOne());
+          context.pushScreen(nextScreen: StudentRegisterScreen());
           // context.pushScreen(nextScreen: RegisterScreen());
         },
         child: Icon(Icons.add, color: colorWhite),

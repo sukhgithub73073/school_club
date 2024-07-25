@@ -18,7 +18,13 @@ class GetClassesByGroupEvent extends ClassesEvent {
   List<Object?> get props => [map];
 }
 
+class GetClassEvent extends ClassesEvent {
+  final Datum groupItem ;
+  const GetClassEvent({required this.groupItem});
 
+  @override
+  List<Object?> get props => [groupItem];
+}
 
 
 class CreateClassesEvent extends ClassesEvent {

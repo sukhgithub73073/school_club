@@ -40,11 +40,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  //var emailController = TextEditingController(text: "gssspgk@gmail.com");
-  //var passwordController = TextEditingController(text: "Qwerty@123");
-
-  // var emailController = TextEditingController(text: "superadmin");
-  // var passwordController = TextEditingController(text: "Lok@592252");
   var emailController = TextEditingController(text: "C0e3c2eb");
   var passwordController = TextEditingController(text: "12345678");
   bool _isObscured = true;
@@ -151,8 +146,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             appLoader(context);
                           } else if (state is LoginSuccess) {
                             context.dissmissLoading();
-                            AppData.authToken = state
-                                .responseModel.data["token"];
+                            // AppData.authToken = state
+                            //     .responseModel.data["token"];
                             print(AppData.authToken);
 
 

@@ -45,10 +45,10 @@ class ClassesCreateLoadingDismiss extends ClassesState {
 }
 
 class ClassesCreateSuccess extends ClassesState {
-  final ResponseModel responseModel ;
-  ClassesCreateSuccess({required this.responseModel});
+  final List<Datum> list ;
+  ClassesCreateSuccess({required this.list});
   @override
-  List<Object> get props => [responseModel];
+  List<Object> get props => [list];
 }
 class ClassesCreateError extends ClassesState {
   final String error ;

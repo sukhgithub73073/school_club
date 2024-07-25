@@ -126,5 +126,8 @@
     "attendedDays": "उपस्थित दिन",
     "male": "पुरुष",
     "female": "महिला",
-    "other": "अन्य"
+    "other": "अन्य",
+    "rollNo": "Roll No",
+    "rollNoHere": "Roll No Here"
+
 }
