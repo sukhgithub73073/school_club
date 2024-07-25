@@ -10,6 +10,9 @@ class ApisEndpoints {
   static String getGroupUrl = "$baseUrl/get-class-group-data";
   static String getClassUrl = "$baseUrl/get-class-data";
   static String getDisabilityUrl = "$baseUrl/get-disability-type";
+  static String getSerialNoUrl = "$baseUrl/get-sr-no/";
+  static String createStudentUrl = "$baseUrl/create-student";
+  static String getStudentUrl = "$baseUrl/get-student-data";
 
 
 }

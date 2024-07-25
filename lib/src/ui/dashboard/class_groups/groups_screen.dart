@@ -11,6 +11,7 @@ import 'package:school_club/src/core/text_view.dart';
 import 'package:school_club/src/data/blocs/groups_bloc/groups_bloc.dart';
 import 'package:school_club/src/extension/app_extension.dart';
 import 'package:school_club/src/ui/dashboard/class_groups/create_group_screen.dart';
+import 'package:school_club/src/utility/app_data.dart';
 import 'package:school_club/src/utility/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,7 +29,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
   void initState() {
     super.initState();
     context.read<GroupsBloc>().add(GetGroupsEvent(map: {
-      'college_id': '15',
+      'college_id': '${AppData.userModel.data?.data.college.id??""}',
       'session': '2023'
     }));
 

@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
@@ -7,6 +9,7 @@ import 'package:school_club/src/core/dialog_widgets/failure_message_dialog.dart'
 import 'package:school_club/src/core/dialog_widgets/success_message_dialog.dart';
 import 'package:school_club/src/core/drop_down/drop_list_model.dart';
 import 'package:school_club/src/data/blocs/classes_bloc/classes_bloc.dart';
+import 'package:school_club/src/data/blocs/disability_bloc/disability_bloc.dart';
 import 'package:school_club/src/data/blocs/groups_bloc/groups_bloc.dart';
 import 'package:school_club/src/data/blocs/image_pick_bloc/image_pick_bloc.dart';
 import 'package:school_club/src/data/blocs/pincode_bloc/pincode_bloc.dart';
@@ -15,7 +18,9 @@ import 'package:school_club/src/data/models/pincode_model.dart';
 import 'package:school_club/src/ui/register/parent_detail_screen.dart';
 import 'package:school_club/src/ui/register/student_registration/register_gaurdian_screen.dart';
 import 'package:school_club/src/ui/register/student_registration/student_data.dart';
+import 'package:school_club/src/utility/app_data.dart';
 import 'package:school_club/src/utility/app_util.dart';
+import 'package:school_club/src/utility/date_time_util.dart';
 import 'package:school_club/src/utility/decoration_util.dart';
 import 'package:school_club/src/utility/validation_util.dart';
 import 'package:flutter/cupertino.dart';
@@ -44,6 +49,16 @@ class AdditionalInfoScreen extends StatefulWidget {
 }
 
 class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<DisabilityBloc>().add(GetDisabilityEvent(map: {
+          'college_id': '${AppData.userModel.data?.data.college.id ?? ""}',
+          'session': '2023',
+          'class_group_id': '28'
+        }));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,12 +147,23 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                 ],
               ),
               spaceVertical(space: 15.h),
-              CustomDropdown<DropListModel>(
-                hintText: tr("selectDisabilityType"),
-                items: StudentData.disabilityTypeList,
-                decoration: customDropdownDecoration,
-                excludeSelected: false,
-                onChanged: (item) {},
+              BlocConsumer<DisabilityBloc, DisabilityState>(
+                listener: (context, state) {
+                  print("sdddddddssssssss${state.toString()}");
+                },
+                builder: (context, state) {
+                  return state is DisabilityLoaded
+                      ? CustomDropdown<DropListModel>(
+                          hintText: tr("selectDisabilityType"),
+                          items: state.list,
+                          decoration: customDropdownDecoration,
+                          excludeSelected: false,
+                          onChanged: (item) {
+                            StudentData.selectDisabilityType = item;
+                          },
+                        )
+                      : SizedBox.shrink();
+                },
               ),
               spaceVertical(space: 15.h),
               CustomTextField(
@@ -241,7 +267,9 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                 items: StudentData.bloodGroupList,
                 decoration: customDropdownDecoration,
                 excludeSelected: false,
-                onChanged: (item) {},
+                onChanged: (item) {
+                  StudentData.selectedBloodGroup = item;
+                },
               ),
               spaceVertical(space: 15.h),
               CustomTextField(
@@ -308,73 +336,101 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                     decoration: BoxDecoration(color: colorPrimary),
                     child: AppSimpleButton(
                       onDoneFuction: () async {
-                        context.read<RegisterBloc>().add(DoRegisterEvent(map: {
-                              "college_id": 4,
-                              "class_group_id": 1,
-                              "class": 10,
-                              "name": StudentData.nameController.text,
-                              "mobile_no": StudentData.mobileGaurdianCtrl.text,
-                              "roll_no": 123,
-                              "father": StudentData.nameControllerFather.text,
-                              "serial_no": "SR123",
-                              "session": "2023-2024",
-                              "application_no": "APP123",
-                              "aadhaar_number": 123456789012,
-                              "admission_date": "2023-06-27",
-                              "dob": "2005-01-01",
-                              "gender": "Male",
-                              "religion": "Christianity",
-                              "caste_id": 1,
-                              "sub_caste_id": 4,
-                              "father_occupation": "Engineer",
-                              "mother": "Jane Doe",
-                              "mother_occupation": "Teacher",
-                              "pin_code": 123456,
-                              "district": "District Name",
-                              "state": "State Name",
-                              "tehsil": "Tehsil Name",
-                              "village_mohalla": "Village Name",
-                              "guardian_name": "Guardian Name",
-                              "relationship_with_student": "Uncle",
-                              "guardian_address": "Guardian Address",
-                              "guardian_pin_code": 654321,
-                              "guardian_district": "Guardian District",
-                              "guardian_tehsil": "Guardian Tehsil",
-                              "guardian_village_mohalla": "Guardian Village",
-                              "guardian_mobile": 9876543210,
-                              "guardian_alternate_mobile": 0123456789,
-                              "previous_school": "Previous School Name",
-                              "previous_passed_class": 9,
-                              "group": "Science",
-                              "time_period_of_residence": "5 years",
-                              "bank_name": "Bank Name",
-                              "ifsc_code": "IFSC1234",
-                              "branch_address": "Branch Address",
-                              "account_number": 1234567890,
-                              "account_holder_name": "John Doe",
-                              "guardian_email": "john.doe@example.com",
-                              "udise_pen": "UDISE12345",
-                              "academic_year": "2023-2024",
-                              "disability_status": 1,
-                              "disability_type": "Visual Impairment",
-                              "disability_percentage": 40.5,
-                              "last_academic_result": "Passed",
-                              "obtained_marks": 85.5,
-                              "attended_days": 180,
-                              "student_blood_group": "O+",
-                              "student_weight": 60.5,
-                              "student_height": 170.5
-                            }));
+                        var map = {
+                          'college_id':
+                              '${AppData.userModel.data?.data.college.id ?? ""}',
+                          "class_group_id":
+                              StudentData.selectedPreviosGroup?.id ?? "",
+                          "class": StudentData.selectedPreviosClass?.id ?? "",
+                          "name": StudentData.nameController.text,
+                          "mobile_no": StudentData.mobileGaurdianCtrl.text,
+                          "roll_no": StudentData.rollNoController.text,
+                          "serial_no": StudentData.srnoController.text,
+                          "session": "2024",
+                          "application_no": "APP123",
+                          "aadhaar_number": StudentData.aadhaarController.text,
+                          "admission_date": DateTimeUtil.getCurrentDate(),
+                          "dob": StudentData.dobController.text,
+                          "gender": StudentData.genderCtrl.value,
+                          "religion": StudentData.selectedReligion?.name ?? "",
+                          "caste_id": StudentData.selectedCast?.id ?? "",
+                          "sub_caste_id": StudentData.selectedSubCast?.id ?? "",
+                          "father": StudentData.nameControllerFather.text,
+                          "father_occupation":
+                              StudentData.selectFatherOcc?.name ?? "",
+                          "mother": StudentData.nameControllerMother.text,
+                          "mother_occupation":
+                              StudentData.selectMotherOcc?.name ?? "",
+                          "pin_code": StudentData.pincodeController.text,
+                          "district": StudentData.districtController.text,
+                          "state": StudentData.stateController.text,
+                          "tehsil": StudentData.tehsilController.text,
+                          "village_mohalla":
+                              StudentData.villMohallaController.text,
+                          "guardian_name": StudentData.nameGaurdianCtrl.text,
+                          "relationship_with_student":
+                              StudentData.relationshipGaurdianCtrl.text,
+                          "guardian_mobile":
+                              StudentData.mobileGaurdianCtrl.text,
+                          "guardian_pin_code":
+                              StudentData.pincodeGaurdianCtrl.text,
+                          "guardian_district":
+                              StudentData.districtGaurdianCtrl.text,
+                          "guardian_tehsil":
+                              StudentData.selectedPostOfficeGaurdian.name,
+                          "guardian_village_mohalla":
+                              StudentData.villageMohalaGaurdianCtrl.text,
+                          "guardian_address": "Guardian Address",
+                          "guardian_alternate_mobile":
+                              StudentData.mobileGaurdianCtrl.text,
+                          "guardian_email": StudentData.emailCtrl.text,
+                          "previous_school": StudentData.previosSchoolCtrl.text,
+                          "group": StudentData.selectedPreviosGroup.name,
+                          "previous_passed_class":
+                              StudentData.selectedPreviosClass.id,
+                          "time_period_of_residence": StudentData.timeCtrl.text,
+                          "academic_year": "2023-2024",
+                          "bank_name": StudentData.bankNameCtrl.text,
+                          "ifsc_code": StudentData.ifscCtrl.text,
+                          "branch_address": StudentData.branchAddressCtrl.text,
+                          "account_number": StudentData.accountCtrl.text,
+                          "account_holder_name":
+                              StudentData.holderNameCtrl.text,
+                          "udise_pen": StudentData.penCtrl.text,
+                          "disability_status":
+                              StudentData.disabilityRadioController.value ==
+                                      "Yes"
+                                  ? 1
+                                  : 0,
+                          "disability_type":
+                              StudentData.selectDisabilityType.name,
+                          "disability_percentage":
+                              StudentData.disabilityCtrl.text,
+                          "last_academic_result":
+                              StudentData.resultRadioController.value,
+                          "obtained_marks": StudentData.obtainMarksCtrl.text,
+                          "attended_days": StudentData.attendedDaysCtrl.text,
+                          "student_blood_group":
+                              StudentData.selectedBloodGroup?.name ?? "",
+                          "student_weight": StudentData.weightCtrl.text,
+                          "student_height": StudentData.heightCtrl.text
+                        };
 
-                        appDialog(
-                            context: context,
-                            child: SuccessDailog(
-                              title: "successfully",
-                              onTap: () {
-                                context.back();
-                              },
-                              message: "Successfully student register",
-                            ));
+                        // print("SCCCCCCCCCCCCCCCCCCC>>>>>>>>>>>>>>>>>>.${jsonEncode(map)}") ;
+                        log(jsonEncode(map));
+
+                        context
+                            .read<RegisterBloc>()
+                            .add(DoRegisterEvent(map: map));
+                        // appDialog(
+                        //     context: context,
+                        //     child: SuccessDailog(
+                        //       title: "successfully",
+                        //       onTap: () {
+                        //         context.back();
+                        //       },
+                        //       message: "Successfully student register",
+                        //     ));
                       },
                       buttonBackgroundColor: colorPrimary,
                       nameText: "submit",

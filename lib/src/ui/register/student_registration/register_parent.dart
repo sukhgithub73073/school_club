@@ -114,7 +114,9 @@ class _RegisterParentState extends State<RegisterParent> {
                 items: StudentData.occupationList,
                 decoration: customDropdownDecoration,
                 excludeSelected: false,
-                onChanged: (item) {},
+                onChanged: (item) {
+                  StudentData.selectFatherOcc = item;
+                },
               ),
               spaceVertical(space: 20.h),
               CustomDropdown<DropListModel>.search(
@@ -122,7 +124,9 @@ class _RegisterParentState extends State<RegisterParent> {
                 items: StudentData.qualificationList,
                 decoration: customDropdownDecoration,
                 excludeSelected: false,
-                onChanged: (item) {},
+                onChanged: (item) {
+                  StudentData.selectFatherQualification = item;
+                },
               ),
               spaceVertical(space: 20.h),
 
@@ -159,7 +163,9 @@ class _RegisterParentState extends State<RegisterParent> {
                 items: StudentData.occupationList,
                 decoration: customDropdownDecoration,
                 excludeSelected: false,
-                onChanged: (item) {},
+                onChanged: (item) {
+                  StudentData.selectMotherOcc =item ;
+                },
               ),
               spaceVertical(space: 20.h),
               CustomDropdown<DropListModel>.search(
@@ -167,52 +173,27 @@ class _RegisterParentState extends State<RegisterParent> {
                 items: StudentData.qualificationList,
                 decoration: customDropdownDecoration,
                 excludeSelected: false,
-                onChanged: (item) {},
+                onChanged: (item) {
+                  StudentData.selectMotherQualification =item ;
+
+                },
               ),
 
 
               spaceVertical(space: 30.h),
-              BlocConsumer<RegisterBloc, RegisterState>(
-                listener: (context, state) {
-                  if (state is RegisterSuccess) {
-                    appDialog(
-                        context: context,
-                        child: SuccessDailog(
-                          title: "successfully",
-                          onTap: () {
-                            context.back();
-                            context.back();
-                          },
-                          message: "${state.userModel.message}",
-                        ));
-                  } else if (state is RegisterError) {
-                    appDialog(
-                        context: context,
-                        child: ErrorDailog(
-                          title: "error",
-                          onTap: () {
-                            context.back();
-                          },
-                          message: "${state.error}",
-                        ));
-                  }
-                },
-                builder: (context, state) {
-                  return Container(
-                    height: 40.h,
-                    width: double.infinity,
-                    decoration: BoxDecoration(color: colorPrimary),
-                    child: AppSimpleButton(
-                      onDoneFuction: () async {
-                        context.pushScreen(nextScreen: RegisterAddressScreen()) ;
-                      },
-                      buttonBackgroundColor: colorPrimary,
-                      nameText: "submit",
-                      textSize: 18.sp,
-                    ),
-                  );
-                },
-              ),
+              Container(
+                height: 40.h,
+                width: double.infinity,
+                decoration: BoxDecoration(color: colorPrimary),
+                child: AppSimpleButton(
+                  onDoneFuction: () async {
+                    context.pushScreen(nextScreen: RegisterAddressScreen()) ;
+                  },
+                  buttonBackgroundColor: colorPrimary,
+                  nameText: "submit",
+                  textSize: 18.sp,
+                ),
+              ) ,
               spaceVertical(space: 10.h),
             ],
           ),

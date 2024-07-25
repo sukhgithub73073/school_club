@@ -1,12 +1,16 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:school_club/src/core/app_assets.dart';
 import 'package:school_club/src/core/app_colors.dart';
 import 'package:school_club/src/core/app_tap_widget.dart';
 import 'package:school_club/src/core/app_text_style.dart';
 import 'package:school_club/src/core/text_view.dart';
+import 'package:school_club/src/data/blocs/login_bloc/login_bloc.dart';
+import 'package:school_club/src/data/blocs/login_bloc/login_bloc.dart';
 import 'package:school_club/src/extension/app_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:school_club/src/utility/app_data.dart';
 
 class DrawerScreen extends StatefulWidget {
   final screenIndex;
@@ -179,31 +183,38 @@ class _DrawerScreenState extends State<DrawerScreen>
                           );
                         },
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8, left: 4),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'GSS School (Boys)',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: isLightMode ? colorGray : colorWhite,
-                                fontSize: 18,
-                              ),
+                      BlocConsumer<LoginBloc, LoginState>(
+                        listener: (context, state) {
+                          // TODO: implement listener
+                        },
+                        builder: (context, state) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 8, left: 4),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  state is LoginSuccess ? '${AppData.userModel.data?.data.college.name}' :"",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: isLightMode ? colorGray : colorWhite,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                TextView(
+                                  text: "${AppData.userModel.data?.data.college.village}",
+                                  color: colorBlack,
+                                  textSize: 13.sp,
+                                  textAlign: TextAlign.left,
+                                  style: AppTextStyleEnum.small,
+                                  fontFamily: Family.regular,
+                                  lineHeight: 1.3,
+                                ),
+                              ],
                             ),
-                            TextView(
-                              text: "Vpo Panjgrain kalan Dist Faridkot",
-                              color: colorBlack,
-                              textSize: 13.sp,
-                              textAlign: TextAlign.left,
-                              style: AppTextStyleEnum.small,
-                              fontFamily: Family.regular,
-                              lineHeight: 1.3,
-                            ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
                     ],
                   ),

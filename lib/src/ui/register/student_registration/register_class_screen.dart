@@ -16,6 +16,7 @@ import 'package:school_club/src/ui/register/parent_detail_screen.dart';
 import 'package:school_club/src/ui/register/student_registration/register_bank_screen.dart';
 import 'package:school_club/src/ui/register/student_registration/register_gaurdian_screen.dart';
 import 'package:school_club/src/ui/register/student_registration/student_data.dart';
+import 'package:school_club/src/utility/app_data.dart';
 import 'package:school_club/src/utility/app_util.dart';
 import 'package:school_club/src/utility/decoration_util.dart';
 import 'package:school_club/src/utility/validation_util.dart';
@@ -77,18 +78,7 @@ class _RegisterClassScreenState extends State<RegisterClassScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               spaceVertical(space: 10.h),
-              CustomTextField(
-                  controller: StudentData.previosSchoolCtrl,
-                  textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.text,
-                  paddingHorizontal: 20.0,
-                  hasViewHight: false,
-                  labelText: "previousSchoolName",
-                  hintText: "previousSchoolName",
-                  numberOfLines: 1,
-                  hintFontWeight: FontWeight.w400,
-                  hintTextColor: colorGray.withOpacity(0.6)),
-              spaceVertical(space: 20.h),
+
               BlocConsumer<GroupsBloc, GroupsState>(
                 listener: (context, state) {},
                 builder: (context, state) {
@@ -106,11 +96,12 @@ class _RegisterClassScreenState extends State<RegisterClassScreen> {
                       excludeSelected: false,
                       decoration: customDropdownDecoration,
                       onChanged: (item) {
-                        StudentData.selectedGroup = item;
+                        StudentData.selectedPreviosGroup = item;
                         context.read<ClassesBloc>().add(GetClassesByGroupEvent(
                                 map: {
-                                  'college_id': '15',
-                                  'session': '2023',
+                                  'college_id':
+                                  '${AppData.userModel.data?.data.college.id ?? ""}',
+                              'session': '2023',
                                   'class_group_id': '${item?.id ?? ""}'
                                 }));
                       },
@@ -139,7 +130,7 @@ class _RegisterClassScreenState extends State<RegisterClassScreen> {
                       decoration: customDropdownDecoration,
                       excludeSelected: false,
                       onChanged: (item) {
-                        StudentData.selectedClass = item;
+                        StudentData.selectedPreviosClass = item;
                       },
                     );
                   } else {
@@ -148,6 +139,20 @@ class _RegisterClassScreenState extends State<RegisterClassScreen> {
                 },
               ),
               spaceVertical(space: 20.h),
+
+              CustomTextField(
+                  controller: StudentData.previosSchoolCtrl,
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.text,
+                  paddingHorizontal: 20.0,
+                  hasViewHight: false,
+                  labelText: "previousSchoolName",
+                  hintText: "previousSchoolName",
+                  numberOfLines: 1,
+                  hintFontWeight: FontWeight.w400,
+                  hintTextColor: colorGray.withOpacity(0.6)),
+              spaceVertical(space: 20.h),
+
               CustomTextField(
                   controller: StudentData.timeCtrl,
                   textInputAction: TextInputAction.next,
@@ -164,47 +169,19 @@ class _RegisterClassScreenState extends State<RegisterClassScreen> {
                   hintFontWeight: FontWeight.w400,
                   hintTextColor: colorGray.withOpacity(0.6)),
               spaceVertical(space: 20.h),
-              BlocConsumer<RegisterBloc, RegisterState>(
-                listener: (context, state) {
-                  if (state is RegisterSuccess) {
-                    appDialog(
-                        context: context,
-                        child: SuccessDailog(
-                          title: "successfully",
-                          onTap: () {
-                            context.back();
-                            context.back();
-                          },
-                          message: "${state.userModel.message}",
-                        ));
-                  } else if (state is RegisterError) {
-                    appDialog(
-                        context: context,
-                        child: ErrorDailog(
-                          title: "error",
-                          onTap: () {
-                            context.back();
-                          },
-                          message: "${state.error}",
-                        ));
-                  }
-                },
-                builder: (context, state) {
-                  return Container(
-                    height: 40.h,
-                    width: double.infinity,
-                    decoration: BoxDecoration(color: colorPrimary),
-                    child: AppSimpleButton(
-                      onDoneFuction: () async {
-                        context.pushScreen(nextScreen: RegisterBankScreen());
-                      },
-                      buttonBackgroundColor: colorPrimary,
-                      nameText: "submit",
-                      textSize: 18.sp,
-                    ),
-                  );
-                },
-              ),
+              Container(
+                height: 40.h,
+                width: double.infinity,
+                decoration: BoxDecoration(color: colorPrimary),
+                child: AppSimpleButton(
+                  onDoneFuction: () async {
+                    context.pushScreen(nextScreen: RegisterBankScreen());
+                  },
+                  buttonBackgroundColor: colorPrimary,
+                  nameText: "submit",
+                  textSize: 18.sp,
+                ),
+              ) ,
               spaceVertical(space: 10.h),
             ],
           ),

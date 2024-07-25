@@ -19,6 +19,7 @@ class ClassesBloc extends Bloc<ClassesEvent, ClassesState> {
     on<GetClassesEvent>(_getClassesApi);
     on<GetClassesByGroupEvent>(_getClassesByGroupApi);
     on<CreateClassesEvent>(_createClassesApi);
+    on<GetClassEvent>(_getClassEvent);
   }
 
   Future<FutureOr<void>> _getClassesApi(
@@ -56,12 +57,19 @@ class ClassesBloc extends Bloc<ClassesEvent, ClassesState> {
       var responseModel = await classesRepository.createClassApi(event.map);
       emit(ClassesCreateLoadingDismiss());
       if (responseModel.status == "${RepoResponseStatus.success}") {
-        emit(ClassesCreateSuccess(responseModel: responseModel));
+        emit(ClassesCreateSuccess(list: []));
       } else {
         emit(ClassesCreateError(error: responseModel.message));
       }
     } catch (e) {
       emit(ClassesCreateError(error: e.toString()));
     }
+  }
+
+  FutureOr<void> _getClassEvent(
+      GetClassEvent event, Emitter<ClassesState> emit) {
+    emit(ClassesCreateLoading());
+    print("Sdfdsfdffdfdsfdsf>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<,${event.groupItem.toJson()}") ;
+    emit(ClassesGetSuccess(data: event.groupItem.classes!));
   }
 }

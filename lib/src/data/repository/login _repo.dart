@@ -10,25 +10,11 @@ abstract class LoginRepository {
 class LoginRepositoryImp extends LoginRepository {
   @override
   Future<ResponseModel> loginApi(Map<String, dynamic> map) async {
-    var responseModel = await ResponseModel(status: "",data: null,errors: null,message: "");
-    responseModel = await HttpService()
+    var responseModel =
+        await ResponseModel(status: "", data: null, errors: null, message: "");
+    responseModel.data = await HttpService()
         .postRequest(fullUrl: ApisEndpoints.loginUrl, body: map);
 
-    // QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-    //     .collection(map["role_type"])
-    //     .where("email", isEqualTo: map["email"])
-    //     .where("password", isEqualTo: map["password"])
-    //     .get();
-    // if (querySnapshot.docs.isNotEmpty) {
-    //   responseModel.status = "${RepoResponseStatus.success}";
-    //   responseModel.message = "Login Successful!";
-    //   responseModel.data = querySnapshot.docs;
-    // } else {
-    //   responseModel.status = "${RepoResponseStatus.error}";
-    //   responseModel.message =
-    //       "Invalid credentials. Please check your email or password and try again";
-    //   responseModel.data = {};
-    // }
     return responseModel;
   }
 }

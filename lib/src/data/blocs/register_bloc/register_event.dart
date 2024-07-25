@@ -12,3 +12,10 @@ class DoRegisterEvent extends RegisterEvent {
   @override
   List<Object?> get props => [map];
 }
+
+class GetSerialNoEvent extends RegisterEvent {
+  const GetSerialNoEvent();
+
+  @override
+  List<Object?> get props => [];
+}

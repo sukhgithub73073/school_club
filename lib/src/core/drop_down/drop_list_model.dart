@@ -1,6 +1,12 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 
+import 'dart:convert';
+
+DropListModel dropListModelFromJson(String str) => DropListModel.fromJson(json.decode(str));
+
+String dropListModelToJson(DropListModel data) => json.encode(data.toJson());
+
 class DropListModel with CustomDropdownListFilter {
   final String name;
   final String id;
@@ -16,4 +22,15 @@ class DropListModel with CustomDropdownListFilter {
   bool filter(String query) {
     return name.toLowerCase().contains(query.toLowerCase());
   }
+
+  factory DropListModel.fromJson(Map<String, dynamic> json) => DropListModel(
+    name: json["name"],
+    id: json["id"].toString(),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "name": name,
+    "id": id,
+  };
+
 }

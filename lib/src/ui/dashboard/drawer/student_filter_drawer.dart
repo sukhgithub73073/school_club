@@ -9,12 +9,15 @@ import 'package:school_club/src/core/drop_down/drop_list_model.dart';
 import 'package:school_club/src/core/text_view.dart';
 import 'package:school_club/src/data/blocs/classes_bloc/classes_bloc.dart';
 import 'package:school_club/src/data/blocs/groups_bloc/groups_bloc.dart';
+import 'package:school_club/src/data/blocs/student_bloc/student_bloc.dart';
 
 import 'package:school_club/src/extension/app_extension.dart';
+import 'package:school_club/src/utility/app_data.dart';
 import 'package:school_club/src/utility/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:school_club/src/utility/decoration_util.dart';
 
 class StudentFilterDrawer extends StatefulWidget {
   const StudentFilterDrawer({super.key});
@@ -66,15 +69,49 @@ class _StudentFilterDrawerState extends State<StudentFilterDrawer> {
                       List<DropListModel> list = [];
                       state.data.forEach((element) {
                         list.add(DropListModel(
-                            id: "${element.id}",
-                            name: "${element.groupName}"));
+                            id: "${element.id}", name: "${element.groupName}"));
                       });
                       return CustomDropdown<DropListModel>.search(
                         hintText: tr("selectGroup"),
                         items: list,
                         excludeSelected: false,
-                        onChanged: (value) {
-                          printLog('changing value to: $value');
+                        decoration: customDropdownDecoration,
+                        onChanged: (item) {
+                          AppData.studentMap["class_group_id"] = item!.id;
+
+                          var data = state.data.firstWhere(
+                            (element) => element.id.toString() == item!.id,
+                          );
+
+                          context
+                              .read<ClassesBloc>()
+                              .add(GetClassEvent(groupItem: data));
+                        },
+                      );
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  },
+                ),
+                spaceVertical(space: 10.h),
+                BlocConsumer<ClassesBloc, ClassesState>(
+                  listener: (context, state) {},
+                  builder: (context, state) {
+                    if (state is ClassesGetSuccess) {
+                      printLog(
+                          "builder >>>>>>>>>>>>>>>>>${state is GroupsSuccess}");
+                      List<DropListModel> list = [];
+                      state.data.forEach((element) {
+                        list.add(DropListModel(
+                            id: "${element.id}", name: "${element.className}"));
+                      });
+                      return CustomDropdown<DropListModel>.search(
+                        hintText: tr("selectClass"),
+                        items: list,
+                        decoration: customDropdownDecoration,
+                        excludeSelected: false,
+                        onChanged: (item) {
+                          AppData.studentMap["class_id"] = item!.id;
                         },
                       );
                     } else {
@@ -83,36 +120,6 @@ class _StudentFilterDrawerState extends State<StudentFilterDrawer> {
                   },
                 ),
                 spaceVertical(space: 20.h),
-                BlocConsumer<ClassesBloc, ClassesState>(
-                  listener: (context, state) {
-                    // TODO: implement listener
-                  },
-                  builder: (context, state) {
-                    if (state is ClassesGetSuccess) {
-                      printLog(
-                          "builder >>>>>>>>>>>>>>>>>${state is ClassesGetSuccess}");
-                      List<DropListModel> list = [];
-                      state.data.forEach((element) {
-                        list.add(DropListModel(
-                            id: "${element.id}",
-                            name: "${element.className}"));
-                      });
-
-                      return Container(
-                        child: CustomDropdown<DropListModel>.search(
-                          hintText: tr("selectClass"),
-                          items: list,
-                          excludeSelected: false,
-                          onChanged: (value) {
-                            printLog('changing value to: $value');
-                          },
-                        ),
-                      );
-                    } else {
-                      return SizedBox.shrink();
-                    }
-                  },
-                ),
               ],
             ),
             Positioned(
@@ -126,8 +133,13 @@ class _StudentFilterDrawerState extends State<StudentFilterDrawer> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       AppSimpleButton(
-                        onDoneFuction: context.back,
+                        onDoneFuction: () {
+                          context
+                              .read<StudentBloc>()
+                              .add(GetStudentEvent(map: AppData.studentMap));
 
+                          context.back();
+                        },
                         buttonBackgroundColor: colorPrimary,
                         nameText: "apply",
                         textSize: 18.sp,

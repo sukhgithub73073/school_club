@@ -22,7 +22,10 @@ class DisabilityBloc extends Bloc<DisabilityEvent, DisabilityState> {
     try {
       emit(DisabilityLoading());
       var responseModel = await registerRepository.getDisablity(event.map);
-      emit(DisabilityLoaded(list: []));
+      var list = (responseModel.data['data'] as List)
+          .map((item) => DropListModel.fromJson(item))
+          .toList();
+      emit(DisabilityLoaded(list: list));
     } catch (e) {
       emit(DisabilityError(error: e.toString()));
     }

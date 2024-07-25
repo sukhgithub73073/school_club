@@ -145,7 +145,7 @@ class _RegisterBankScreenState extends State<RegisterBankScreen> {
                   hasViewHight: false,
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(12),
+                    LengthLimitingTextInputFormatter(20),
                   ],
                   labelText: "accountNumber",
                   hintText: "accountNumber",
@@ -166,46 +166,18 @@ class _RegisterBankScreenState extends State<RegisterBankScreen> {
                   hintTextColor: colorGray.withOpacity(0.6)),
               spaceVertical(space: 40.h),
 
-              BlocConsumer<RegisterBloc, RegisterState>(
-                listener: (context, state) {
-                  if (state is RegisterSuccess) {
-                    appDialog(
-                        context: context,
-                        child: SuccessDailog(
-                          title: "successfully",
-                          onTap: () {
-                            context.back();
-                            context.back();
-                          },
-                          message: "${state.userModel.message}",
-                        ));
-                  } else if (state is RegisterError) {
-                    appDialog(
-                        context: context,
-                        child: ErrorDailog(
-                          title: "error",
-                          onTap: () {
-                            context.back();
-                          },
-                          message: "${state.error}",
-                        ));
-                  }
-                },
-                builder: (context, state) {
-                  return Container(
-                    height: 40.h,
-                    width: double.infinity,
-                    decoration: BoxDecoration(color: colorPrimary),
-                    child: AppSimpleButton(
-                      onDoneFuction: () async {
-                        context.pushScreen(nextScreen: AdditionalInfoScreen());
-                      },
-                      buttonBackgroundColor: colorPrimary,
-                      nameText: "submit",
-                      textSize: 18.sp,
-                    ),
-                  );
-                },
+              Container(
+                height: 40.h,
+                width: double.infinity,
+                decoration: BoxDecoration(color: colorPrimary),
+                child: AppSimpleButton(
+                  onDoneFuction: () async {
+                    context.pushScreen(nextScreen: AdditionalInfoScreen());
+                  },
+                  buttonBackgroundColor: colorPrimary,
+                  nameText: "submit",
+                  textSize: 18.sp,
+                ),
               ),
               spaceVertical(space: 10.h),
             ],

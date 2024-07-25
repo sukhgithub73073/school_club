@@ -259,7 +259,7 @@ class _RegisterAddressScreenState extends State<RegisterAddressScreen> {
               ),
               spaceVertical(space: 20.h),
               CustomTextField(
-                  controller: StudentData.addressAddressController,
+                  controller: StudentData.villMohallaController,
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.text,
                   paddingHorizontal: 20.0,
@@ -273,48 +273,20 @@ class _RegisterAddressScreenState extends State<RegisterAddressScreen> {
 
 
 
+              Container(
+                height: 40.h,
+                width: double.infinity,
+                decoration: BoxDecoration(color: colorPrimary),
+                child: AppSimpleButton(
+                  onDoneFuction: () async {
+                    context.pushScreen(nextScreen: RegisterGaurdianScreen());
+                  },
+                  buttonBackgroundColor: colorPrimary,
+                  nameText: "submit",
+                  textSize: 18.sp,
+                ),
+              ) ,
 
-              BlocConsumer<RegisterBloc, RegisterState>(
-                listener: (context, state) {
-                  if (state is RegisterSuccess) {
-                    appDialog(
-                        context: context,
-                        child: SuccessDailog(
-                          title: "successfully",
-                          onTap: () {
-                            context.back();
-                            context.back();
-                          },
-                          message: "${state.userModel.message}",
-                        ));
-                  } else if (state is RegisterError) {
-                    appDialog(
-                        context: context,
-                        child: ErrorDailog(
-                          title: "error",
-                          onTap: () {
-                            context.back();
-                          },
-                          message: "${state.error}",
-                        ));
-                  }
-                },
-                builder: (context, state) {
-                  return Container(
-                    height: 40.h,
-                    width: double.infinity,
-                    decoration: BoxDecoration(color: colorPrimary),
-                    child: AppSimpleButton(
-                      onDoneFuction: () async {
-                        context.pushScreen(nextScreen: RegisterGaurdianScreen());
-                      },
-                      buttonBackgroundColor: colorPrimary,
-                      nameText: "submit",
-                      textSize: 18.sp,
-                    ),
-                  );
-                },
-              ),
               spaceVertical(space: 10.h),
             ],
           ),

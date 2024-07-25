@@ -128,7 +128,9 @@
     "attendedDays": "Attended Days",
     "male": "Male",
     "female": "Female",
-    "other": "Other"
+    "other": "Other",
+    "rollNo": "Roll No",
+    "rollNoHere": "Roll No Here"
 
 
 }

@@ -9,6 +9,8 @@ abstract class RegisterRepository {
   Future<ResponseModel> getDisablity(Map<String, dynamic> body);
 
   Future<ResponseModel> getCastListApi();
+
+  Future<ResponseModel> getSerialNoApi();
 }
 
 class RegisterRepositoryImp extends RegisterRepository {
@@ -16,24 +18,10 @@ class RegisterRepositoryImp extends RegisterRepository {
   Future<ResponseModel> registerApi(Map<String, dynamic> body) async {
     var responseModel =
         await ResponseModel(status: "", data: null, errors: null, message: "");
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection(body["role_type"])
-        .where("email", isEqualTo: body["email"])
-        .get();
-    if (querySnapshot.docs.isEmpty) {
-      var res = await FirebaseFirestore.instance
-          .collection(body["role_type"])
-          .add(body);
-      responseModel.status = "${RepoResponseStatus.success}";
-      responseModel.message =
-          "Registration Successful! Your records have been successfully registered";
-      responseModel.data = res;
-    } else {
-      responseModel.status = "${RepoResponseStatus.error}";
-      responseModel.message =
-          "Email Already Exists! Please use a different email address.";
-      responseModel.data = {};
-    }
+    responseModel = await HttpService().postRequest(
+        fullUrl: ApisEndpoints.createStudentUrl,
+        body: body,
+        useTokenInBody: true);
     return responseModel;
   }
 
@@ -47,9 +35,16 @@ class RegisterRepositoryImp extends RegisterRepository {
 
   @override
   Future<ResponseModel> getDisablity(Map<String, dynamic> body) async {
-    var res = await HttpService()
-        .getRequest(fullUrl: ApisEndpoints.getDisabilityUrl, useTokenInBody: true);
+    var res = await HttpService().getRequest(
+        fullUrl: ApisEndpoints.getDisabilityUrl, useTokenInBody: true);
 
+    return res;
+  }
+
+  @override
+  Future<ResponseModel> getSerialNoApi() async {
+    var res = await HttpService().getRequestWithForm(
+        fullUrl: "${ApisEndpoints.getSerialNoUrl}4", useTokenInBody: true);
     return res;
   }
 }

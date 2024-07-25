@@ -175,7 +175,7 @@ class _CreateClassesScreenState extends State<CreateClassesScreen> {
                                     context.back();
                                     context.back();
                                   },
-                                  message: "${state.responseModel.message}",
+                                  message: "Suuuuuccc",
                                 ));
                           } else if (state is ClassesCreateError) {
                             printLog("listener>>>>>>>>>>>ClassesError");

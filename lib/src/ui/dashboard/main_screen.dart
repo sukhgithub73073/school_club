@@ -24,6 +24,7 @@ import 'package:school_club/src/ui/dashboard/drawer/drawer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:school_club/src/utility/app_data.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -49,7 +50,7 @@ class _MainScreenState extends State<MainScreen> {
           "school_code": "GSSS19543",
         }));
     context.read<GroupsBloc>().add(GetGroupsEvent(map: {
-      'college_id': '15',
+      'college_id': '${AppData.userModel.data?.data.college.id??""}',
       'session': '2023'
     }));
     context.read<ClassesBloc>().add(GetClassesEvent(map: {
@@ -199,7 +200,7 @@ class _MainScreenState extends State<MainScreen> {
                       builder: (context, state) {
                         return TextView(
                           text: state is StudentGetSuccess
-                              ? "${tr("student")} (${state.responseModel.data.length})"
+                              ? "${tr("student")} (${state.studentsList.length})"
                               : "${tr("student")} (--)",
                           color: colorPrimary,
                           textSize: 15.sp,

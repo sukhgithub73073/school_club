@@ -1,6 +1,7 @@
 import 'package:school_club/src/data/blocs/cast_bloc/cast_bloc.dart';
 import 'package:school_club/src/data/blocs/classes_bloc/classes_bloc.dart';
 import 'package:school_club/src/data/blocs/detail_bloc/detail_bloc.dart';
+import 'package:school_club/src/data/blocs/disability_bloc/disability_bloc.dart';
 import 'package:school_club/src/data/blocs/groups_bloc/groups_bloc.dart';
 import 'package:school_club/src/data/blocs/image_pick_bloc/image_pick_bloc.dart';
 import 'package:school_club/src/data/blocs/language_bloc/language_bloc.dart';
@@ -49,6 +50,7 @@ class AppBlocProvider extends StatelessWidget {
         BlocProvider(lazy: lazy, create: (_) => SubjectBloc()),
         BlocProvider(lazy: lazy, create: (_) => ImagePickBloc()),
         BlocProvider(lazy: lazy, create: (_) => CastBloc()),
+        BlocProvider(lazy: lazy, create: (_) => DisabilityBloc()),
         BlocProvider(lazy: lazy, create: (_) => LanguageBloc()..add(ChangeLanguageEvent(locale: "en"))) ,
 
 
