@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:school_club/src/data/models/response_model.dart';
+import 'package:school_club/src/data/models/teachers_model.dart';
 import 'package:school_club/src/data/network/api_status_code.dart';
 import 'package:school_club/src/data/repository/teacher_repo.dart';
 
@@ -26,8 +27,10 @@ class TeacherBloc extends Bloc<TeacherEvent, TeacherState> {
       emit(TeacherGetLoading());
       var responseModel = await teacherRepository.getTeacherApi(event.map);
       emit(TeacherGetLoadingDismiss());
-      emit(TeacherGetSuccess(responseModel: responseModel));
-    } catch (e) {
+      TeachersModel teachersModel = TeachersModel.fromJson(responseModel.data) ;
+      emit(TeacherGetSuccess(teachersList: teachersModel.data));
+    } catch (e ,t) {
+      print("ssssssssssss$t") ;
       emit(TeacherGetError(error: e.toString()));
     }
   }

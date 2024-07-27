@@ -1,12 +1,24 @@
+import 'dart:io';
+
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/services.dart';
 import 'package:school_club/src/core/app_assets.dart';
 import 'package:school_club/src/core/app_dialog.dart';
 import 'package:school_club/src/core/app_strings.dart';
 import 'package:school_club/src/core/dialog_widgets/failure_message_dialog.dart';
 import 'package:school_club/src/core/dialog_widgets/success_message_dialog.dart';
+import 'package:school_club/src/core/drop_down/drop_list_model.dart';
+import 'package:school_club/src/data/blocs/image_pick_bloc/image_pick_bloc.dart';
 import 'package:school_club/src/data/blocs/pincode_bloc/pincode_bloc.dart';
 import 'package:school_club/src/data/blocs/register_bloc/register_bloc.dart';
 import 'package:school_club/src/data/models/pincode_model.dart';
+import 'package:school_club/src/enums/role_enum.dart';
 import 'package:school_club/src/ui/dashboard/main_screen.dart';
+import 'package:school_club/src/ui/register/student_registration/student_data.dart';
+import 'package:school_club/src/utility/app_data.dart';
+import 'package:school_club/src/utility/app_util.dart';
+import 'package:school_club/src/utility/decoration_util.dart';
 import 'package:school_club/src/utility/firestore_table.dart';
 import 'package:school_club/src/utility/validation_util.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,13 +47,23 @@ class TeacherRegisterScreen extends StatefulWidget {
 
 class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
   var nameController = TextEditingController(text: "");
+  var mobileController = TextEditingController(text: "");
   var fatherController = TextEditingController(text: "");
   var motherController = TextEditingController(text: "");
   var emailController = TextEditingController(text: "");
+  var dobController = TextEditingController(text: "");
   var pincodeController = TextEditingController(text: "");
-  var addressController = TextEditingController(text: "");
-  var passwordController = TextEditingController(text: "");
-  var selectedPostOffice;
+  var stateController = TextEditingController(text: "");
+  var districtController = TextEditingController(text: "");
+  var villMohallaController = TextEditingController(text: "");
+  var selectedPostOfficeAddress;
+  var selectedDesignations;
+
+  @override
+  void initState() {
+    super.initState();
+    StudentData.resetImage();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,10 +90,82 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
                           color: colorWhite,
                           shape: BoxShape.circle),
                       child: Center(
-                        child: ImageView(
-                          margin: EdgeInsets.all(20.w),
-                          url: AppAssets.logo,
-                          imageType: ImageType.asset,
+                        child: Stack(
+                          children: [
+                            BlocConsumer<ImagePickBloc, ImagePickState>(
+                              listener: (context, state) {},
+                              builder: (context, state) {
+                                if (state is ImagePickRemoveBg) {
+                                  return Image.memory(state.file);
+                                } else {
+                                  if (state is ImagePickSuccess) {
+                                    StudentData.selectedImage = state.file;
+                                    return CircleAvatar(
+                                      radius: 100,
+                                      backgroundImage:
+                                          FileImage(File(state.file.path)),
+                                    );
+                                  } else {
+                                    return CircleAvatar(
+                                      radius: 100,
+                                      backgroundImage:
+                                          AssetImage(AppAssets.logo),
+                                    );
+                                  }
+                                }
+                              },
+                            ),
+                            Positioned(
+                                bottom: 0,
+                                right: 10,
+                                child: TapWidget(
+                                  onTap: () async {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return SafeArea(
+                                          child: Wrap(
+                                            children: <Widget>[
+                                              ListTile(
+                                                leading:
+                                                    Icon(Icons.photo_library),
+                                                title: Text('Gallery'),
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                  context
+                                                      .read<ImagePickBloc>()
+                                                      .add(
+                                                          ChangeImagePickEvent());
+                                                },
+                                              ),
+                                              ListTile(
+                                                leading:
+                                                    Icon(Icons.photo_camera),
+                                                title: Text('Camera'),
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                  context
+                                                      .read<ImagePickBloc>()
+                                                      .add(
+                                                          CaptureImagePickEvent());
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Container(
+                                      padding: EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: colorBlack, width: 1.w),
+                                          color: colorWhite,
+                                          shape: BoxShape.circle),
+                                      child: Icon(Icons.camera_alt)),
+                                ))
+                          ],
                         ),
                       ),
                     ),
@@ -81,31 +175,6 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
                       child: Column(
                         children: [
                           CustomTextField(
-                              controller: emailController,
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.text,
-                              paddingHorizontal: 20.0,
-                              hasViewHight: false,
-                              labelText: "email",
-                              hintText: "emailHere",
-                              numberOfLines: 1,
-                              hintFontWeight: FontWeight.w400,
-                              hintTextColor: colorGray.withOpacity(0.6)),
-                          spaceVertical(space: 20.h),
-                          CustomTextField(
-                              controller: passwordController,
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.text,
-                              paddingHorizontal: 20.0,
-                              hasViewHight: false,
-                              labelText: "password",
-                              hintText: "***********",
-                              numberOfLines: 1,
-                              borderColor: colorInputBorder,
-                              hintFontWeight: FontWeight.w400,
-                              hintTextColor: colorInputBorder.withOpacity(0.6)),
-                          spaceVertical(space: 20.h),
-                          CustomTextField(
                               controller: nameController,
                               textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.text,
@@ -113,6 +182,22 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
                               hasViewHight: false,
                               labelText: "name",
                               hintText: "nameHere",
+                              numberOfLines: 1,
+                              hintFontWeight: FontWeight.w400,
+                              hintTextColor: colorGray.withOpacity(0.6)),
+                          spaceVertical(space: 20.h),
+                          CustomTextField(
+                              controller: mobileController,
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.number,
+                              paddingHorizontal: 20.0,
+                              hasViewHight: false,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                              ],
+                              labelText: "mobileNumber",
+                              hintText: "mobileNumber",
                               numberOfLines: 1,
                               hintFontWeight: FontWeight.w400,
                               hintTextColor: colorGray.withOpacity(0.6)),
@@ -130,16 +215,72 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
                               hintTextColor: colorGray.withOpacity(0.6)),
                           spaceVertical(space: 20.h),
                           CustomTextField(
-                              controller: motherController,
+                              controller: emailController,
                               textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.text,
                               paddingHorizontal: 20.0,
                               hasViewHight: false,
-                              labelText: "motherName",
-                              hintText: "motherNameHere",
+                              labelText: "email",
+                              hintText: "emailHere",
                               numberOfLines: 1,
                               hintFontWeight: FontWeight.w400,
                               hintTextColor: colorGray.withOpacity(0.6)),
+                          spaceVertical(space: 20.h),
+                          TapWidget(
+                            onTap: () async {
+                              DateTime? selectedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(1900),
+                                  lastDate: DateTime.now(),
+                                  builder:
+                                      (BuildContext context, Widget? child) {
+                                    return Theme(
+                                      data: ThemeData.light().copyWith(
+                                        primaryColor: colorPrimary,
+                                        colorScheme: ColorScheme.light(
+                                            primary: colorPrimary),
+                                        buttonTheme: ButtonThemeData(
+                                          textTheme: ButtonTextTheme.primary,
+                                        ),
+                                      ),
+                                      child: child!,
+                                    );
+                                  });
+                              if (selectedDate != null) {
+                                String formattedDate =
+                                    "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
+                                dobController.text =
+                                    formattedDate; // Uprdate the text field with the selected date
+                              }
+                            },
+                            child: CustomTextField(
+                                controller: dobController,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(12),
+                                ],
+                                textInputAction: TextInputAction.next,
+                                keyboardType: TextInputType.number,
+                                paddingHorizontal: 20.0,
+                                hasViewHight: false,
+                                labelText: "dob",
+                                hintText: "dobHere",
+                                numberOfLines: 1,
+                                enabled: false,
+                                hintFontWeight: FontWeight.w400,
+                                hintTextColor: colorGray.withOpacity(0.6)),
+                          ),
+                          spaceVertical(space: 20.h),
+                          CustomDropdown<DropListModel>(
+                            hintText: tr("designations"),
+                            items: getDesignationsList(),
+                            decoration: customDropdownDecoration,
+                            excludeSelected: false,
+                            onChanged: (item) {
+                              selectedDesignations = item;
+                            },
+                          ),
                           spaceVertical(space: 20.h),
                           BlocConsumer<PincodeBloc, PincodeState>(
                             listener: (context, state) {
@@ -201,8 +342,41 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
                           BlocBuilder<PincodeBloc, PincodeState>(
                             builder: (context, state) {
                               if (state is PincodeSuccess) {
+                                PostOffice postOffice =
+                                    state.responseModel.data[0].postOffice[0];
+
+                                stateController.text = postOffice.state;
+                                districtController.text = postOffice.district;
                                 return Column(
                                   children: [
+                                    spaceVertical(space: 20.h),
+                                    CustomTextField(
+                                        controller: stateController,
+                                        textInputAction: TextInputAction.next,
+                                        keyboardType: TextInputType.text,
+                                        paddingHorizontal: 20.0,
+                                        hasViewHight: false,
+                                        readOnly: true,
+                                        labelText: "state",
+                                        hintText: "state",
+                                        numberOfLines: 1,
+                                        hintFontWeight: FontWeight.w400,
+                                        hintTextColor:
+                                            colorGray.withOpacity(0.6)),
+                                    spaceVertical(space: 20.h),
+                                    CustomTextField(
+                                        controller: districtController,
+                                        textInputAction: TextInputAction.next,
+                                        keyboardType: TextInputType.text,
+                                        paddingHorizontal: 20.0,
+                                        hasViewHight: false,
+                                        readOnly: true,
+                                        labelText: "district",
+                                        hintText: "district",
+                                        numberOfLines: 1,
+                                        hintFontWeight: FontWeight.w400,
+                                        hintTextColor:
+                                            colorGray.withOpacity(0.6)),
                                     spaceVertical(space: 20.h),
                                     FormField<String>(
                                       builder: (FormFieldState<String> s) {
@@ -225,7 +399,7 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
                                                 color: Colors.grey,
                                               ),
                                               hint: Text(
-                                                "selectCity",
+                                                tr("selectTehsil"),
                                                 style: TextStyle(
                                                   color: Colors.grey,
                                                   fontSize: 16,
@@ -261,11 +435,11 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
                                               isDense: true,
                                               onChanged: (selectedItem) {
                                                 setState(() {
-                                                  selectedPostOffice =
+                                                  selectedPostOfficeAddress =
                                                       selectedItem;
                                                 });
                                               },
-                                              value: selectedPostOffice,
+                                              value: selectedPostOfficeAddress,
                                             ),
                                           ),
                                         );
@@ -280,13 +454,13 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
                           ),
                           spaceVertical(space: 20.h),
                           CustomTextField(
-                              controller: addressController,
+                              controller: villMohallaController,
                               textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.text,
                               paddingHorizontal: 20.0,
                               hasViewHight: false,
-                              labelText: "address",
-                              hintText: "addressHere",
+                              labelText: "villMohalla",
+                              hintText: "villMohalla",
                               numberOfLines: 1,
                               hintFontWeight: FontWeight.w400,
                               hintTextColor: colorGray.withOpacity(0.6)),
@@ -299,8 +473,8 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
                                     child: SuccessDailog(
                                       title: "successfully",
                                       onTap: () {
-                                        context.back();
-                                        context.back();
+                                        context.pushReplacementScreen(
+                                            nextScreen: MainScreen());
                                       },
                                       message: "${state.userModel.message}",
                                     ));
@@ -323,29 +497,41 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
                                 decoration: BoxDecoration(color: colorPrimary),
                                 child: AppSimpleButton(
                                   onDoneFuction: () async {
-                                    if (!ValidationUtil.emailValidation(
-                                        email: emailController.text)) {
-                                    } else if (!ValidationUtil
-                                        .passwordValidation(
-                                            password:
-                                                passwordController.text)) {
-                                    } else {
-                                      var map = {
-                                        "school_code": "GSSS19543",
-                                        "role_type": tblTeacher,
-                                        "email": emailController.text,
-                                        "password": passwordController.text,
-                                        "name": nameController.text,
-                                        "father_name": fatherController.text,
-                                        "mother_name": motherController.text,
-                                        "pincode": pincodeController.text,
-                                        "city": selectedPostOffice.name,
-                                        "address": addressController.text
-                                      };
-                                      context
-                                          .read<RegisterBloc>()
-                                          .add(DoRegisterEvent(map: map));
-                                    }
+                                    var map = {
+                                      'college_id':
+                                          '${AppData.userModel.data?.data.college.id ?? ""}',
+                                      'user_id':
+                                          '${AppData.userModel.data?.data.id ?? ""}',
+                                      'session': "${DateTime.now().year}",
+                                      'name': nameController.text,
+                                      'dob': dobController.text,
+                                      'gender': 'Male',
+                                      'father': fatherController.text,
+                                      'designation': selectedDesignations.id,
+                                      'qualification': '',
+                                      'email': emailController.text,
+                                      'mobile_no': mobileController.text,
+                                      'alternate_mobile_no': "",
+                                      'pin_code': pincodeController.text,
+                                      'state': stateController.text,
+                                      'district': districtController.text,
+                                      'tehsil': selectedPostOfficeAddress.name,
+                                      'village_mohalla':
+                                          villMohallaController.text,
+                                      'religion': '',
+                                      'caste_id': '',
+                                      'sub_caste_id': '',
+                                      'bank_name': '',
+                                      'ifsc_code': '',
+                                      'status': 'Active',
+                                      'account_number': '',
+                                      'confirm_account_number': '',
+                                      'account_holder_name': '',
+                                      "TYPE": RoleEnum.teacher.name
+                                    };
+                                    context
+                                        .read<RegisterBloc>()
+                                        .add(DoRegisterEvent(map: map));
                                   },
                                   buttonBackgroundColor: colorPrimary,
                                   nameText: "register",

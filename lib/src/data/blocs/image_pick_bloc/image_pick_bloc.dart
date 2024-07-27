@@ -14,6 +14,7 @@ part 'image_pick_state.dart';
 class ImagePickBloc extends Bloc<ImagePickEvent, ImagePickState> {
   ImagePickBloc() : super(ImagePickInitial()) {
     on<ChangeImagePickEvent>(_onImageChange);
+    on<CaptureImagePickEvent>(_onImageCapture);
   }
 
   Future<FutureOr<void>> _onImageChange(
@@ -23,13 +24,27 @@ class ImagePickBloc extends Bloc<ImagePickEvent, ImagePickState> {
         imageQuality: 100,
         maxWidth: 400,
         maxHeight: 400);
-    // final Uint8List imageBytes = await file!.readAsBytes();
-    // var image = await removeBackground(imageBytes: imageBytes);
     emit(ImagePickLoading());
     if (file != null) {
       emit(ImagePickSuccess(file: file));
     } else {
       emit(ImagePickError(error: "Please pick any image"));
     }
+  }
+
+  Future<FutureOr<void>> _onImageCapture(CaptureImagePickEvent event, Emitter<ImagePickState> emit) async {
+
+    var file = await ImagePicker().pickImage(
+        source: ImageSource.camera,
+        imageQuality: 100,
+        maxWidth: 400,
+        maxHeight: 400);
+    emit(ImagePickLoading());
+    if (file != null) {
+      emit(ImagePickSuccess(file: file));
+    } else {
+      emit(ImagePickError(error: "Please pick any image"));
+    }
+
   }
 }

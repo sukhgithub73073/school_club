@@ -101,7 +101,7 @@ class _RegisterClassScreenState extends State<RegisterClassScreen> {
                                 map: {
                                   'college_id':
                                   '${AppData.userModel.data?.data.college.id ?? ""}',
-                              'session': '2023',
+                              'session': DateTime.now().year,
                                   'class_group_id': '${item?.id ?? ""}'
                                 }));
                       },

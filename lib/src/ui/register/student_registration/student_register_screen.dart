@@ -29,6 +29,7 @@ import 'package:school_club/src/data/blocs/pincode_bloc/pincode_bloc.dart';
 import 'package:school_club/src/data/blocs/register_bloc/register_bloc.dart';
 import 'package:school_club/src/data/models/group_class_model.dart';
 import 'package:school_club/src/data/models/pincode_model.dart';
+import 'package:school_club/src/enums/role_enum.dart';
 import 'package:school_club/src/extension/app_extension.dart';
 import 'package:school_club/src/ui/dashboard/main_screen.dart';
 import 'package:school_club/src/ui/register/student_registration/student_data.dart';
@@ -49,6 +50,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
   @override
   void initState() {
     super.initState();
+    StudentData.clearStudentData() ;
     context.read<RegisterBloc>().add(GetSerialNoEvent());
   }
 
@@ -88,6 +90,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                                   return Image.memory(state.file);
                                 } else {
                                   if (state is ImagePickSuccess) {
+                                    StudentData.selectedImage = state.file;
                                     return CircleAvatar(
                                       radius: 100,
                                       backgroundImage:
@@ -108,12 +111,41 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                                 right: 10,
                                 child: TapWidget(
                                   onTap: () async {
-                                    context.pushScreen(
-                                        nextScreen: CameraExampleHome());
-
-                                    // context
-                                    //     .read<ImagePickBloc>()
-                                    //     .add(ChangeImagePickEvent());
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return SafeArea(
+                                          child: Wrap(
+                                            children: <Widget>[
+                                              ListTile(
+                                                leading:
+                                                    Icon(Icons.photo_library),
+                                                title: Text('Gallery'),
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                  context
+                                                      .read<ImagePickBloc>()
+                                                      .add(
+                                                          ChangeImagePickEvent());
+                                                },
+                                              ),
+                                              ListTile(
+                                                leading:
+                                                    Icon(Icons.photo_camera),
+                                                title: Text('Camera'),
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                  context
+                                                      .read<ImagePickBloc>()
+                                                      .add(
+                                                          CaptureImagePickEvent());
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
                                   },
                                   child: Container(
                                       padding: EdgeInsets.all(8),
@@ -280,7 +312,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                                     //     map: {
                                     //       'college_id':
                                     //       '${AppData.userModel.data?.data.college.id ?? ""}',
-                                    //       'session': '2023',
+                                    //       'session': DateTime.now().year,
                                     //       'class_group_id': '${item?.id ?? ""}'
                                     //     }));
                                   },
@@ -478,7 +510,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                                                 color: Colors.grey,
                                               ),
                                               hint: Text(
-                                                "selectTehsil",
+                                                tr("selectTehsil"),
                                                 style: TextStyle(
                                                   color: Colors.grey,
                                                   fontSize: 16,
@@ -719,7 +751,8 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                                       'mother_aadhar_front': "",
                                       'mother_aadhar_back': "",
                                       'student_tc': "",
-                                      'student_marksheet': ""
+                                      'student_marksheet': "",
+                                      "TYPE":RoleEnum.student.name
                                     };
 
                                     log(jsonEncode(map));

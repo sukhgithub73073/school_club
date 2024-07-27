@@ -51,15 +51,15 @@ class _StudentFilterDrawerState extends State<StudentFilterDrawer> {
                   lineHeight: 1.3,
                 ),
                 spaceVertical(space: 20.h),
-                CustomDropdown<DropListModel>.search(
-                  hintText: tr("selectSession"),
-                  items: sessionList,
-                  excludeSelected: false,
-                  onChanged: (value) {
-                    printLog('changing value to: $value');
-                  },
-                ),
-                spaceVertical(space: 20.h),
+                // CustomDropdown<DropListModel>.search(
+                //   hintText: tr("selectSession"),
+                //   items: sessionList,
+                //   excludeSelected: false,
+                //   onChanged: (value) {
+                //     printLog('changing value to: $value');
+                //   },
+                // ),
+                // spaceVertical(space: 20.h),
                 BlocConsumer<GroupsBloc, GroupsState>(
                   listener: (context, state) {},
                   builder: (context, state) {

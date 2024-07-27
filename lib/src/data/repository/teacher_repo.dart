@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_club/src/data/models/response_model.dart';
 import 'package:school_club/src/data/network/api_status_code.dart';
+import 'package:school_club/src/data/network/http_service.dart';
 import 'package:school_club/src/utility/app_util.dart';
 import 'package:school_club/src/utility/firestore_table.dart';
 
@@ -13,15 +14,10 @@ abstract class TeacherRepository {
 class TeacherRepositoryImp extends TeacherRepository {
   @override
   Future<ResponseModel> getTeacherApi(Map<String, dynamic> map) async {
-    var responseModel = await ResponseModel(status: "",data: null,errors: null,message: "");
-    CollectionReference collectionRef = FirebaseFirestore.instance.collection(tblTeacher);
-    Query query = collectionRef.where("school_code", isEqualTo: map["school_code"]);
-    QuerySnapshot querySnapshot = await query.get();
-    printLog("getTeacherApi>>>>>>>>${querySnapshot.docs.length}") ;
-    responseModel.status = "${RepoResponseStatus.success}";
-    responseModel.message = "Class Successful!";
-    responseModel.data = querySnapshot.docs;
-    return responseModel;
+
+    return await HttpService()
+        .postRequest(fullUrl: ApisEndpoints.getStaffUrl, body: map);
+
   }
 
   @override

@@ -164,7 +164,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                             decoration: BoxDecoration(color: colorPrimary),
                             child: AppSimpleButton(
                               onDoneFuction: () async {
-                                {
+
                                   context
                                       .read<GroupsBloc>()
                                       .add(AddGroupsEvent(map: {
@@ -173,7 +173,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                             text: nameController.text),
                                         "group_name": nameController.text,
                                       }));
-                                }
+
                               },
                               buttonBackgroundColor: colorPrimary,
                               nameText: "create",
@@ -193,7 +193,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                 child: Row(
                   children: [
                     TapWidget(
-                      onTap: () {},
+                      onTap: () {context.back();},
                       child: Icon(
                         Icons.arrow_back,
                         color: colorWhite,

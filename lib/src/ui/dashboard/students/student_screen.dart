@@ -14,6 +14,7 @@ import 'package:school_club/src/core/text_view.dart';
 import 'package:school_club/src/data/blocs/classes_bloc/classes_bloc.dart';
 import 'package:school_club/src/data/blocs/groups_bloc/groups_bloc.dart';
 import 'package:school_club/src/data/blocs/student_bloc/student_bloc.dart';
+import 'package:school_club/src/data/network/http_service.dart';
 import 'package:school_club/src/extension/app_extension.dart';
 import 'package:school_club/src/ui/dashboard/drawer/drawer_screen.dart';
 import 'package:school_club/src/ui/dashboard/drawer/student_filter_drawer.dart';
@@ -38,14 +39,14 @@ class StudentScreen extends StatefulWidget {
 class _StudentScreenState extends State<StudentScreen> {
   @override
   void initState() {
-
-    AppData.studentMap["college_id"] = AppData.userModel.data?.data.college.id??"" ;
-    AppData.studentMap["session"] = "2024" ;
+    AppData.studentMap["college_id"] =
+        AppData.userModel.data?.data.college.id ?? "";
+    AppData.studentMap["session"] = DateTime.now().year;
 
     // context.read<StudentBloc>().add(GetStudentEvent(map: {
     //   'class_group_id': '135',
     //   'class_id': '405',
-    //   'session': '2023',
+    //   'session': DateTime.now().year,
     //   'college_id': '${AppData.userModel.data?.data.college.id??""}'
     //     }));
 
@@ -63,7 +64,9 @@ class _StudentScreenState extends State<StudentScreen> {
       appBar: AppBar(
         backgroundColor: colorPrimary,
         leading: TapWidget(
-          onTap: () {},
+          onTap: () {
+            context.back();
+          },
           child: Icon(
             Icons.arrow_back,
             color: colorWhite,
@@ -83,7 +86,6 @@ class _StudentScreenState extends State<StudentScreen> {
       ),
       body: Column(children: [
         spaceVertical(space: 5.h),
-
         Container(
           width: double.infinity,
           margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
@@ -111,8 +113,6 @@ class _StudentScreenState extends State<StudentScreen> {
             ],
           ),
         ),
-
-
         BlocConsumer<StudentBloc, StudentState>(
           listener: (context, state) {
             printLog("Create listener>>>>>>>>>>>${state.toString()}");
@@ -145,38 +145,57 @@ class _StudentScreenState extends State<StudentScreen> {
                           itemCount: state.studentsList.length,
                           itemBuilder: (c, i) {
                             return TapWidget(
-                              onTap: (){
-                                context.pushScreen(nextScreen: StudentDetailScreen(student: state.studentsList[i],));
-
+                              onTap: () {
+                                context.pushScreen(
+                                    nextScreen: StudentDetailScreen(
+                                  student: state.studentsList[i],
+                                ));
                               },
                               child: Card(
                                 elevation: 10.h,
                                 margin: EdgeInsets.all(10.r),
                                 shadowColor: colorPrimary,
                                 child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
+                                  padding: EdgeInsets.all(10.0),
                                   child: Row(
                                     children: [
-                                      Container(
-                                        width: 100,
-                                        height: 100,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(50),
-                                          border: Border.all(
-                                            style: BorderStyle.solid,
-                                            color: colorPrimary,
-                                            // Specify the border color
-                                            width: 2, // Specify the border width
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: ImageView(
-                                            size: 70,
-                                            url: AppAssets.logo,
-                                            imageType: ImageType.asset,
-                                          ),
-                                        ),
-                                      ),
+                                      state.studentsList[i].image == ""
+                                          ? CircleAvatar(
+                                              radius: 45,
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              backgroundImage:
+                                                  AssetImage(AppAssets.logo))
+                                          : CircleAvatar(
+                                              radius: 45,
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              backgroundImage: NetworkImage(
+                                                  "${ApisEndpoints.imagesPathStudent}${state.studentsList[i].image}"),
+                                            ),
+
+                                      // Container(
+                                      //   width: 100,
+                                      //   height: 100,
+                                      //   decoration: BoxDecoration(
+                                      //     borderRadius: BorderRadius.circular(50),
+                                      //     border: Border.all(
+                                      //       style: BorderStyle.solid,
+                                      //       color: colorPrimary,
+                                      //       // Specify the border color
+                                      //       width: 2, // Specify the border width
+                                      //     ),
+                                      //   ),
+                                      //   child: Center(
+                                      //     child:
+                                      //     ImageView(
+                                      //       size: 70,
+                                      //       fit: BoxFit.cover,
+                                      //       url:state.studentsList[i].image == ""? AppAssets.logo : "${ApisEndpoints.imagesPathStudent}${state.studentsList[i].image}",
+                                      //       imageType: state.studentsList[i].image == ""? ImageType.asset :ImageType.network,
+                                      //     ),
+                                      //   ),
+                                      // ),
                                       spaceHorizontal(space: 10.w),
                                       Expanded(
                                         child: Column(
@@ -199,19 +218,19 @@ class _StudentScreenState extends State<StudentScreen> {
                                             TextView(
                                               text:
                                                   "${state.studentsList[i].father}",
-                                              color: colorBlack.withOpacity(0.6),
+                                              color:
+                                                  colorBlack.withOpacity(0.6),
                                               textSize: 13.sp,
                                               textAlign: TextAlign.start,
                                               style: AppTextStyleEnum.medium,
                                               fontFamily: Family.medium,
                                               lineHeight: 1.3,
                                             ),
-
-
                                             TextView(
                                               text:
                                                   "${state.studentsList[i].finalClassGroupName} ( ${state.studentsList[i].finalClassName} )",
-                                              color: colorBlack.withOpacity(0.4),
+                                              color:
+                                                  colorBlack.withOpacity(0.4),
                                               textSize: 10.sp,
                                               maxlines: 2,
                                               overflow: TextOverflow.ellipsis,

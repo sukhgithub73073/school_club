@@ -30,7 +30,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
     super.initState();
     context.read<GroupsBloc>().add(GetGroupsEvent(map: {
       'college_id': '${AppData.userModel.data?.data.college.id??""}',
-      'session': '2023'
+      'session': DateTime.now().year
     }));
 
   }
@@ -124,7 +124,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                 child: Row(
                   children: [
                     TapWidget(
-                      onTap: () {},
+                      onTap: () {context.back();},
                       child: Icon(
                         Icons.arrow_back,
                         color: colorWhite,

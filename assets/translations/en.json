@@ -130,7 +130,10 @@
     "female": "Female",
     "other": "Other",
     "rollNo": "Roll No",
-    "rollNoHere": "Roll No Here"
+    "rollNoHere": "Roll No Here",
+    "designations": "Designations",
+    "staffList": "Staff List"
+
 
 
 }

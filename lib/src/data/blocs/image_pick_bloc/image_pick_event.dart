@@ -10,3 +10,10 @@ class ChangeImagePickEvent extends ImagePickEvent {
   @override
   List<Object?> get props => [];
 }
+
+class CaptureImagePickEvent extends ImagePickEvent {
+  const CaptureImagePickEvent();
+
+  @override
+  List<Object?> get props => [];
+}

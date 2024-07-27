@@ -9,8 +9,6 @@ import 'package:school_club/src/data/blocs/groups_bloc/groups_bloc.dart';
 import 'package:school_club/src/data/blocs/role_bloc/role_bloc.dart';
 import 'package:school_club/src/enums/role_enum.dart';
 import 'package:school_club/src/ui/choose_language_screen.dart';
-import 'package:school_club/src/ui/register/school_code_screen.dart';
-import 'package:school_club/src/ui/register/school_register_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,17 +16,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:school_club/src/core/app_button.dart';
 import 'package:school_club/src/core/app_colors.dart';
 import 'package:school_club/src/core/app_input_field.dart';
-import 'package:school_club/src/core/app_tap_widget.dart';
 import 'package:school_club/src/core/app_text_style.dart';
 import 'package:school_club/src/core/common_space.dart';
-import 'dart:math';
-
-import 'package:school_club/src/core/custom_clipper.dart';
 import 'package:school_club/src/core/text_view.dart';
 import 'package:school_club/src/data/blocs/login_bloc/login_bloc.dart';
 import 'package:school_club/src/extension/app_extension.dart';
 import 'package:school_club/src/ui/dashboard/main_screen.dart';
-import 'package:school_club/src/ui/register/register_screen.dart';
 import 'package:school_club/src/utility/app_data.dart';
 import 'package:school_club/src/utility/validation_util.dart';
 

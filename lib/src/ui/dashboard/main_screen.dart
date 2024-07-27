@@ -47,12 +47,13 @@ class _MainScreenState extends State<MainScreen> {
           "school_code": "GSSS19543",
         }));
     context.read<TeacherBloc>().add(GetTeacherEvent(map: {
-          "school_code": "GSSS19543",
+          'college_id': '${AppData.userModel.data?.data.college.id ?? ""}',
+          'session': DateTime.now().year
         }));
     context.read<GroupsBloc>().add(GetGroupsEvent(map: {
-      'college_id': '${AppData.userModel.data?.data.college.id??""}',
-      'session': '2023'
-    }));
+          'college_id': '${AppData.userModel.data?.data.college.id ?? ""}',
+          'session': DateTime.now().year
+        }));
     context.read<ClassesBloc>().add(GetClassesEvent(map: {
           "school_code": "GSSS19543",
         }));
@@ -160,7 +161,7 @@ class _MainScreenState extends State<MainScreen> {
                       builder: (context, state) {
                         return TextView(
                           text: state is TeacherGetSuccess
-                              ? "${tr("staff")} (${state.responseModel.data.length})"
+                              ? "${tr("staff")} (${state.teachersList.length})"
                               : "${tr("staff")} (--)",
                           color: colorPrimary,
                           textSize: 15.sp,
@@ -390,7 +391,9 @@ class _MainScreenState extends State<MainScreen> {
                 ),
                 TapWidget(
                   onTap: () {
-                    context.pushScreen(nextScreen: ChooseLanguageScreen(fromWhere:"MainScreen"));
+                    context.pushScreen(
+                        nextScreen:
+                            ChooseLanguageScreen(fromWhere: "MainScreen"));
                   },
                   child: Icon(
                     Icons.g_translate,

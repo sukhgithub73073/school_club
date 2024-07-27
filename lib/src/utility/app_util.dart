@@ -3,6 +3,27 @@ import 'dart:math';
 import 'package:school_club/src/core/drop_down/drop_list_model.dart';
 import 'package:flutter/foundation.dart';
 
+List<DropListModel> getDesignationsList() {
+  return [
+    DropListModel(name: "MANAGER", id: "manager"),
+    DropListModel(name: "PRINCIPAL", id: "principal"),
+    DropListModel(name: "SENIOR CLERK", id: "senior-clerk"),
+    DropListModel(name: "JUNIOR CLERK", id: "junior-clerk"),
+    DropListModel(name: "CLERK", id: "clerk"),
+    DropListModel(name: "EXAM INCHARGE", id: "exam-incharge"),
+    DropListModel(name: "SPORTS INCHARGE", id: "sports-incharge"),
+    DropListModel(name: "NCC INCHARGE", id: "ncc-incharge"),
+    DropListModel(name: "SCOUT INCHARGE", id: "scout-incharge"),
+    DropListModel(name: "LIBRARY INCHARGE", id: "library-incharge"),
+    DropListModel(name: "HOSTEL INCHARGE", id: "hostel-incharge"),
+    DropListModel(name: "CLASS TEACHER", id: "class-teacher"),
+    DropListModel(name: "ASST. TEACHER", id: "asst-teacher"),
+    DropListModel(name: "DRIVER", id: "driver"),
+    DropListModel(name: "SUB DRIVER", id: "sub-driver"),
+    DropListModel(name: "PEON", id: "peon"),
+  ];
+}
+
 List<DropListModel> getCasteList() {
   return [
     DropListModel(name: "General", id: "1"),

@@ -54,7 +54,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
     super.initState();
     context.read<DisabilityBloc>().add(GetDisabilityEvent(map: {
           'college_id': '${AppData.userModel.data?.data.college.id ?? ""}',
-          'session': '2023',
+          'session': DateTime.now().year,
           'class_group_id': '28'
         }));
   }

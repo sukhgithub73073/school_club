@@ -10,6 +10,7 @@ import 'package:school_club/src/data/blocs/login_bloc/login_bloc.dart';
 import 'package:school_club/src/extension/app_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:school_club/src/ui/login/login_screen.dart';
 import 'package:school_club/src/utility/app_data.dart';
 
 class DrawerScreen extends StatefulWidget {
@@ -281,7 +282,7 @@ class _DrawerScreenState extends State<DrawerScreen>
   }
 
   void onTapped() {
-    print('Doing Something...'); // Print to console.
+    context.pushReplacementScreen(nextScreen: LoginScreen()) ;
   }
 
   Widget inkwell(DrawerList listData, int index) {

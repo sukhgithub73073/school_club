@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:school_club/src/core/drop_down/drop_list_model.dart';
 import 'package:school_club/src/utility/app_util.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:radio_group_v2/widgets/view_models/radio_group_controller.dart';
 import '../../../data/models/cast_model.dart';
 
 class StudentData{
+  static XFile selectedImage = XFile("") ;
 
 
   static var nameController = TextEditingController(text: "");
@@ -78,6 +80,81 @@ class StudentData{
   static RadioGroupController resultRadioController = RadioGroupController();
 
   static DropListModel? selectedBloodGroup;
+
+  static void resetImage() {
+    selectedImage = XFile("") ;
+  }
+  static void clearStudentData() {
+    selectedImage = XFile("") ;
+    nameController.clear();
+    aadhaarController.clear();
+    dobController.clear();
+    srnoController.clear();
+    rollNoController.clear();
+    admissionType = "new"; // Assuming this is the default value
+    genderCtrl = RadioGroupController(); // Reset the radio group controller
+    selectedReligion = null;
+    selectedCast = null;
+    selectedSubCast = null;
+    selectFatherOcc = null;
+    selectFatherQualification = null;
+    selectMotherOcc = null;
+    selectMotherQualification = null;
+
+    addressController.clear();
+    pincodeController.clear();
+    selectedPostOffice = null;
+    nameControllerFather.clear();
+    aadharControllerFather.clear();
+    nameControllerMother.clear();
+    aadharControllerMother.clear();
+    occupationList = getOccupationList(); // Reload the default occupation list
+    qualificationList = getQualificationList(); // Reload the default qualification list
+
+    stateController.clear();
+    districtController.clear();
+    tehsilController.clear();
+    villMohallaController.clear();
+    pincodeAddressController.clear();
+    selectedPostOfficeAddress = null;
+
+    stateGaurdianCtrl.clear();
+    districtGaurdianCtrl.clear();
+    villageMohalaGaurdianCtrl.clear();
+    pincodeGaurdianCtrl.clear();
+    nameGaurdianCtrl.clear();
+    relationshipGaurdianCtrl.clear();
+    mobileGaurdianCtrl.clear();
+    selectedPostOfficeGaurdian = null;
+
+    previosSchoolCtrl.clear();
+    timeCtrl.clear();
+    selectedGroup = null;
+    selectedClass = null;
+
+    selectedPreviosGroup = null;
+    selectedPreviosClass = null;
+    bankNameCtrl.clear();
+    ifscCtrl.clear();
+    branchAddressCtrl.clear();
+    accountCtrl.clear();
+    holderNameCtrl.clear();
+
+    penCtrl.clear();
+    selectDisabilityType = null;
+    obtainMarksCtrl.clear();
+    attendedDaysCtrl.clear();
+    emailCtrl.clear();
+    disabilityCtrl.clear();
+    weightCtrl.clear();
+    heightCtrl.clear();
+    bloodGroupList = getBloodGroupList(); // Reload the default blood group list
+    disabilityTypeList = getDisabilityTypeList(); // Reload the default disability type list
+    disabilityRadioController = RadioGroupController(); // Reset the disability radio controller
+    resultRadioController = RadioGroupController(); // Reset the result radio controller
+    selectedBloodGroup = null;
+  }
+
 
 
 
