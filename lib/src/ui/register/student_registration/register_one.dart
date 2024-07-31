@@ -4,6 +4,7 @@ import 'package:camera/camera.dart';
 import 'package:school_club/src/data/blocs/cast_bloc/cast_bloc.dart';
 import 'package:school_club/src/data/blocs/login_bloc/login_bloc.dart';
 import 'package:school_club/src/data/models/cast_model.dart';
+import 'package:school_club/src/data/network/http_service.dart';
 import 'package:school_club/src/ui/register/student_registration/register_parent.dart';
 import 'package:school_club/src/ui/register/student_registration/student_data.dart';
 import 'package:school_club/src/ui/register/student_registration/take_image_screen.dart';
@@ -84,22 +85,26 @@ class _RegisterOneState extends State<RegisterOne> {
                             BlocConsumer<ImagePickBloc, ImagePickState>(
                               listener: (context, state) {},
                               builder: (context, state) {
-                                if (state is ImagePickRemoveBg) {
-                                  return Image.memory(state.file);
+                                if (state is ImagePickSuccess) {
+                                  StudentData.selectedImage = state.file;
+                                  return CircleAvatar(
+                                    radius: 100,
+                                    backgroundImage:
+                                        FileImage(File(state.file.path)),
+                                  );
                                 } else {
-                                  if (state is ImagePickSuccess) {
-                                    return CircleAvatar(
-                                      radius: 100,
-                                      backgroundImage:
-                                          FileImage(File(state.file.path)),
-                                    );
-                                  } else {
-                                    return CircleAvatar(
-                                      radius: 100,
-                                      backgroundImage:
-                                          AssetImage(AppAssets.logo),
-                                    );
-                                  }
+                                  return (StudentData.selectedStudent?.image) !=
+                                          ""
+                                      ? CircleAvatar(
+                                          radius: 100,
+                                          backgroundImage: NetworkImage(
+                                              "${ApisEndpoints.imagesPathStudent}${StudentData.selectedStudent?.image}"),
+                                        )
+                                      : CircleAvatar(
+                                          radius: 100,
+                                          backgroundImage:
+                                              AssetImage(AppAssets.logo),
+                                        );
                                 }
                               },
                             ),
@@ -108,12 +113,41 @@ class _RegisterOneState extends State<RegisterOne> {
                                 right: 10,
                                 child: TapWidget(
                                   onTap: () async {
-                                    context.pushScreen(
-                                        nextScreen: CameraExampleHome());
-
-                                    // context
-                                    //     .read<ImagePickBloc>()
-                                    //     .add(ChangeImagePickEvent());
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return SafeArea(
+                                          child: Wrap(
+                                            children: <Widget>[
+                                              ListTile(
+                                                leading:
+                                                Icon(Icons.photo_library),
+                                                title: Text('Gallery'),
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                  context
+                                                      .read<ImagePickBloc>()
+                                                      .add(
+                                                      ChangeImagePickEvent());
+                                                },
+                                              ),
+                                              ListTile(
+                                                leading:
+                                                Icon(Icons.photo_camera),
+                                                title: Text('Camera'),
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                  context
+                                                      .read<ImagePickBloc>()
+                                                      .add(
+                                                      CaptureImagePickEvent());
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
                                   },
                                   child: Container(
                                       padding: EdgeInsets.all(8),
@@ -134,118 +168,105 @@ class _RegisterOneState extends State<RegisterOne> {
                       child: Column(
                         children: [
                           spaceVertical(space: 20.h),
-                          Container(
-                            height: 40.h,
-                            width: double.maxFinite,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: colorPrimary.withOpacity(0.8),
-                                      blurRadius: 10,
-                                      blurStyle: BlurStyle.outer)
-                                ],
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: TapWidget(
-                                    onTap: () {
-                                      setState(() {
-                                        StudentData.admissionType = "new";
-                                      });
-                                    },
-                                    child: Container(
-                                      height: double.maxFinite,
-                                      decoration: BoxDecoration(
-                                          color:
-                                              StudentData.admissionType == "new"
-                                                  ? colorPrimary
-                                                  : colorWhite,
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      child: Center(
-                                        child: TextView(
-                                          text: "newAddmission",
-                                          color:
-                                              StudentData.admissionType == "new"
-                                                  ? colorWhite
-                                                  : colorGray,
-                                          textSize: 16.sp,
-                                          textAlign: TextAlign.center,
-                                          style: AppTextStyleEnum.medium,
-                                          fontFamily: Family.medium,
-                                          lineHeight: 1.3,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: TapWidget(
-                                    onTap: () {
-                                      setState(() {
-                                        StudentData.admissionType = "old";
-                                      });
-                                    },
-                                    child: Container(
-                                      height: double.maxFinite,
-                                      decoration: BoxDecoration(
-                                          color:
-                                              StudentData.admissionType == "old"
-                                                  ? colorPrimary
-                                                  : colorWhite,
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      child: Center(
-                                        child: TextView(
-                                          text: "oldAddmission",
-                                          color:
-                                              StudentData.admissionType == "old"
-                                                  ? colorWhite
-                                                  : colorGray,
-                                          textSize: 16.sp,
-                                          textAlign: TextAlign.center,
-                                          style: AppTextStyleEnum.medium,
-                                          fontFamily: Family.medium,
-                                          lineHeight: 1.3,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          spaceVertical(space: 20.h),
-                          CustomTextField(
-                              controller: StudentData.srnoController,
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.text,
-                              paddingHorizontal: 20.0,
-                              hasViewHight: false,
-                              labelText: "srNo",
-                              hintText: "srNoHere",
-                              numberOfLines: 1,
-                              enabled: false,
-                              hintFontWeight: FontWeight.w400,
-                              hintTextColor: colorGray.withOpacity(0.6)),
-                          spaceVertical(space: 20.h),
-                          CustomTextField(
-                              controller: StudentData.rollNoController,
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.text,
-                              paddingHorizontal: 20.0,
-                              hasViewHight: false,
-                              labelText: "rollNo",
-                              hintText: "rollNoHere",
-                              numberOfLines: 1,
-
-                              hintFontWeight: FontWeight.w400,
-                              hintTextColor: colorGray.withOpacity(0.6)),
-                          spaceVertical(space: 20.h),
+                          // Container(
+                          //   height: 40.h,
+                          //   width: double.maxFinite,
+                          //   decoration: BoxDecoration(
+                          //       border: Border.all(color: Colors.grey),
+                          //       boxShadow: [
+                          //         BoxShadow(
+                          //             color: colorPrimary.withOpacity(0.8),
+                          //             blurRadius: 10,
+                          //             blurStyle: BlurStyle.outer)
+                          //       ],
+                          //       borderRadius: BorderRadius.circular(10)),
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.center,
+                          //     crossAxisAlignment: CrossAxisAlignment.center,
+                          //     children: [
+                          //       Expanded(
+                          //         child: TapWidget(
+                          //           onTap: () {
+                          //             setState(() {
+                          //               StudentData.admissionType = "new";
+                          //             });
+                          //           },
+                          //           child: Container(
+                          //             height: double.maxFinite,
+                          //             decoration: BoxDecoration(
+                          //                 color:
+                          //                     StudentData.admissionType == "new"
+                          //                         ? colorPrimary
+                          //                         : colorWhite,
+                          //                 borderRadius:
+                          //                     BorderRadius.circular(10)),
+                          //             child: Center(
+                          //               child: TextView(
+                          //                 text: "newAddmission",
+                          //                 color:
+                          //                     StudentData.admissionType == "new"
+                          //                         ? colorWhite
+                          //                         : colorGray,
+                          //                 textSize: 16.sp,
+                          //                 textAlign: TextAlign.center,
+                          //                 style: AppTextStyleEnum.medium,
+                          //                 fontFamily: Family.medium,
+                          //                 lineHeight: 1.3,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       ),
+                          //       Expanded(
+                          //         child: TapWidget(
+                          //           onTap: () {
+                          //             setState(() {
+                          //               StudentData.admissionType = "old";
+                          //             });
+                          //           },
+                          //           child: Container(
+                          //             height: double.maxFinite,
+                          //             decoration: BoxDecoration(
+                          //                 color:
+                          //                     StudentData.admissionType == "old"
+                          //                         ? colorPrimary
+                          //                         : colorWhite,
+                          //                 borderRadius:
+                          //                     BorderRadius.circular(10)),
+                          //             child: Center(
+                          //               child: TextView(
+                          //                 text: "oldAddmission",
+                          //                 color:
+                          //                     StudentData.admissionType == "old"
+                          //                         ? colorWhite
+                          //                         : colorGray,
+                          //                 textSize: 16.sp,
+                          //                 textAlign: TextAlign.center,
+                          //                 style: AppTextStyleEnum.medium,
+                          //                 fontFamily: Family.medium,
+                          //                 lineHeight: 1.3,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       )
+                          //     ],
+                          //   ),
+                          // ),
+                          // spaceVertical(space: 20.h),
+                          // CustomTextField(
+                          //     controller: StudentData.srnoController,
+                          //     textInputAction: TextInputAction.next,
+                          //     keyboardType: TextInputType.text,
+                          //     paddingHorizontal: 20.0,
+                          //     hasViewHight: false,
+                          //     labelText: "srNo",
+                          //     hintText: "srNoHere",
+                          //     numberOfLines: 1,
+                          //     enabled: false,
+                          //     hintFontWeight: FontWeight.w400,
+                          //     hintTextColor: colorGray.withOpacity(0.6)),
+                          // spaceVertical(space: 20.h),
                           CustomTextField(
                               controller: StudentData.nameController,
                               textInputAction: TextInputAction.next,
@@ -257,6 +278,20 @@ class _RegisterOneState extends State<RegisterOne> {
                               numberOfLines: 1,
                               hintFontWeight: FontWeight.w400,
                               hintTextColor: colorGray.withOpacity(0.6)),
+                          spaceVertical(space: 20.h),
+
+                          CustomTextField(
+                              controller: StudentData.rollNoController,
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.text,
+                              paddingHorizontal: 20.0,
+                              hasViewHight: false,
+                              labelText: "rollNo",
+                              hintText: "rollNoHere",
+                              numberOfLines: 1,
+                              hintFontWeight: FontWeight.w400,
+                              hintTextColor: colorGray.withOpacity(0.6)),
+
                           spaceVertical(space: 20.h),
                           CustomTextField(
                               controller: StudentData.aadhaarController,
@@ -338,6 +373,7 @@ class _RegisterOneState extends State<RegisterOne> {
                           ),
                           spaceVertical(space: 20.h),
                           CustomDropdown<DropListModel>.search(
+                            initialItem: StudentData.selectReligion,
                             hintText: tr("selectReligion"),
                             items: getReligionList(),
                             decoration: customDropdownDecoration,
@@ -407,7 +443,6 @@ class _RegisterOneState extends State<RegisterOne> {
                               textSize: 18.sp,
                             ),
                           ),
-
 
                           spaceVertical(space: 10.h),
                         ],

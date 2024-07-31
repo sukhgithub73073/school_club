@@ -19,6 +19,7 @@ import 'package:school_club/src/data/blocs/login_bloc/login_bloc.dart';
 import 'package:school_club/src/data/blocs/product_bloc/product_bloc.dart';
 import 'package:school_club/src/data/blocs/register_bloc/register_bloc.dart';
 import 'package:hive_storage/hive_storage.dart';
+import 'package:school_club/src/data/blocs/update_bloc/update_bloc.dart';
 
 class AppBlocProvider extends StatelessWidget {
   final Widget child;
@@ -50,6 +51,7 @@ class AppBlocProvider extends StatelessWidget {
         BlocProvider(lazy: lazy, create: (_) => SubjectBloc()),
         BlocProvider(lazy: lazy, create: (_) => ImagePickBloc()),
         BlocProvider(lazy: lazy, create: (_) => CastBloc()),
+        BlocProvider(lazy: lazy, create: (_) => UpdateBloc()),
         BlocProvider(lazy: lazy, create: (_) => DisabilityBloc()),
         BlocProvider(lazy: lazy, create: (_) => LanguageBloc()..add(ChangeLanguageEvent(locale: "en"))) ,
 

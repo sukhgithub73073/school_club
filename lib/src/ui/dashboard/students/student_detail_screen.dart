@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:school_club/src/core/app_assets.dart';
 import 'package:school_club/src/core/app_image_view.dart';
 import 'package:school_club/src/data/models/students_model.dart';
+import 'package:school_club/src/data/network/http_service.dart';
+import 'package:intl/intl.dart';
 
 class StudentDetailScreen extends StatefulWidget {
   final Datum student;
@@ -26,11 +28,21 @@ class _StudentDetailScreenState extends State<StudentDetailScreen> {
             Center(
               child: Column(
                 children: [
-                  ImageView(
-                    size: 150,
-                    url: AppAssets.logo,
-                    imageType: ImageType.asset,
-                  ),
+
+                  (widget.student.image) !=
+                      ""
+                      ? CircleAvatar(
+                    radius: 100,
+                    backgroundImage: NetworkImage(
+                        "${ApisEndpoints.imagesPathStudent}${widget.student.image}"),
+                  )
+                      : CircleAvatar(
+                    radius: 100,
+                    backgroundImage:
+                    AssetImage(AppAssets.logo),
+                  ) ,
+
+
                   SizedBox(height: 10),
                   Text(
                     widget.student.name ?? "",
@@ -45,7 +57,7 @@ class _StudentDetailScreenState extends State<StudentDetailScreen> {
             SizedBox(height: 20),
             _buildSectionHeader('Personal Information'),
             _buildInfoTable([
-              ['Date of Birth', widget.student.dob.toLocal().toString()],
+              //['Date of Birth', DateFormat('dd-MM-yyyy').format(widget.student.dob.toLocal())],
               ['Gender', widget.student.gender ?? ""],
               ['Mobile No', widget.student.mobileNo ?? ""],
               ['Alternate Mobile No', widget.student.alternateMobileNo ?? ""],
@@ -56,24 +68,40 @@ class _StudentDetailScreenState extends State<StudentDetailScreen> {
             _buildInfoTable([
               ['Father\'s Name', widget.student.father ?? ""],
               ['Father\'s Occupation', widget.student.fatherOccupation ?? ""],
+              [
+                'Father\'s Qualification',
+                widget.student.fatherQualification ?? ""
+              ],
               ['Mother\'s Name', widget.student.mother ?? ""],
               ['Mother\'s Occupation', widget.student.motherOccupation ?? ""],
+              [
+                'Mother\'s Qualification',
+                widget.student.motherQualification ?? ""
+              ],
             ]),
             _buildSectionHeader('Guardian Information'),
             _buildInfoTable([
               ['Guardian Name', widget.student.guardian.guardianName ?? ""],
               ['Guardian Mobile', widget.student.guardian.guardianMobile ?? ""],
-              ['Guardian Alternate Mobile', widget.student.guardian.guardianAlternateMobile ?? ""],
-              ['Relationship with Student', widget.student.guardian.relationshipWithStudent ?? ""],
-              ['Guardian Address', widget.student.guardian.guardianAddress ?? ""],
+              [
+                'Guardian Alternate Mobile',
+                widget.student.guardian.guardianAlternateMobile ?? ""
+              ],
+              [
+                'Relationship with Student',
+                widget.student.guardian.relationshipWithStudent ?? ""
+              ],
+              [
+                'Guardian Address',
+                widget.student.guardian.guardianAddress ?? ""
+              ],
             ]),
             _buildSectionHeader('Academic Details'),
             _buildInfoTable([
-              ['College ID', widget.student.collegeId.toString()],
-              ['Class', widget.student.finalClassName ?? ""],
               ['Group', widget.student.finalClassGroupName ?? ""],
+              ['Class', widget.student.finalClassName ?? ""],
               ['Previous School', widget.student.previousSchool ?? ""],
-              ['Last Academic Result', widget.student.latestPromotion ?? ""],
+              ['Last Academic Result', widget.student.details.academicYear ?? ""],
               ['Obtained Marks', 'N/A'],
               ['Attended Days', 'N/A'],
             ]),
@@ -82,18 +110,21 @@ class _StudentDetailScreenState extends State<StudentDetailScreen> {
               ['Blood Group', widget.student.details.studentBloodGroup ?? ""],
               ['Weight', '${widget.student.details.studentWeight ?? ""} kg'],
               ['Height', '${widget.student.details.studentHeight ?? ""} cm'],
-              ['Disability Status', widget.student.details.disabilityStatus == 0 ? 'No' : 'Yes'],
+              [
+                'Disability Status',
+                widget.student.details.disabilityStatus == 0 ? 'No' : 'Yes'
+              ],
               // Uncomment these if data is available
               // ['Disability Type', widget.student.disabilityType ?? ""],
               // ['Disability Percentage', widget.student.disabilityPercentage.toString()],
             ]),
             _buildSectionHeader('Contact Details'),
             _buildInfoTable([
-              ['District', widget.student.district ?? ""],
+              ['Pin Code', widget.student.pinCode ?? ""],
               ['State', widget.student.state ?? ""],
+              ['District', widget.student.district ?? ""],
               ['Tehsil', widget.student.tehsil ?? ""],
               ['Village/Mohalla', widget.student.villageMohalla ?? ""],
-              ['Pin Code', widget.student.pinCode ?? ""],
             ]),
           ],
         ),

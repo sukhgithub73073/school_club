@@ -61,6 +61,7 @@ dependencies:
   video_player: ^2.9.1
   image: ^4.0.13
   flutter_better_camera: ^1.0.3
+  animated_snack_bar: ^0.4.0
 
 
 dev_dependencies:

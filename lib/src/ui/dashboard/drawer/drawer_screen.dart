@@ -10,6 +10,9 @@ import 'package:school_club/src/data/blocs/login_bloc/login_bloc.dart';
 import 'package:school_club/src/extension/app_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:school_club/src/ui/about_us_screen/about_us_screen.dart';
+import 'package:school_club/src/ui/dashboard/students/student_screen.dart';
+import 'package:school_club/src/ui/dashboard/teachers/teachers_screen.dart';
 import 'package:school_club/src/ui/login/login_screen.dart';
 import 'package:school_club/src/utility/app_data.dart';
 
@@ -52,71 +55,73 @@ class _DrawerScreenState extends State<DrawerScreen>
         labelName: tr('manageStaff'),
         icon: Icon(Icons.groups),
       ),
-      DrawerList(
-        //index: DrawerIndex.Invite,
-        labelName: tr('manageClasses'),
-        icon: Icon(Icons.group),
-      ),
-      DrawerList(
-        //index: DrawerIndex.Invite,
-        labelName: tr('manageSubject'),
-        icon: Icon(Icons.menu_book),
-      ),
-      DrawerList(
-        //index: DrawerIndex.Invite,
-        labelName: tr('timeTable'),
-        icon: Icon(Icons.lock_clock),
-      ),
-      DrawerList(
-        //index: DrawerIndex.Share,
-        labelName: tr('attendance'),
-        icon: Icon(Icons.fingerprint),
-      ),
-      DrawerList(
-        //index: DrawerIndex.Invite,
-        labelName: tr('work'),
-        icon: Icon(Icons.auto_stories),
-      ),
-      DrawerList(
-        //index: DrawerIndex.Invite,
-        labelName: tr('ledger'),
-        icon: Icon(Icons.wallet),
-      ),
-      DrawerList(
-        //index: DrawerIndex.Invite,
-        labelName: tr('leave'),
-        icon: Icon(Icons.calendar_month),
-      ),
-      DrawerList(
-        //index: DrawerIndex.Invite,
-        labelName: tr('complaints'),
-        icon: Icon(Icons.notification_important),
-      ),
-      DrawerList(
-        //index: DrawerIndex.Invite,
-        labelName: tr('transport'),
-        icon: Icon(Icons.bus_alert),
-      ),
-      DrawerList(
-        //index: DrawerIndex.Invite,
-        labelName: tr('exam'),
-        icon: Icon(Icons.developer_board_sharp),
-      ),
-      DrawerList(
-        //index: DrawerIndex.Invite,
-        labelName: tr('document'),
-        icon: Icon(Icons.document_scanner_sharp),
-      ),
-      DrawerList(
-        //index: DrawerIndex.Invite,
-        labelName: tr('library'),
-        icon: Icon(Icons.my_library_books),
-      ),
-      DrawerList(
-        //index: DrawerIndex.Invite,
-        labelName: tr('hostel'),
-        icon: Icon(Icons.house_outlined),
-      ),
+
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('manageClasses'),
+      //   icon: Icon(Icons.group),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('manageSubject'),
+      //   icon: Icon(Icons.menu_book),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('timeTable'),
+      //   icon: Icon(Icons.lock_clock),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Share,
+      //   labelName: tr('attendance'),
+      //   icon: Icon(Icons.fingerprint),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('work'),
+      //   icon: Icon(Icons.auto_stories),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('ledger'),
+      //   icon: Icon(Icons.wallet),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('leave'),
+      //   icon: Icon(Icons.calendar_month),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('complaints'),
+      //   icon: Icon(Icons.notification_important),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('transport'),
+      //   icon: Icon(Icons.bus_alert),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('exam'),
+      //   icon: Icon(Icons.developer_board_sharp),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('document'),
+      //   icon: Icon(Icons.document_scanner_sharp),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('library'),
+      //   icon: Icon(Icons.my_library_books),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('hostel'),
+      //   icon: Icon(Icons.house_outlined),
+      // ),
+
       DrawerList(
         //index: DrawerIndex.About,
         labelName: tr('aboutUs'),
@@ -196,7 +201,9 @@ class _DrawerScreenState extends State<DrawerScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  state is LoginSuccess ? '${AppData.userModel.data?.data.college.name}' :"",
+                                  state is LoginSuccess
+                                      ? '${AppData.userModel.data?.data.college.name}'
+                                      : "",
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
                                     color: isLightMode ? colorGray : colorWhite,
@@ -204,7 +211,8 @@ class _DrawerScreenState extends State<DrawerScreen>
                                   ),
                                 ),
                                 TextView(
-                                  text: "${AppData.userModel.data?.data.college.village}",
+                                  text:
+                                      "${AppData.userModel.data?.data.college.village}",
                                   color: colorBlack,
                                   textSize: 13.sp,
                                   textAlign: TextAlign.left,
@@ -282,7 +290,7 @@ class _DrawerScreenState extends State<DrawerScreen>
   }
 
   void onTapped() {
-    context.pushReplacementScreen(nextScreen: LoginScreen()) ;
+    context.pushReplacementScreen(nextScreen: LoginScreen());
   }
 
   Widget inkwell(DrawerList listData, int index) {
@@ -292,7 +300,13 @@ class _DrawerScreenState extends State<DrawerScreen>
         splashColor: Colors.grey.withOpacity(0.1),
         highlightColor: Colors.transparent,
         onTap: () {
-          navigationtoScreen();
+          if (listData.labelName == tr("manageStudents")) {
+            context.pushScreen(nextScreen: StudentScreen());
+          }else if (listData.labelName == tr("manageStaff")) {
+            context.pushScreen(nextScreen: TeacherScreen());
+          }else if (listData.labelName == tr("aboutUs")) {
+            context.pushScreen(nextScreen: AboutUsScreen());
+          }
         },
         child: Stack(
           children: <Widget>[

@@ -191,65 +191,19 @@ class _RegisterAddressScreenState extends State<RegisterAddressScreen> {
                             hintTextColor: colorGray.withOpacity(0.6)),
                         spaceVertical(space: 20.h),
 
+                        CustomTextField(
+                            controller: StudentData.tehsilController,
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.text,
+                            paddingHorizontal: 20.0,
+                            hasViewHight: false,
+                            labelText: "tehsil",
+                            hintText: "selectTehsil",
+                            numberOfLines: 1,
+                            hintFontWeight: FontWeight.w400,
+                            hintTextColor: colorGray.withOpacity(0.6)),
 
 
-                        FormField<String>(
-                          builder: (FormFieldState<String> s) {
-                            return InputDecorator(
-                              decoration: InputDecoration(
-                                  contentPadding:
-                                  EdgeInsets.fromLTRB(12, 10, 20, 20),
-                                  errorStyle: TextStyle(
-                                      color: Colors.redAccent, fontSize: 16.0),
-                                  border: OutlineInputBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(10.0))),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<PostOffice>(
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey,
-                                  ),
-                                  hint: Text(
-                                    "selectTehsil",
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  items: state.responseModel.data[0].postOffice
-                                      .map<DropdownMenuItem<PostOffice>>(
-                                          (PostOffice value) {
-                                        return DropdownMenuItem(
-                                          value: value,
-                                          child: Row(
-                                            children: [
-                                              TextView(
-                                                text: "${value.name}",
-                                                color: colorGray,
-                                                textSize: 12.sp,
-                                                textAlign: TextAlign.center,
-                                                style: AppTextStyleEnum.medium,
-                                                fontFamily: Family.medium,
-                                                lineHeight: 1.3,
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      }).toList(),
-                                  isExpanded: true,
-                                  isDense: true,
-                                  onChanged: (selectedItem) {
-                                    setState(() {
-                                      StudentData.selectedPostOfficeAddress = selectedItem;
-                                    });
-                                  },
-                                  value: StudentData.selectedPostOfficeAddress,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
                       ],
                     );
                   } else {

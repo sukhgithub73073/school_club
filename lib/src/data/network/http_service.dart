@@ -79,7 +79,8 @@ class HttpService {
         'Authorization': 'Bearer ${AppData.authToken}',
         'X-API-Key': 'ahscfSsMbWHe0jZUs80AFRpEom1mo/qgkFb9YRLt6fg='
       };
-      var data = FormData.fromMap({'college_id': '15', 'session': DateTime.now().year});
+      var data = FormData.fromMap(
+          {'college_id': '15', 'session': DateTime.now().year});
       printLog("Hit Api Url 😛 ==> $fullUrl");
       printLog("Hit Request Type 😛 ==> get");
       printLog("Hit Request Type 😛headers ==> headers>>>${headers}");
@@ -143,8 +144,6 @@ class HttpService {
     return responseModel;
   }
 
-
-
   Future<ResponseModel> postRequestMultipart({
     required String fullUrl,
     bool useTokenInBody = true,
@@ -152,7 +151,7 @@ class HttpService {
     List<XFile>? files, // Optional list of files to be uploaded
   }) async {
     ResponseModel responseModel =
-    ResponseModel(status: "", data: null, errors: null, message: "");
+        ResponseModel(status: "", data: null, errors: null, message: "");
 
     var headers = {'X-API-Key': 'ahscfSsMbWHe0jZUs80AFRpEom1mo/qgkFb9YRLt6fg='};
     if (useTokenInBody) {
@@ -175,7 +174,6 @@ class HttpService {
     if (files != null) {
       for (var file in files) {
         String fileName = file.path.split('/').last;
-        print("POST Hit Api FILEEEEEEEEEEEEE 😛 ==> $fileName") ;
         data.files.add(
           MapEntry(
             'image',
@@ -186,10 +184,7 @@ class HttpService {
     }
     var dio = Dio();
 
-
-
     try {
-
       Response response = await dio.post(
         fullUrl,
         options: Options(
@@ -203,23 +198,20 @@ class HttpService {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx and is also not 304.
       if (e.response != null) {
-        print("<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>${e.response!.data}") ;
+        print("<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>${e.response!.data}");
         //responseModel = ResponseModel.fromJson(e.response!.data);
-        responseModel.status="Error";
-        responseModel.message=e.response!.data["message"];
-
+        responseModel.status = "Error";
+        responseModel.message = e.response!.data["message"];
 
         print(e.response!.headers);
         print(e.response!.requestOptions);
       } else {
-        responseModel.status="Error";
-        responseModel.message="Server Error";
+        responseModel.status = "Error";
+        responseModel.message = "Server Error";
 
         print(e.message);
       }
     }
-
-
 
     return responseModel;
   }

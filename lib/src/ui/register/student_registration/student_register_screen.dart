@@ -50,7 +50,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
   @override
   void initState() {
     super.initState();
-    StudentData.clearStudentData() ;
+    StudentData.clearStudentData();
     context.read<RegisterBloc>().add(GetSerialNoEvent());
   }
 
@@ -166,117 +166,106 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                       child: Column(
                         children: [
                           spaceVertical(space: 20.h),
-                          Container(
-                            height: 40.h,
-                            width: double.maxFinite,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: colorPrimary.withOpacity(0.8),
-                                      blurRadius: 10,
-                                      blurStyle: BlurStyle.outer)
-                                ],
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: TapWidget(
-                                    onTap: () {
-                                      setState(() {
-                                        StudentData.admissionType = "new";
-                                      });
-                                    },
-                                    child: Container(
-                                      height: double.maxFinite,
-                                      decoration: BoxDecoration(
-                                          color:
-                                              StudentData.admissionType == "new"
-                                                  ? colorPrimary
-                                                  : colorWhite,
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      child: Center(
-                                        child: TextView(
-                                          text: "newAddmission",
-                                          color:
-                                              StudentData.admissionType == "new"
-                                                  ? colorWhite
-                                                  : colorGray,
-                                          textSize: 16.sp,
-                                          textAlign: TextAlign.center,
-                                          style: AppTextStyleEnum.medium,
-                                          fontFamily: Family.medium,
-                                          lineHeight: 1.3,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: TapWidget(
-                                    onTap: () {
-                                      setState(() {
-                                        StudentData.admissionType = "old";
-                                      });
-                                    },
-                                    child: Container(
-                                      height: double.maxFinite,
-                                      decoration: BoxDecoration(
-                                          color:
-                                              StudentData.admissionType == "old"
-                                                  ? colorPrimary
-                                                  : colorWhite,
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      child: Center(
-                                        child: TextView(
-                                          text: "oldAddmission",
-                                          color:
-                                              StudentData.admissionType == "old"
-                                                  ? colorWhite
-                                                  : colorGray,
-                                          textSize: 16.sp,
-                                          textAlign: TextAlign.center,
-                                          style: AppTextStyleEnum.medium,
-                                          fontFamily: Family.medium,
-                                          lineHeight: 1.3,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          spaceVertical(space: 20.h),
-                          CustomTextField(
-                              controller: StudentData.srnoController,
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.text,
-                              paddingHorizontal: 20.0,
-                              hasViewHight: false,
-                              labelText: "srNo",
-                              hintText: "srNoHere",
-                              numberOfLines: 1,
-                              enabled: false,
-                              hintFontWeight: FontWeight.w400,
-                              hintTextColor: colorGray.withOpacity(0.6)),
-                          spaceVertical(space: 20.h),
-                          CustomTextField(
-                              controller: StudentData.rollNoController,
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.text,
-                              paddingHorizontal: 20.0,
-                              hasViewHight: false,
-                              labelText: "rollNo",
-                              hintText: "rollNoHere",
-                              numberOfLines: 1,
-                              hintFontWeight: FontWeight.w400,
-                              hintTextColor: colorGray.withOpacity(0.6)),
-                          spaceVertical(space: 20.h),
+                          // Container(
+                          //   height: 40.h,
+                          //   width: double.maxFinite,
+                          //   decoration: BoxDecoration(
+                          //       border: Border.all(color: Colors.grey),
+                          //       boxShadow: [
+                          //         BoxShadow(
+                          //             color: colorPrimary.withOpacity(0.8),
+                          //             blurRadius: 10,
+                          //             blurStyle: BlurStyle.outer)
+                          //       ],
+                          //       borderRadius: BorderRadius.circular(10)),
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.center,
+                          //     crossAxisAlignment: CrossAxisAlignment.center,
+                          //     children: [
+                          //       Expanded(
+                          //         child: TapWidget(
+                          //           onTap: () {
+                          //             setState(() {
+                          //               StudentData.admissionType = "new";
+                          //             });
+                          //           },
+                          //           child: Container(
+                          //             height: double.maxFinite,
+                          //             decoration: BoxDecoration(
+                          //                 color:
+                          //                     StudentData.admissionType == "new"
+                          //                         ? colorPrimary
+                          //                         : colorWhite,
+                          //                 borderRadius:
+                          //                     BorderRadius.circular(10)),
+                          //             child: Center(
+                          //               child: TextView(
+                          //                 text: "newAddmission",
+                          //                 color:
+                          //                     StudentData.admissionType == "new"
+                          //                         ? colorWhite
+                          //                         : colorGray,
+                          //                 textSize: 16.sp,
+                          //                 textAlign: TextAlign.center,
+                          //                 style: AppTextStyleEnum.medium,
+                          //                 fontFamily: Family.medium,
+                          //                 lineHeight: 1.3,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       ),
+                          //       Expanded(
+                          //         child: TapWidget(
+                          //           onTap: () {
+                          //             setState(() {
+                          //               StudentData.admissionType = "old";
+                          //             });
+                          //           },
+                          //           child: Container(
+                          //             height: double.maxFinite,
+                          //             decoration: BoxDecoration(
+                          //                 color:
+                          //                     StudentData.admissionType == "old"
+                          //                         ? colorPrimary
+                          //                         : colorWhite,
+                          //                 borderRadius:
+                          //                     BorderRadius.circular(10)),
+                          //             child: Center(
+                          //               child: TextView(
+                          //                 text: "oldAddmission",
+                          //                 color:
+                          //                     StudentData.admissionType == "old"
+                          //                         ? colorWhite
+                          //                         : colorGray,
+                          //                 textSize: 16.sp,
+                          //                 textAlign: TextAlign.center,
+                          //                 style: AppTextStyleEnum.medium,
+                          //                 fontFamily: Family.medium,
+                          //                 lineHeight: 1.3,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       )
+                          //     ],
+                          //   ),
+                          // ),
+                          // spaceVertical(space: 20.h),
+                          // CustomTextField(
+                          //     controller: StudentData.srnoController,
+                          //     textInputAction: TextInputAction.next,
+                          //     keyboardType: TextInputType.text,
+                          //     paddingHorizontal: 20.0,
+                          //     hasViewHight: false,
+                          //     labelText: "srNo",
+                          //     hintText: "srNoHere",
+                          //     numberOfLines: 1,
+                          //     enabled: false,
+                          //     hintFontWeight: FontWeight.w400,
+                          //     hintTextColor: colorGray.withOpacity(0.6)),
+                          // spaceVertical(space: 20.h),
+
                           BlocConsumer<GroupsBloc, GroupsState>(
                             listener: (context, state) {},
                             builder: (context, state) {
@@ -351,6 +340,18 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                           ),
                           spaceVertical(space: 20.h),
                           CustomTextField(
+                              controller: StudentData.rollNoController,
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.text,
+                              paddingHorizontal: 20.0,
+                              hasViewHight: false,
+                              labelText: "rollNo",
+                              hintText: "rollNoHere",
+                              numberOfLines: 1,
+                              hintFontWeight: FontWeight.w400,
+                              hintTextColor: colorGray.withOpacity(0.6)),
+                          spaceVertical(space: 20.h),
+                          CustomTextField(
                               controller: StudentData.nameController,
                               textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.text,
@@ -404,8 +405,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                               return Stack(
                                 children: [
                                   CustomTextField(
-                                      controller:
-                                          StudentData.pincodeAddressController,
+                                      controller: StudentData.pincodeController,
                                       textInputAction: TextInputAction.next,
                                       keyboardType: TextInputType.number,
                                       paddingHorizontal: 20.0,
@@ -415,14 +415,13 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                                       numberOfLines: 1,
                                       hintFontWeight: FontWeight.w400,
                                       onChanged: (e) {
-                                        if (StudentData.pincodeAddressController
-                                                .text.length ==
+                                        if (StudentData.pincodeController.text
+                                                .length ==
                                             6) {
                                           context.read<PincodeBloc>().add(
                                               GetInfoPincodeEvent(
                                                   pincode: StudentData
-                                                      .pincodeAddressController
-                                                      .text));
+                                                      .pincodeController.text));
                                         }
                                       },
                                       hintTextColor:
@@ -489,75 +488,90 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                                         hintTextColor:
                                             colorGray.withOpacity(0.6)),
                                     spaceVertical(space: 20.h),
-                                    FormField<String>(
-                                      builder: (FormFieldState<String> s) {
-                                        return InputDecorator(
-                                          decoration: InputDecoration(
-                                              contentPadding:
-                                                  EdgeInsets.fromLTRB(
-                                                      12, 10, 20, 20),
-                                              errorStyle: TextStyle(
-                                                  color: Colors.redAccent,
-                                                  fontSize: 16.0),
-                                              border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0))),
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButton<PostOffice>(
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.grey,
-                                              ),
-                                              hint: Text(
-                                                tr("selectTehsil"),
-                                                style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                              items: state.responseModel.data[0]
-                                                  .postOffice
-                                                  .map<
-                                                          DropdownMenuItem<
-                                                              PostOffice>>(
-                                                      (PostOffice value) {
-                                                return DropdownMenuItem(
-                                                  value: value,
-                                                  child: Row(
-                                                    children: [
-                                                      TextView(
-                                                        text: "${value.name}",
-                                                        color: colorGray,
-                                                        textSize: 12.sp,
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: AppTextStyleEnum
-                                                            .medium,
-                                                        fontFamily:
-                                                            Family.medium,
-                                                        lineHeight: 1.3,
-                                                      )
-                                                    ],
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              isExpanded: true,
-                                              isDense: true,
-                                              onChanged: (selectedItem) {
-                                                setState(() {
-                                                  StudentData
-                                                          .selectedPostOfficeAddress =
-                                                      selectedItem;
-                                                });
-                                              },
-                                              value: StudentData
-                                                  .selectedPostOfficeAddress,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
+
+                                    CustomTextField(
+                                        controller:
+                                            StudentData.tehsilController,
+                                        textInputAction: TextInputAction.next,
+                                        keyboardType: TextInputType.text,
+                                        paddingHorizontal: 20.0,
+                                        hasViewHight: false,
+                                        labelText: "selectTehsil",
+                                        hintText: "tehsil",
+                                        numberOfLines: 1,
+                                        hintFontWeight: FontWeight.w400,
+                                        hintTextColor:
+                                            colorGray.withOpacity(0.6)),
+
+                                    // FormField<String>(
+                                    //   builder: (FormFieldState<String> s) {
+                                    //     return InputDecorator(
+                                    //       decoration: InputDecoration(
+                                    //           contentPadding:
+                                    //               EdgeInsets.fromLTRB(
+                                    //                   12, 10, 20, 20),
+                                    //           errorStyle: TextStyle(
+                                    //               color: Colors.redAccent,
+                                    //               fontSize: 16.0),
+                                    //           border: OutlineInputBorder(
+                                    //               borderRadius:
+                                    //                   BorderRadius.circular(
+                                    //                       10.0))),
+                                    //       child: DropdownButtonHideUnderline(
+                                    //         child: DropdownButton<PostOffice>(
+                                    //           style: TextStyle(
+                                    //             fontSize: 16,
+                                    //             color: Colors.grey,
+                                    //           ),
+                                    //           hint: Text(
+                                    //             tr("selectTehsil"),
+                                    //             style: TextStyle(
+                                    //               color: Colors.grey,
+                                    //               fontSize: 16,
+                                    //             ),
+                                    //           ),
+                                    //           items: state.responseModel.data[0]
+                                    //               .postOffice
+                                    //               .map<
+                                    //                       DropdownMenuItem<
+                                    //                           PostOffice>>(
+                                    //                   (PostOffice value) {
+                                    //             return DropdownMenuItem(
+                                    //               value: value,
+                                    //               child: Row(
+                                    //                 children: [
+                                    //                   TextView(
+                                    //                     text: "${value.name}",
+                                    //                     color: colorGray,
+                                    //                     textSize: 12.sp,
+                                    //                     textAlign:
+                                    //                         TextAlign.center,
+                                    //                     style: AppTextStyleEnum
+                                    //                         .medium,
+                                    //                     fontFamily:
+                                    //                         Family.medium,
+                                    //                     lineHeight: 1.3,
+                                    //                   )
+                                    //                 ],
+                                    //               ),
+                                    //             );
+                                    //           }).toList(),
+                                    //           isExpanded: true,
+                                    //           isDense: true,
+                                    //           onChanged: (selectedItem) {
+                                    //             setState(() {
+                                    //               StudentData
+                                    //                       .selectedPostOfficeAddress =
+                                    //                   selectedItem;
+                                    //             });
+                                    //           },
+                                    //           value: StudentData
+                                    //               .selectedPostOfficeAddress,
+                                    //         ),
+                                    //       ),
+                                    //     );
+                                    //   },
+                                    // ),
                                   ],
                                 );
                               } else {
@@ -579,7 +593,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                               hintTextColor: colorGray.withOpacity(0.6)),
                           spaceVertical(space: 30.h),
                           CustomTextField(
-                              controller: StudentData.mobileGaurdianCtrl,
+                              controller: StudentData.mobileController,
                               textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.number,
                               paddingHorizontal: 20.0,
@@ -594,52 +608,52 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                               hintFontWeight: FontWeight.w400,
                               hintTextColor: colorGray.withOpacity(0.6)),
                           spaceVertical(space: 20.h),
-                          TapWidget(
-                            onTap: () async {
-                              DateTime? selectedDate = await showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(1900),
-                                  lastDate: DateTime.now(),
-                                  builder:
-                                      (BuildContext context, Widget? child) {
-                                    return Theme(
-                                      data: ThemeData.light().copyWith(
-                                        primaryColor: colorPrimary,
-                                        colorScheme: ColorScheme.light(
-                                            primary: colorPrimary),
-                                        buttonTheme: ButtonThemeData(
-                                          textTheme: ButtonTextTheme.primary,
-                                        ),
-                                      ),
-                                      child: child!,
-                                    );
-                                  });
-                              if (selectedDate != null) {
-                                String formattedDate =
-                                    "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
-                                StudentData.dobController.text =
-                                    formattedDate; // Uprdate the text field with the selected date
-                              }
-                            },
-                            child: CustomTextField(
-                                controller: StudentData.dobController,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(12),
-                                ],
-                                textInputAction: TextInputAction.next,
-                                keyboardType: TextInputType.number,
-                                paddingHorizontal: 20.0,
-                                hasViewHight: false,
-                                labelText: "dob",
-                                hintText: "dobHere",
-                                numberOfLines: 1,
-                                enabled: false,
-                                hintFontWeight: FontWeight.w400,
-                                hintTextColor: colorGray.withOpacity(0.6)),
-                          ),
-                          spaceVertical(space: 20.h),
+                          // TapWidget(
+                          //   onTap: () async {
+                          //     DateTime? selectedDate = await showDatePicker(
+                          //         context: context,
+                          //         initialDate: DateTime.now(),
+                          //         firstDate: DateTime(1900),
+                          //         lastDate: DateTime.now(),
+                          //         builder:
+                          //             (BuildContext context, Widget? child) {
+                          //           return Theme(
+                          //             data: ThemeData.light().copyWith(
+                          //               primaryColor: colorPrimary,
+                          //               colorScheme: ColorScheme.light(
+                          //                   primary: colorPrimary),
+                          //               buttonTheme: ButtonThemeData(
+                          //                 textTheme: ButtonTextTheme.primary,
+                          //               ),
+                          //             ),
+                          //             child: child!,
+                          //           );
+                          //         });
+                          //     if (selectedDate != null) {
+                          //       String formattedDate =
+                          //           "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
+                          //       StudentData.dobController.text =
+                          //           formattedDate; // Uprdate the text field with the selected date
+                          //     }
+                          //   },
+                          //   child: CustomTextField(
+                          //       controller: StudentData.dobController,
+                          //       inputFormatters: [
+                          //         FilteringTextInputFormatter.digitsOnly,
+                          //         LengthLimitingTextInputFormatter(12),
+                          //       ],
+                          //       textInputAction: TextInputAction.next,
+                          //       keyboardType: TextInputType.number,
+                          //       paddingHorizontal: 20.0,
+                          //       hasViewHight: false,
+                          //       labelText: "dob",
+                          //       hintText: "dobHere",
+                          //       numberOfLines: 1,
+                          //       enabled: false,
+                          //       hintFontWeight: FontWeight.w400,
+                          //       hintTextColor: colorGray.withOpacity(0.6)),
+                          // ),
+                          // spaceVertical(space: 20.h),
                           spaceVertical(space: 30.h),
                           BlocConsumer<RegisterBloc, RegisterState>(
                             listener: (context, state) {
@@ -683,7 +697,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                                           "",
                                       "name": StudentData.nameController.text,
                                       "mobile_no":
-                                          StudentData.mobileGaurdianCtrl.text,
+                                          StudentData.mobileController.text,
                                       "roll_no":
                                           StudentData.rollNoController.text,
                                       "serial_no":
@@ -702,7 +716,8 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                                       'caste_id': '',
                                       'sub_caste_id': '',
                                       'father_occupation': '',
-                                      'mother': '',
+                                      'mother':
+                                          StudentData.nameControllerMother.text,
                                       'mother_occupation': '',
                                       "pin_code":
                                           StudentData.pincodeController.text,
@@ -752,7 +767,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                                       'mother_aadhar_back': "",
                                       'student_tc': "",
                                       'student_marksheet': "",
-                                      "TYPE":RoleEnum.student.name
+                                      "TYPE": RoleEnum.student.name
                                     };
 
                                     log(jsonEncode(map));
