@@ -134,6 +134,7 @@ class _StudentFilterDrawerState extends State<StudentFilterDrawer> {
                     children: [
                       AppSimpleButton(
                         onDoneFuction: () {
+                          AppData.studentMap["page"] = 1 ;
                           context
                               .read<StudentBloc>()
                               .add(GetStudentEvent(map: AppData.studentMap));

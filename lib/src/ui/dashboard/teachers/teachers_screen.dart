@@ -10,6 +10,7 @@ import 'package:school_club/src/core/common_space.dart';
 import 'package:school_club/src/core/dialog_widgets/failure_message_dialog.dart';
 import 'package:school_club/src/core/text_view.dart';
 import 'package:school_club/src/data/blocs/teacher_bloc/teacher_bloc.dart';
+import 'package:school_club/src/data/network/http_service.dart';
 import 'package:school_club/src/extension/app_extension.dart';
 import 'package:school_club/src/ui/register/register_screen.dart';
 import 'package:school_club/src/ui/register/teacher_register_screen.dart';
@@ -128,8 +129,21 @@ class _TeacherScreenState extends State<TeacherScreen> {
                                     : CircleAvatar(
                                         radius: 45,
                                         backgroundColor: Colors.transparent,
-                                        backgroundImage: NetworkImage(
-                                            "${state.teachersList[i].image}"),
+                                        child: ClipOval(
+                                          child: FadeInImage(
+                                            image: NetworkImage(
+                                                "${ApisEndpoints.imagesPathStaff}${state.teachersList[i].image}"),
+                                            placeholder:
+                                                AssetImage(AppAssets.logo),
+                                            // Path to your placeholder image
+                                            imageErrorBuilder:
+                                                (context, error, stackTrace) {
+                                              return Image.asset(AppAssets.logo,
+                                                  fit: BoxFit.cover);
+                                            },
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
                                       ),
                                 spaceHorizontal(space: 10.w),
                                 Expanded(
@@ -151,12 +165,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
                                         children: [
                                           TextView(
                                             text:
-                                                "${state.teachersList[i].name.toUpperCase()} (${getDesignationsList().firstWhere(
-                                                      (element) =>
-                                                          element.id ==
-                                                          state.teachersList[i]
-                                                              .designation,
-                                                    ).name})",
+                                                "${state.teachersList[i].name.toUpperCase()}",
                                             color: colorPrimary,
                                             textSize: 15.sp,
                                             textAlign: TextAlign.start,

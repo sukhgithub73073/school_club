@@ -13,11 +13,6 @@ Color get colorDivider => Color(0xFFF1F1F5) ;
 Color get colorDrawerBg => Color(0xFFeeecee) ;
 
 
-
-
-
-
-
 Color get colorOnboardingTitle => Color(0xff333333) ;
 Color get colorOnboardingDescription => Color(0xff677294) ;
 Color get colorInputBorder => Color(0x24677294) ;

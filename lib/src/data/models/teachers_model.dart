@@ -107,7 +107,7 @@ class Datum {
     userId: json["user_id"],
     session: json["session"],
     name: json["name"],
-    dob: DateTime.parse(json["dob"]),
+    dob: DateTime.parse(json["dob"] =="" ? DateTime.now().toString():json["dob"]),
     gender: json["gender"],
     father: json["father"],
     designation: json["designation"],

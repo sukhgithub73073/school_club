@@ -79,66 +79,66 @@ class _RegisterClassScreenState extends State<RegisterClassScreen> {
             children: [
               spaceVertical(space: 10.h),
 
-              BlocConsumer<GroupsBloc, GroupsState>(
-                listener: (context, state) {},
-                builder: (context, state) {
-                  if (state is GroupsSuccess) {
-                    printLog(
-                        "builder >>>>>>>>>>>>>>>>>${state is GroupsSuccess}");
-                    List<DropListModel> list = [];
-                    state.data.forEach((element) {
-                      list.add(DropListModel(
-                          id: "${element.id}", name: "${element.groupName}"));
-                    });
-                    return CustomDropdown<DropListModel>.search(
-                      hintText: tr("selectGroup"),
-                      items: list,
-                      excludeSelected: false,
-                      decoration: customDropdownDecoration,
-                      onChanged: (item) {
-                        StudentData.selectedPreviosGroup = item;
-                        context.read<ClassesBloc>().add(GetClassesByGroupEvent(
-                                map: {
-                                  'college_id':
-                                  '${AppData.userModel.data?.data.college.id ?? ""}',
-                              'session': DateTime.now().year,
-                                  'class_group_id': '${item?.id ?? ""}'
-                                }));
-                      },
-                    );
-                  } else {
-                    return SizedBox.shrink();
-                  }
-                },
-              ),
-              spaceVertical(space: 10.h),
-              BlocConsumer<ClassesBloc, ClassesState>(
-                listener: (context, state) {},
-                builder: (context, state) {
-                  if (state is ClassesGetSuccess) {
-                    printLog(
-                        "builder >>>>>>>>>>>>>>>>>${state is GroupsSuccess}");
-                    List<DropListModel> list = [];
-                    state.data.forEach((element) {
-                      list.add(DropListModel(
-                          id: "${element.id}",
-                          name: "${element.className}"));
-                    });
-                    return CustomDropdown<DropListModel>.search(
-                      hintText: tr("selectClass"),
-                      items: list,
-                      decoration: customDropdownDecoration,
-                      excludeSelected: false,
-                      onChanged: (item) {
-                        StudentData.selectedPreviosClass = item;
-                      },
-                    );
-                  } else {
-                    return SizedBox.shrink();
-                  }
-                },
-              ),
-              spaceVertical(space: 20.h),
+              // BlocConsumer<GroupsBloc, GroupsState>(
+              //   listener: (context, state) {},
+              //   builder: (context, state) {
+              //     if (state is GroupsSuccess) {
+              //       printLog(
+              //           "builder >>>>>>>>>>>>>>>>>${state is GroupsSuccess}");
+              //       List<DropListModel> list = [];
+              //       state.data.forEach((element) {
+              //         list.add(DropListModel(
+              //             id: "${element.id}", name: "${element.groupName}"));
+              //       });
+              //       return CustomDropdown<DropListModel>.search(
+              //         hintText: tr("selectGroup"),
+              //         items: list,
+              //         excludeSelected: false,
+              //         decoration: customDropdownDecoration,
+              //         onChanged: (item) {
+              //           StudentData.selectedPreviosGroup = item;
+              //           context.read<ClassesBloc>().add(GetClassesByGroupEvent(
+              //                   map: {
+              //                     'college_id':
+              //                     '${AppData.userModel.data?.data.college.id ?? ""}',
+              //                 'session': DateTime.now().year,
+              //                     'class_group_id': '${item?.id ?? ""}'
+              //                   }));
+              //         },
+              //       );
+              //     } else {
+              //       return SizedBox.shrink();
+              //     }
+              //   },
+              // ),
+              // spaceVertical(space: 10.h),
+              // BlocConsumer<ClassesBloc, ClassesState>(
+              //   listener: (context, state) {},
+              //   builder: (context, state) {
+              //     if (state is ClassesGetSuccess) {
+              //       printLog(
+              //           "builder >>>>>>>>>>>>>>>>>${state is GroupsSuccess}");
+              //       List<DropListModel> list = [];
+              //       state.data.forEach((element) {
+              //         list.add(DropListModel(
+              //             id: "${element.id}",
+              //             name: "${element.className}"));
+              //       });
+              //       return CustomDropdown<DropListModel>.search(
+              //         hintText: tr("selectClass"),
+              //         items: list,
+              //         decoration: customDropdownDecoration,
+              //         excludeSelected: false,
+              //         onChanged: (item) {
+              //           StudentData.selectedPreviosClass = item;
+              //         },
+              //       );
+              //     } else {
+              //       return SizedBox.shrink();
+              //     }
+              //   },
+              // ),
+              // spaceVertical(space: 20.h),
 
               CustomTextField(
                   controller: StudentData.previosSchoolCtrl,

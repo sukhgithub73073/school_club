@@ -33,8 +33,13 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  var emailController = TextEditingController(text: "C0e3c2eb");
-  var passwordController = TextEditingController(text: "12345678");
+  // var emailController = TextEditingController(text: "C0e3c2eb");
+
+  //var emailController = TextEditingController(text: "COL62A8");
+  //var passwordController = TextEditingController(text: "12345678");
+
+   var emailController = TextEditingController(text: "");
+  var passwordController = TextEditingController(text: "");
   bool _isObscured = true;
 
   @override
@@ -88,8 +93,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           keyboardType: TextInputType.text,
                           paddingHorizontal: 20.0,
                           hasViewHight: false,
-                          labelText: "mobileNumber",
-                          hintText: "itsmemamun1@gmail.com",
+                          labelText: "loginId",
+                          hintText: "",
                           numberOfLines: 1,
                           hintFontWeight: FontWeight.w400,
                           hintTextColor: colorGray.withOpacity(0.6)),
@@ -142,7 +147,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             // AppData.authToken = state
                             //     .responseModel.data["token"];
                             print(AppData.authToken);
-
 
                             context.pushReplacementScreen(
                                 nextScreen: MainScreen());
@@ -259,7 +263,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       size: 35,
                     ),
                     onPressed: () {
-                      context.pushScreen(nextScreen: ChooseLanguageScreen(fromWhere:"LoginScreen"));
+                      context.pushScreen(
+                          nextScreen:
+                              ChooseLanguageScreen(fromWhere: "LoginScreen"));
                     },
                   )),
             ],

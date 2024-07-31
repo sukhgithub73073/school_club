@@ -5,10 +5,12 @@ class ApisEndpoints {
 
   static String pincodeUrl = "https://api.postalpincode.in/pincode/";
   static String versionCode = "/v1";
-  static String domain = "http://schoolclub.in";
+  static String domain = "https://schoolclub.in";
   static String baseUrl = "$domain/api$versionCode";
   static String imagesPathStudent =
       "$domain/laravel_app/public/uploads/student/";
+  static String imagesPathStaff =
+      "$domain/laravel_app/public/uploads/staff/";
 
   static String loginUrl = "$baseUrl/login";
   static String getCasteUrl = "$baseUrl/get-caste-sub-caste";
@@ -17,6 +19,7 @@ class ApisEndpoints {
   static String getDisabilityUrl = "$baseUrl/get-disability-type";
   static String getSerialNoUrl = "$baseUrl/get-sr-no/";
   static String createStudentUrl = "$baseUrl/create-student";
+  static String updateStudentUrl = "$baseUrl/update-student/";
   static String createStaffUrl = "$baseUrl/create-staff";
   static String getStudentUrl = "$baseUrl/get-student-data";
   static String getStaffUrl = "$baseUrl/get-staff-data";

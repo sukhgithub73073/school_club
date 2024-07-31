@@ -14,7 +14,9 @@ import 'package:school_club/src/data/blocs/groups_bloc/groups_bloc.dart';
 import 'package:school_club/src/data/blocs/image_pick_bloc/image_pick_bloc.dart';
 import 'package:school_club/src/data/blocs/pincode_bloc/pincode_bloc.dart';
 import 'package:school_club/src/data/blocs/register_bloc/register_bloc.dart';
+import 'package:school_club/src/data/blocs/update_bloc/update_bloc.dart';
 import 'package:school_club/src/data/models/pincode_model.dart';
+import 'package:school_club/src/ui/dashboard/main_screen.dart';
 import 'package:school_club/src/ui/register/parent_detail_screen.dart';
 import 'package:school_club/src/ui/register/student_registration/register_gaurdian_screen.dart';
 import 'package:school_club/src/ui/register/student_registration/student_data.dart';
@@ -108,7 +110,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
             children: [
               spaceVertical(space: 10.h),
               CustomTextField(
-                  controller: StudentData.penCtrl,
+                  controller: StudentData.udisePenCtrl,
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.text,
                   paddingHorizontal: 20.0,
@@ -304,20 +306,20 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                   hintFontWeight: FontWeight.w400,
                   hintTextColor: colorGray.withOpacity(0.6)),
               spaceVertical(space: 15.h),
-              BlocConsumer<RegisterBloc, RegisterState>(
+              BlocConsumer<UpdateBloc, UpdateState>(
                 listener: (context, state) {
-                  if (state is RegisterSuccess) {
+                  if (state is UpdateSuccess) {
                     appDialog(
                         context: context,
                         child: SuccessDailog(
                           title: "successfully",
                           onTap: () {
-                            context.back();
-                            context.back();
+                            context.pushReplacementScreen(
+                                nextScreen: MainScreen());
                           },
-                          message: "${state.userModel.message}",
+                          message: "Successfully update student detail",
                         ));
-                  } else if (state is RegisterError) {
+                  } else if (state is UpdateError) {
                     appDialog(
                         context: context,
                         child: ErrorDailog(
@@ -338,18 +340,18 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                       onDoneFuction: () async {
                         var map = {
                           'college_id':
-                              '${AppData.userModel.data?.data.college.id ?? ""}',
+                              '${StudentData.selectedStudent?.collegeId}',
                           "class_group_id":
-                              StudentData.selectedPreviosGroup?.id ?? "",
-                          "class": StudentData.selectedPreviosClass?.id ?? "",
+                              StudentData.selectedStudent?.classGroupId,
+                          "class": StudentData.selectedStudent?.finalClassId,
                           "name": StudentData.nameController.text,
                           "mobile_no": StudentData.mobileGaurdianCtrl.text,
                           "roll_no": StudentData.rollNoController.text,
-                          "serial_no": StudentData.srnoController.text,
-                          "session": "2024",
-                          "application_no": "APP123",
+                          "serial_no": StudentData.selectedStudent?.serialNo,
+                          "session": StudentData.selectedStudent?.session,
+                          //"application_no": "APP123",
                           "aadhaar_number": StudentData.aadhaarController.text,
-                          "admission_date": DateTimeUtil.getCurrentDate(),
+                          //"admission_date": DateTimeUtil.getCurrentDate(),
                           "dob": StudentData.dobController.text,
                           "gender": StudentData.genderCtrl.value,
                           "religion": StudentData.selectedReligion?.name ?? "",
@@ -362,8 +364,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                           "mother_occupation":
                               StudentData.selectMotherOcc?.name ?? "",
                           "pin_code": StudentData.pincodeController.text,
-                          "district": StudentData.districtController.text,
-                          "state": StudentData.stateController.text,
+                          "district": StudentData.selectedStudent?.district,
+                          "state": StudentData.selectedStudent?.state,
                           "tehsil": StudentData.tehsilController.text,
                           "village_mohalla":
                               StudentData.villMohallaController.text,
@@ -376,8 +378,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                               StudentData.pincodeGaurdianCtrl.text,
                           "guardian_district":
                               StudentData.districtGaurdianCtrl.text,
-                          "guardian_tehsil":
-                              StudentData.selectedPostOfficeGaurdian.name,
+                          "guardian_tehsil": StudentData.tehsilGaurdianCtrl,
                           "guardian_village_mohalla":
                               StudentData.villageMohalaGaurdianCtrl.text,
                           "guardian_address": "Guardian Address",
@@ -385,9 +386,10 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                               StudentData.mobileGaurdianCtrl.text,
                           "guardian_email": StudentData.emailCtrl.text,
                           "previous_school": StudentData.previosSchoolCtrl.text,
-                          "group": StudentData.selectedPreviosGroup.name,
-                          "previous_passed_class":
-                              StudentData.selectedPreviosClass.id,
+                          "group":
+                              StudentData.selectedStudent?.finalClassGroupName,
+                          "previous_passed_class": StudentData
+                              .selectedStudent?.details.previousPassedClass,
                           "time_period_of_residence": StudentData.timeCtrl.text,
                           "academic_year": "2023-2024",
                           "bank_name": StudentData.bankNameCtrl.text,
@@ -396,7 +398,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                           "account_number": StudentData.accountCtrl.text,
                           "account_holder_name":
                               StudentData.holderNameCtrl.text,
-                          "udise_pen": StudentData.penCtrl.text,
+                          "udise_pen": StudentData.udisePenCtrl.text,
                           "disability_status":
                               StudentData.disabilityRadioController.value ==
                                       "Yes"
@@ -416,12 +418,9 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                           "student_height": StudentData.heightCtrl.text
                         };
 
-                        // print("SCCCCCCCCCCCCCCCCCCC>>>>>>>>>>>>>>>>>>.${jsonEncode(map)}") ;
-                        log(jsonEncode(map));
-
                         context
-                            .read<RegisterBloc>()
-                            .add(DoRegisterEvent(map: map));
+                            .read<UpdateBloc>()
+                            .add(UpdateStudentEvent(map: map));
                         // appDialog(
                         //     context: context,
                         //     child: SuccessDailog(

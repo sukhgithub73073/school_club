@@ -9,6 +9,8 @@ import 'package:school_club/src/utility/app_data.dart';
 abstract class RegisterRepository {
   Future<ResponseModel> registerApi(Map<String, dynamic> body);
 
+  Future<ResponseModel> updateStudentApi(Map<String, dynamic> body);
+
   Future<ResponseModel> getDisablity(Map<String, dynamic> body);
 
   Future<ResponseModel> getCastListApi();
@@ -22,15 +24,48 @@ class RegisterRepositoryImp extends RegisterRepository {
     var responseModel =
         await ResponseModel(status: "", data: null, errors: null, message: "");
 
-    var _fullUrl = ApisEndpoints.createStudentUrl ;
-    if(body["TYPE"] == RoleEnum.teacher.name){
-      _fullUrl = ApisEndpoints.createStaffUrl ;
+    var _fullUrl = ApisEndpoints.createStudentUrl;
+    if (body["TYPE"] == RoleEnum.teacher.name) {
+      _fullUrl = ApisEndpoints.createStaffUrl;
     }
-    responseModel = await HttpService().postRequestMultipart(
-        fullUrl: _fullUrl,
-        body: body,
-        useTokenInBody: true,
-        files: [StudentData.selectedImage]);
+    if (StudentData.selectedImage == null) {
+      print("sdsdddddd") ;
+      responseModel = await HttpService()
+          .postRequest(fullUrl: _fullUrl, body: body, useTokenInBody: true);
+    } else {
+      print("sdsddddd>>>>>>>>>>>>>>>>>>d") ;
+
+      responseModel = await HttpService().postRequestMultipart(
+          fullUrl: _fullUrl,
+          body: body,
+          useTokenInBody: true,
+          files: StudentData.selectedImage == null
+              ? []
+              : [StudentData.selectedImage!]);
+    }
+    return responseModel;
+  }
+
+  @override
+  Future<ResponseModel> updateStudentApi(Map<String, dynamic> body) async {
+    var responseModel =
+        await ResponseModel(status: "", data: null, errors: null, message: "");
+
+    var _fullUrl =
+        "${ApisEndpoints.updateStudentUrl}${StudentData.selectedStudent?.id}";
+
+    if (StudentData.selectedImage == null) {
+      responseModel = await HttpService()
+          .postRequest(fullUrl: _fullUrl, body: body, useTokenInBody: true);
+    } else {
+      responseModel = await HttpService().postRequestMultipart(
+          fullUrl: _fullUrl,
+          body: body,
+          useTokenInBody: true,
+          files: StudentData.selectedImage == null
+              ? []
+              : [StudentData.selectedImage!]);
+    }
     return responseModel;
   }
 
@@ -53,7 +88,9 @@ class RegisterRepositoryImp extends RegisterRepository {
   @override
   Future<ResponseModel> getSerialNoApi() async {
     var res = await HttpService().getRequestWithForm(
-        fullUrl: "${ApisEndpoints.getSerialNoUrl}${AppData.userModel.data?.data.college.id??""}", useTokenInBody: true);
+        fullUrl:
+            "${ApisEndpoints.getSerialNoUrl}${AppData.userModel.data?.data.college.id ?? ""}",
+        useTokenInBody: true);
     return res;
   }
 }

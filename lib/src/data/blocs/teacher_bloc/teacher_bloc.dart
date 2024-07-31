@@ -27,7 +27,7 @@ class TeacherBloc extends Bloc<TeacherEvent, TeacherState> {
       emit(TeacherGetLoading());
       var responseModel = await teacherRepository.getTeacherApi(event.map);
       emit(TeacherGetLoadingDismiss());
-      TeachersModel teachersModel = TeachersModel.fromJson(responseModel.data) ;
+      TeachersModel teachersModel = TeachersModel.fromJson(responseModel.data["staffs"]) ;
       emit(TeacherGetSuccess(teachersList: teachersModel.data));
     } catch (e ,t) {
       print("ssssssssssss$t") ;

@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:school_club/src/data/blocs/classes_bloc/classes_bloc.dart';
 import 'package:school_club/src/data/blocs/groups_bloc/groups_bloc.dart';
+import 'package:school_club/src/data/blocs/login_bloc/login_bloc.dart';
+import 'package:school_club/src/data/blocs/login_bloc/login_bloc.dart';
 import 'package:school_club/src/data/blocs/student_bloc/student_bloc.dart';
 import 'package:school_club/src/data/blocs/subject_bloc/subject_bloc.dart';
 import 'package:school_club/src/data/blocs/teacher_bloc/teacher_bloc.dart';
@@ -43,9 +45,7 @@ class _MainScreenState extends State<MainScreen> {
     context.read<SubjectBloc>().add(GetSubjectEvent(map: {
           "school_code": "GSSS19543",
         }));
-    context.read<StudentBloc>().add(GetStudentEvent(map: {
-          "school_code": "GSSS19543",
-        }));
+
     context.read<TeacherBloc>().add(GetTeacherEvent(map: {
           'college_id': '${AppData.userModel.data?.data.college.id ?? ""}',
           'session': DateTime.now().year
@@ -376,30 +376,43 @@ class _MainScreenState extends State<MainScreen> {
           Padding(
             padding:
                 const EdgeInsets.symmetric(vertical: 40.0, horizontal: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
               children: [
-                TapWidget(
-                  onTap: () {
-                    _key.currentState!.openDrawer();
-                  },
-                  child: Icon(
-                    Icons.menu,
-                    color: colorWhite,
-                    size: 25.h,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TapWidget(
+                      onTap: () {
+                        _key.currentState!.openDrawer();
+                      },
+                      child: Icon(
+                        Icons.menu,
+                        color: colorWhite,
+                        size: 25.h,
+                      ),
+                    ),
+                    TapWidget(
+                      onTap: () {
+                        context.pushScreen(
+                            nextScreen:
+                                ChooseLanguageScreen(fromWhere: "MainScreen"));
+                      },
+                      child: Icon(
+                        Icons.g_translate,
+                        color: colorWhite,
+                        size: 20.h,
+                      ),
+                    ),
+                  ],
                 ),
-                TapWidget(
-                  onTap: () {
-                    context.pushScreen(
-                        nextScreen:
-                            ChooseLanguageScreen(fromWhere: "MainScreen"));
-                  },
-                  child: Icon(
-                    Icons.g_translate,
-                    color: colorWhite,
-                    size: 20.h,
-                  ),
+                TextView(
+                  text: "${AppData.userModel.data?.data.college.name}",
+                  color: colorWhite,
+                  textSize: 18.sp,
+                  textAlign: TextAlign.left,
+                  style: AppTextStyleEnum.regular,
+                  fontFamily: Family.regular,
+                  lineHeight: 1.3,
                 ),
               ],
             ),

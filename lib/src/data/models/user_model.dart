@@ -62,7 +62,6 @@ class DataData {
   String uniqueId;
   String mobileNumber;
   dynamic mobileVerifiedAt;
-  int accessType;
   dynamic parentUserId;
   String status;
   DateTime createdAt;
@@ -79,7 +78,6 @@ class DataData {
     required this.uniqueId,
     required this.mobileNumber,
     required this.mobileVerifiedAt,
-    required this.accessType,
     required this.parentUserId,
     required this.status,
     required this.createdAt,
@@ -97,7 +95,6 @@ class DataData {
     uniqueId: json["unique_id"],
     mobileNumber: json["mobile_number"],
     mobileVerifiedAt: json["mobile_verified_at"],
-    accessType: json["access_type"],
     parentUserId: json["parent_user_id"],
     status: json["status"],
     createdAt: DateTime.parse(json["created_at"]),
@@ -115,7 +112,6 @@ class DataData {
     "unique_id": uniqueId,
     "mobile_number": mobileNumber,
     "mobile_verified_at": mobileVerifiedAt,
-    "access_type": accessType,
     "parent_user_id": parentUserId,
     "status": status,
     "created_at": createdAt.toIso8601String(),

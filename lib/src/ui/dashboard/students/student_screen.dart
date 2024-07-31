@@ -21,7 +21,9 @@ import 'package:school_club/src/ui/dashboard/drawer/student_filter_drawer.dart';
 import 'package:school_club/src/ui/dashboard/students/student_detail_screen.dart';
 import 'package:school_club/src/ui/register/register_screen.dart';
 import 'package:school_club/src/ui/register/student_registration/register_one.dart';
+import 'package:school_club/src/ui/register/student_registration/student_data.dart';
 import 'package:school_club/src/ui/register/student_registration/student_register_screen.dart';
+import 'package:school_club/src/ui/register/student_registration/student_update_screen.dart';
 import 'package:school_club/src/utility/app_data.dart';
 import 'package:school_club/src/utility/app_util.dart';
 import 'package:flutter/cupertino.dart';
@@ -37,20 +39,30 @@ class StudentScreen extends StatefulWidget {
 }
 
 class _StudentScreenState extends State<StudentScreen> {
+  ScrollController scrollController = ScrollController();
+
   @override
   void initState() {
     AppData.studentMap["college_id"] =
         AppData.userModel.data?.data.college.id ?? "";
     AppData.studentMap["session"] = DateTime.now().year;
+    AppData.studentMap["page"] = 1;
 
-    // context.read<StudentBloc>().add(GetStudentEvent(map: {
-    //   'class_group_id': '135',
-    //   'class_id': '405',
-    //   'session': DateTime.now().year,
-    //   'college_id': '${AppData.userModel.data?.data.college.id??""}'
-    //     }));
+    context
+        .read<StudentBloc>()
+        .add(ClearStudentEvent(map: AppData.studentMap));
 
     super.initState();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        print("addListener>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        AppData.studentMap["page"] = AppData.studentMap["page"] + 1;
+        context
+            .read<StudentBloc>()
+            .add(GetStudentEvent(map: AppData.studentMap));
+      }
+    });
   }
 
   final GlobalKey<ScaffoldState> _key = GlobalKey();
@@ -101,6 +113,12 @@ class _StudentScreenState extends State<StudentScreen> {
                     labelText: "",
                     hintText: "searchHere",
                     numberOfLines: 1,
+                    onChanged: (e){
+                      AppData.studentMap["query"] = e ;
+                      context
+                          .read<StudentBloc>()
+                          .add(SearchStudentEvent(map: AppData.studentMap));
+                    },
                     preffixicon: Icon(Icons.search),
                     suffixicon: TapWidget(
                         onTap: () {
@@ -140,6 +158,7 @@ class _StudentScreenState extends State<StudentScreen> {
                     )
                   : Expanded(
                       child: ListView.builder(
+                          controller: scrollController,
                           shrinkWrap: true,
                           physics: BouncingScrollPhysics(),
                           itemCount: state.studentsList.length,
@@ -157,91 +176,108 @@ class _StudentScreenState extends State<StudentScreen> {
                                 shadowColor: colorPrimary,
                                 child: Padding(
                                   padding: EdgeInsets.all(10.0),
-                                  child: Row(
+                                  child: Stack(
                                     children: [
-                                      state.studentsList[i].image == ""
-                                          ? CircleAvatar(
-                                              radius: 45,
-                                              backgroundColor:
-                                                  Colors.transparent,
-                                              backgroundImage:
-                                                  AssetImage(AppAssets.logo))
-                                          : CircleAvatar(
-                                              radius: 45,
-                                              backgroundColor:
-                                                  Colors.transparent,
-                                              backgroundImage: NetworkImage(
-                                                  "${ApisEndpoints.imagesPathStudent}${state.studentsList[i].image}"),
+                                      Row(
+                                        children: [
+                                          state.studentsList[i].image == ""
+                                              ? CircleAvatar(
+                                                  radius: 45,
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  backgroundImage: AssetImage(
+                                                      AppAssets.logo))
+                                              : CircleAvatar(
+                                                  radius: 45,
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  backgroundImage: NetworkImage(
+                                                      "${ApisEndpoints.imagesPathStudent}${state.studentsList[i].image}"),
+                                                ),
+                                          spaceHorizontal(space: 10.w),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                TextView(
+                                                  text:
+                                                      "${state.studentsList[i].name} (${state.studentsList[i].mobileNo})",
+                                                  color: colorPrimary,
+                                                  textSize: 15.sp,
+                                                  textAlign: TextAlign.start,
+                                                  style: AppTextStyleEnum.bold,
+                                                  fontFamily: Family.medium,
+                                                  lineHeight: 1.3,
+                                                ),
+                                                spaceVertical(space: 5.h),
+                                                TextView(
+                                                  text:
+                                                      "${state.studentsList[i].father}",
+                                                  color: colorBlack
+                                                      .withOpacity(0.6),
+                                                  textSize: 13.sp,
+                                                  textAlign: TextAlign.start,
+                                                  style:
+                                                      AppTextStyleEnum.medium,
+                                                  fontFamily: Family.medium,
+                                                  lineHeight: 1.3,
+                                                ),
+                                                TextView(
+                                                  text:
+                                                      "${state.studentsList[i].finalClassGroupName} ( ${state.studentsList[i].finalClassName} )",
+                                                  color: colorBlack
+                                                      .withOpacity(0.4),
+                                                  textSize: 10.sp,
+                                                  maxlines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.start,
+                                                  style:
+                                                      AppTextStyleEnum.medium,
+                                                  fontFamily: Family.medium,
+                                                  lineHeight: 1.3,
+                                                ),
+                                              ],
                                             ),
-
-                                      // Container(
-                                      //   width: 100,
-                                      //   height: 100,
-                                      //   decoration: BoxDecoration(
-                                      //     borderRadius: BorderRadius.circular(50),
-                                      //     border: Border.all(
-                                      //       style: BorderStyle.solid,
-                                      //       color: colorPrimary,
-                                      //       // Specify the border color
-                                      //       width: 2, // Specify the border width
-                                      //     ),
-                                      //   ),
-                                      //   child: Center(
-                                      //     child:
-                                      //     ImageView(
-                                      //       size: 70,
-                                      //       fit: BoxFit.cover,
-                                      //       url:state.studentsList[i].image == ""? AppAssets.logo : "${ApisEndpoints.imagesPathStudent}${state.studentsList[i].image}",
-                                      //       imageType: state.studentsList[i].image == ""? ImageType.asset :ImageType.network,
-                                      //     ),
-                                      //   ),
-                                      // ),
-                                      spaceHorizontal(space: 10.w),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            TextView(
-                                              text:
-                                                  "${state.studentsList[i].name} (${state.studentsList[i].mobileNo})",
-                                              color: colorPrimary,
-                                              textSize: 15.sp,
-                                              textAlign: TextAlign.start,
-                                              style: AppTextStyleEnum.bold,
-                                              fontFamily: Family.medium,
-                                              lineHeight: 1.3,
-                                            ),
-                                            spaceVertical(space: 5.h),
-                                            TextView(
-                                              text:
-                                                  "${state.studentsList[i].father}",
-                                              color:
-                                                  colorBlack.withOpacity(0.6),
-                                              textSize: 13.sp,
-                                              textAlign: TextAlign.start,
-                                              style: AppTextStyleEnum.medium,
-                                              fontFamily: Family.medium,
-                                              lineHeight: 1.3,
-                                            ),
-                                            TextView(
-                                              text:
-                                                  "${state.studentsList[i].finalClassGroupName} ( ${state.studentsList[i].finalClassName} )",
-                                              color:
-                                                  colorBlack.withOpacity(0.4),
-                                              textSize: 10.sp,
-                                              maxlines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              textAlign: TextAlign.start,
-                                              style: AppTextStyleEnum.medium,
-                                              fontFamily: Family.medium,
-                                              lineHeight: 1.3,
-                                            ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
+                                      Positioned(
+                                          right: 10,
+                                          bottom: 0,
+                                          child: true
+                                              ? TapWidget(
+                                                  onTap: () {
+                                                    StudentData.editStudent(
+                                                        student: state
+                                                            .studentsList[i]);
+                                                    context.pushScreen(
+                                                        nextScreen:
+                                                            StudentUpdateScreen());
+                                                  },
+                                                  child: CircleAvatar(
+                                                    radius: 20,
+                                                    backgroundColor:
+                                                        Colors.transparent,
+                                                    backgroundImage: AssetImage(
+                                                        AppAssets.editBg),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              bottom: 10),
+                                                      child: Icon(
+                                                        Icons.edit,
+                                                        size: 15,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(
+                                                  child: Icon(Icons.edit))),
                                     ],
                                   ),
                                 ),
