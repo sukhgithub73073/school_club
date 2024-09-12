@@ -12,6 +12,16 @@ class GetTeacherEvent extends TeacherEvent {
   @override
   List<Object?> get props => [map];
 }
+
+class LoadMoreTeacherEvent extends TeacherEvent {
+  final Map<String, dynamic> map;
+
+  const LoadMoreTeacherEvent({required this.map});
+
+  @override
+  List<Object?> get props => [map];
+}
+
 class CreateTeacherEvent extends TeacherEvent {
   final Map<String, dynamic> map;
 

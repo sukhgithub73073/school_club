@@ -1,4 +1,6 @@
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:school_club/src/core/app_assets.dart';
 import 'package:school_club/src/core/app_colors.dart';
 import 'package:school_club/src/core/app_dialog.dart';
@@ -14,6 +16,7 @@ import 'package:school_club/src/core/text_view.dart';
 import 'package:school_club/src/data/blocs/classes_bloc/classes_bloc.dart';
 import 'package:school_club/src/data/blocs/groups_bloc/groups_bloc.dart';
 import 'package:school_club/src/data/blocs/student_bloc/student_bloc.dart';
+import 'package:school_club/src/data/models/students_model.dart';
 import 'package:school_club/src/data/network/http_service.dart';
 import 'package:school_club/src/extension/app_extension.dart';
 import 'package:school_club/src/ui/dashboard/drawer/drawer_screen.dart';
@@ -30,6 +33,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:school_club/src/utility/decoration_util.dart';
 
 class StudentScreen extends StatefulWidget {
   const StudentScreen({super.key});
@@ -40,6 +44,7 @@ class StudentScreen extends StatefulWidget {
 
 class _StudentScreenState extends State<StudentScreen> {
   ScrollController scrollController = ScrollController();
+  List<Datum> studentsList = [];
 
   @override
   void initState() {
@@ -47,20 +52,25 @@ class _StudentScreenState extends State<StudentScreen> {
         AppData.userModel.data?.data.college.id ?? "";
     AppData.studentMap["session"] = DateTime.now().year;
     AppData.studentMap["page"] = 1;
+    context.read<StudentBloc>().add(ClearStudentEvent(map: AppData.studentMap));
 
-    context
-        .read<StudentBloc>()
-        .add(ClearStudentEvent(map: AppData.studentMap));
+    context.read<ClassesBloc>().add(EmptyClassEvent()) ;
+
+    // AppData.studentMap["class_group_id"] = "42";
+    // AppData.studentMap["class_id"] = "131";
+    // context.read<StudentBloc>().add(GetStudentEvent(map: AppData.studentMap));
 
     super.initState();
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
-        print("addListener>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        AppData.studentMap["page"] = AppData.studentMap["page"] + 1;
-        context
-            .read<StudentBloc>()
-            .add(GetStudentEvent(map: AppData.studentMap));
+        if (AppData.loadMore) {
+          print("addListener>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+          AppData.studentMap["page"] = AppData.studentMap["page"] + 1;
+          context
+              .read<StudentBloc>()
+              .add(LoadMoreStudentEvent(map: AppData.studentMap));
+        }
       }
     });
   }
@@ -69,10 +79,11 @@ class _StudentScreenState extends State<StudentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size ;
     return Scaffold(
       key: _key,
-      endDrawer: Container(width: 250.w, child: StudentFilterDrawer()),
-      endDrawerEnableOpenDragGesture: false,
+      // endDrawer: Container(width: 250.w, child: StudentFilterDrawer()),
+      // endDrawerEnableOpenDragGesture: false,
       appBar: AppBar(
         backgroundColor: colorPrimary,
         leading: TapWidget(
@@ -98,6 +109,87 @@ class _StudentScreenState extends State<StudentScreen> {
       ),
       body: Column(children: [
         spaceVertical(space: 5.h),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: (size.width / 2)-20.w ,
+
+                child: BlocConsumer<GroupsBloc, GroupsState>(
+                  listener: (context, state) {},
+                  builder: (context, state) {
+                    if (state is GroupsSuccess) {
+                      printLog(
+                          "builder >>>>>>>>>>>>>>>>>${state is GroupsSuccess}");
+                      List<DropListModel> list = [];
+                      state.data.forEach((element) {
+                        list.add(DropListModel(
+                            id: "${element.id}", name: "${element.groupName}"));
+                      });
+                      return CustomDropdown<DropListModel>(
+                        hintText: tr("selectGroup"),
+                        items: list,
+                        excludeSelected: false,
+
+                        decoration: customDropdownDecoration,
+                        onChanged: (item) {
+                          AppData.studentMap["class_group_id"] = item!.id;
+
+                          var data = state.data.firstWhere(
+                                (element) => element.id.toString() == item!.id,
+                          );
+                          context
+                              .read<ClassesBloc>()
+                              .add(GetClassEvent(groupItem: data));
+                        },
+                      );
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  },
+                ),
+              ),
+
+              Container(
+                width: (size.width / 2)-20.w,
+                child: BlocConsumer<ClassesBloc, ClassesState>(
+                  listener: (context, state) {},
+                  builder: (context, state) {
+                    if (state is ClassesGetSuccess) {
+                      printLog(
+                          "builder >>>>>>>>>>>>>>>>>${state is GroupsSuccess}");
+                      List<DropListModel> list = [];
+                      state.data.forEach((element) {
+                        list.add(DropListModel(
+                            id: "${element.id}", name: "${element.className}"));
+                      });
+                      return CustomDropdown<DropListModel>(
+                        hintText: tr("selectClass"),
+                        items: list,
+
+                        decoration: customDropdownDecoration,
+                        excludeSelected: false,
+                        onChanged: (item) {
+                          AppData.studentMap["class_id"] = item!.id;
+                          AppData.studentMap["page"] = 1 ;
+                          context
+                              .read<StudentBloc>()
+                              .add(GetStudentEvent(map: AppData.studentMap));
+                        },
+                      );
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  },
+                ),
+              ),
+
+            ],),
+        ),
+        spaceVertical(space: 5.h),
         Container(
           width: double.infinity,
           margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
@@ -113,37 +205,41 @@ class _StudentScreenState extends State<StudentScreen> {
                     labelText: "",
                     hintText: "searchHere",
                     numberOfLines: 1,
-                    onChanged: (e){
-                      AppData.studentMap["query"] = e ;
-                      context
-                          .read<StudentBloc>()
-                          .add(SearchStudentEvent(map: AppData.studentMap));
+                    onChanged: (e) {
+                      if(AppData.studentMap.containsKey("class_id")){
+                        AppData.studentMap["page"] = 1;
+                        AppData.studentMap["search"] = e;
+                        context
+                            .read<StudentBloc>()
+                            .add(SearchStudentEvent(map: AppData.studentMap));
+                      }
+
+
                     },
                     preffixicon: Icon(Icons.search),
-                    suffixicon: TapWidget(
-                        onTap: () {
-                          _key.currentState!.openEndDrawer();
-                        },
-                        child: Icon(Icons.filter_list)),
+                    // suffixicon: TapWidget(
+                    //     onTap: () {
+                    //       _key.currentState!.openEndDrawer();
+                    //     },
+                    //     child: Icon(Icons.filter_list)),
                     hintFontWeight: FontWeight.w400,
                     hintTextColor: colorGray.withOpacity(0.6)),
               ),
             ],
           ),
         ),
-        BlocConsumer<StudentBloc, StudentState>(
-          listener: (context, state) {
-            printLog("Create listener>>>>>>>>>>>${state.toString()}");
 
-            if (state is StudentGetLoading) {
-              // appLoader(context);
-            } else if (state is StudentGetLoadingDismiss) {
-              // context.dissmissLoading();
-            }
-          },
+
+
+        BlocConsumer<StudentBloc, StudentState>(
+          listener: (context, state) {},
           builder: (context, state) {
+            final List<Datum> list;
+
             if (state is StudentGetSuccess) {
-              return state.studentsList.isEmpty
+              list = state.studentsModel.data;
+              AppData.loadMore = state.loadMore;
+              return list.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.symmetric(vertical: 40),
                       child: TextView(
@@ -160,15 +256,16 @@ class _StudentScreenState extends State<StudentScreen> {
                       child: ListView.builder(
                           controller: scrollController,
                           shrinkWrap: true,
+                          padding: EdgeInsets.only(bottom: 50),
                           physics: BouncingScrollPhysics(),
-                          itemCount: state.studentsList.length,
+                          itemCount: list.length,
                           itemBuilder: (c, i) {
                             return TapWidget(
                               onTap: () {
-                                context.pushScreen(
-                                    nextScreen: StudentDetailScreen(
-                                  student: state.studentsList[i],
-                                ));
+                                // context.pushScreen(
+                                //     nextScreen: StudentDetailScreen(
+                                //   student: list[i],
+                                // ));
                               },
                               child: Card(
                                 elevation: 10.h,
@@ -180,7 +277,7 @@ class _StudentScreenState extends State<StudentScreen> {
                                     children: [
                                       Row(
                                         children: [
-                                          state.studentsList[i].image == ""
+                                          list[i].image == ""
                                               ? CircleAvatar(
                                                   radius: 45,
                                                   backgroundColor:
@@ -192,8 +289,7 @@ class _StudentScreenState extends State<StudentScreen> {
                                                   backgroundColor:
                                                       Colors.transparent,
                                                   backgroundImage: NetworkImage(
-                                                      "${ApisEndpoints.imagesPathStudent}${state.studentsList[i].image}"),
-                                                ),
+                                                      "${ApisEndpoints.imagesPathStudent}${list[i].image}")),
                                           spaceHorizontal(space: 10.w),
                                           Expanded(
                                             child: Column(
@@ -203,8 +299,7 @@ class _StudentScreenState extends State<StudentScreen> {
                                                   MainAxisAlignment.start,
                                               children: [
                                                 TextView(
-                                                  text:
-                                                      "${state.studentsList[i].name} (${state.studentsList[i].mobileNo})",
+                                                  text: "${list[i].name}",
                                                   color: colorPrimary,
                                                   textSize: 15.sp,
                                                   textAlign: TextAlign.start,
@@ -212,10 +307,21 @@ class _StudentScreenState extends State<StudentScreen> {
                                                   fontFamily: Family.medium,
                                                   lineHeight: 1.3,
                                                 ),
-                                                spaceVertical(space: 5.h),
+                                                spaceVertical(space: 1.h),
                                                 TextView(
-                                                  text:
-                                                      "${state.studentsList[i].father}",
+                                                  text: "${list[i].mobileNo}",
+                                                  color: colorBlack
+                                                      .withOpacity(0.6),
+                                                  textSize: 13.sp,
+                                                  textAlign: TextAlign.start,
+                                                  style:
+                                                      AppTextStyleEnum.medium,
+                                                  fontFamily: Family.medium,
+                                                  lineHeight: 1.3,
+                                                ),
+                                                spaceVertical(space: 1.h),
+                                                TextView(
+                                                  text: "${list[i].father}",
                                                   color: colorBlack
                                                       .withOpacity(0.6),
                                                   textSize: 13.sp,
@@ -227,7 +333,7 @@ class _StudentScreenState extends State<StudentScreen> {
                                                 ),
                                                 TextView(
                                                   text:
-                                                      "${state.studentsList[i].finalClassGroupName} ( ${state.studentsList[i].finalClassName} )",
+                                                      "${list[i].finalClassGroupName} ( ${list[i].finalClassName} )",
                                                   color: colorBlack
                                                       .withOpacity(0.4),
                                                   textSize: 10.sp,
@@ -246,38 +352,80 @@ class _StudentScreenState extends State<StudentScreen> {
                                         ],
                                       ),
                                       Positioned(
-                                          right: 10,
+                                        right: 0,
+                                        child: TextView(
+                                          text: "Roll No : ${list[i].rollNo}",
+                                          color: colorBlack.withOpacity(0.6),
+                                          textSize: 13.sp,
+                                          textAlign: TextAlign.start,
+                                          style: AppTextStyleEnum.medium,
+                                          fontFamily: Family.medium,
+                                          lineHeight: 1.3,
+                                        ),
+                                      ),
+                                      Positioned(
+                                          right: 5,
                                           bottom: 0,
-                                          child: true
-                                              ? TapWidget(
-                                                  onTap: () {
-                                                    StudentData.editStudent(
-                                                        student: state
-                                                            .studentsList[i]);
-                                                    context.pushScreen(
-                                                        nextScreen:
-                                                            StudentUpdateScreen());
-                                                  },
-                                                  child: CircleAvatar(
-                                                    radius: 20,
-                                                    backgroundColor:
-                                                        Colors.transparent,
-                                                    backgroundImage: AssetImage(
-                                                        AppAssets.editBg),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              bottom: 10),
-                                                      child: Icon(
-                                                        Icons.edit,
-                                                        size: 15,
-                                                        color: Colors.white,
-                                                      ),
+                                          child: Row(
+                                            children: [
+                                              TapWidget(
+                                                onTap: () {
+                                                  StudentData.editStudent(
+                                                      student: state
+                                                          .studentsModel
+                                                          .data[i]);
+                                                  context.pushScreen(
+                                                      nextScreen:
+                                                          StudentUpdateScreen());
+                                                },
+                                                child: CircleAvatar(
+                                                  radius: 20,
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  backgroundImage: AssetImage(
+                                                      AppAssets.editBg),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            bottom: 10),
+                                                    child: Icon(
+                                                      Icons.edit,
+                                                      size: 15,
+                                                      color: Colors.white,
                                                     ),
                                                   ),
-                                                )
-                                              : Container(
-                                                  child: Icon(Icons.edit))),
+                                                ),
+                                              ),
+                                              // TapWidget(
+                                              //   onTap: () {
+                                              //     StudentData.editStudent(
+                                              //         student: state
+                                              //             .studentsModel
+                                              //             .data[i]);
+                                              //     context.pushScreen(
+                                              //         nextScreen:
+                                              //             StudentUpdateScreen());
+                                              //   },
+                                              //   child: CircleAvatar(
+                                              //     radius: 20,
+                                              //     backgroundColor:
+                                              //         Colors.transparent,
+                                              //     backgroundImage: AssetImage(
+                                              //         AppAssets.deleteBg),
+                                              //     child: Padding(
+                                              //       padding:
+                                              //           const EdgeInsets.only(
+                                              //               bottom: 10),
+                                              //       child: Icon(
+                                              //         Icons.delete,
+                                              //         size: 15,
+                                              //         color: Colors.white,
+                                              //       ),
+                                              //     ),
+                                              //   ),
+                                              // ),
+                                            ],
+                                          )),
                                     ],
                                   ),
                                 ),
@@ -285,6 +433,11 @@ class _StudentScreenState extends State<StudentScreen> {
                             );
                           }),
                     );
+            } else if (state is StudentGetLoading) {
+              return Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: CircularProgressIndicator(strokeWidth: 1),
+              );
             }
             return SizedBox.shrink();
           },

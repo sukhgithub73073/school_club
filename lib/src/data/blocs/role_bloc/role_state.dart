@@ -15,28 +15,28 @@ class RoleLoading extends RoleState {
 }
 
 class RolePrincipal extends RoleState {
-  final ResponseModel responseModel;
+  
 
-  RolePrincipal({required this.responseModel});
+  RolePrincipal();
 
   @override
-  List<Object> get props => [responseModel];
+  List<Object> get props => [];
 }
 
-class RoleTeacher extends RoleState {
-  final ResponseModel responseModel;
+class RoleStaff extends RoleState {
 
-  RoleTeacher({required this.responseModel});
+
+  RoleStaff();
 
   @override
-  List<Object> get props => [responseModel];
+  List<Object> get props => [];
 }
 
 class RoleStudent extends RoleState {
-  final ResponseModel responseModel;
+  
 
-  RoleStudent({required this.responseModel});
+  RoleStudent();
 
   @override
-  List<Object> get props => [responseModel];
+  List<Object> get props => [];
 }

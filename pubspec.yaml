@@ -62,6 +62,10 @@ dependencies:
   image: ^4.0.13
   flutter_better_camera: ^1.0.3
   animated_snack_bar: ^0.4.0
+  get: ^4.6.6
+  faker: ^2.1.0
+  image_cropper: ^8.0.1
+  upgrader: ^10.3.0
 
 
 dev_dependencies:

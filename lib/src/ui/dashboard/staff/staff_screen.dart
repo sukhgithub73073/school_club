@@ -1,40 +1,57 @@
 import 'package:school_club/src/core/app_assets.dart';
 import 'package:school_club/src/core/app_colors.dart';
-import 'package:school_club/src/core/app_dialog.dart';
 import 'package:school_club/src/core/app_image_view.dart';
 import 'package:school_club/src/core/app_input_field.dart';
-import 'package:school_club/src/core/app_loader.dart';
 import 'package:school_club/src/core/app_tap_widget.dart';
 import 'package:school_club/src/core/app_text_style.dart';
 import 'package:school_club/src/core/common_space.dart';
-import 'package:school_club/src/core/dialog_widgets/failure_message_dialog.dart';
 import 'package:school_club/src/core/text_view.dart';
 import 'package:school_club/src/data/blocs/teacher_bloc/teacher_bloc.dart';
 import 'package:school_club/src/data/network/http_service.dart';
 import 'package:school_club/src/extension/app_extension.dart';
-import 'package:school_club/src/ui/register/register_screen.dart';
-import 'package:school_club/src/ui/register/teacher_register_screen.dart';
+import 'package:school_club/src/ui/register/staff_registration/staff_register_screen.dart';
+import 'package:school_club/src/ui/register/staff_registration/staff_update_screen.dart';
 import 'package:school_club/src/utility/app_data.dart';
 import 'package:school_club/src/utility/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class TeacherScreen extends StatefulWidget {
-  const TeacherScreen({super.key});
+class StaffScreen extends StatefulWidget {
+  const StaffScreen({super.key});
 
   @override
-  State<TeacherScreen> createState() => _TeacherScreenState();
+  State<StaffScreen> createState() => _StaffScreenState();
 }
 
-class _TeacherScreenState extends State<TeacherScreen> {
+class _StaffScreenState extends State<StaffScreen> {
+  ScrollController scrollController = ScrollController();
+  int page = 1;
+
   @override
   void initState() {
     super.initState();
     context.read<TeacherBloc>().add(GetTeacherEvent(map: {
           'college_id': '${AppData.userModel.data?.data.college.id ?? ""}',
-          'session': DateTime.now().year
+          'session': DateTime.now().year,
+          "page": page
         }));
+
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        if (AppData.loadMore) {
+          print("addListener>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+          page = page + 1;
+          context.read<TeacherBloc>().add(LoadMoreTeacherEvent(map: {
+                'college_id':
+                    '${AppData.userModel.data?.data.college.id ?? ""}',
+                'session': DateTime.now().year,
+                "page": page
+              }));
+        }
+      }
+    });
   }
 
   @override
@@ -64,7 +81,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
         ),
         actions: [],
       ),
-      body: ListView(children: [
+      body: Column(children: [
         spaceVertical(space: 5.h),
         Container(
           width: double.infinity,
@@ -94,7 +111,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
           },
           builder: (context, state) {
             if (state is TeacherGetSuccess) {
-              return state.teachersList.isEmpty
+              return state.teachersModel.data.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.symmetric(vertical: 40),
                       child: TextView(
@@ -107,116 +124,159 @@ class _TeacherScreenState extends State<TeacherScreen> {
                         lineHeight: 1.3,
                       ),
                     )
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: state.teachersList.length,
-                      itemBuilder: (c, i) {
-                        return Card(
-                          elevation: 10.h,
-                          margin: EdgeInsets.all(10.r),
-                          shadowColor: colorPrimary,
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Row(
-                              children: [
-                                state.teachersList[i].image == ""
-                                    ? CircleAvatar(
-                                        radius: 45,
-                                        backgroundColor: Colors.transparent,
-                                        backgroundImage:
-                                            AssetImage(AppAssets.logo))
-                                    : CircleAvatar(
-                                        radius: 45,
-                                        backgroundColor: Colors.transparent,
-                                        child: ClipOval(
-                                          child: FadeInImage(
-                                            image: NetworkImage(
-                                                "${ApisEndpoints.imagesPathStaff}${state.teachersList[i].image}"),
-                                            placeholder:
-                                                AssetImage(AppAssets.logo),
-                                            // Path to your placeholder image
-                                            imageErrorBuilder:
-                                                (context, error, stackTrace) {
-                                              return Image.asset(AppAssets.logo,
-                                                  fit: BoxFit.cover);
-                                            },
-                                            fit: BoxFit.cover,
+                  : Expanded(
+                      child: ListView.builder(
+                          controller: scrollController,
+                          shrinkWrap: true,
+                          physics: BouncingScrollPhysics(),
+                          itemCount: state.teachersModel.data.length,
+                          itemBuilder: (c, i) {
+                            return Card(
+                              elevation: 10.h,
+                              margin: EdgeInsets.all(10.r),
+                              shadowColor: colorPrimary,
+                              child: Stack(
+                                children: [
+                                  state.teachersModel.data[i].status == "active"
+                                      ? Positioned(
+                                          right: 5,
+                                          top: 5,
+                                          child: Icon(
+                                            Icons.verified,
+                                            color: colorPrimary,
+                                          ))
+                                      : SizedBox.shrink(),
+                                  Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      children: [
+                                        state.teachersModel.data[i].image == ""
+                                            ? CircleAvatar(
+                                                radius: 45,
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                backgroundImage:
+                                                    AssetImage(AppAssets.logo))
+                                            : CircleAvatar(
+                                                radius: 45,
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                child: ClipOval(
+                                                  child: FadeInImage(
+                                                    image: NetworkImage(
+                                                        "${ApisEndpoints.imagesPathStaff}${state.teachersModel.data[i].image}"),
+                                                    placeholder: AssetImage(
+                                                        AppAssets.logo),
+                                                    // Path to your placeholder image
+                                                    imageErrorBuilder: (context,
+                                                        error, stackTrace) {
+                                                      return Image.asset(
+                                                          AppAssets.logo,
+                                                          fit: BoxFit.cover);
+                                                    },
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                        spaceHorizontal(space: 10.w),
+                                        Expanded(
+                                          child: Stack(
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  TextView(
+                                                    text:
+                                                        "${state.teachersModel.data[i].name.toUpperCase()}",
+                                                    color: colorPrimary,
+                                                    textSize: 15.sp,
+                                                    textAlign: TextAlign.start,
+                                                    style:
+                                                        AppTextStyleEnum.bold,
+                                                    fontFamily: Family.medium,
+                                                    lineHeight: 1.3,
+                                                  ),
+                                                  spaceVertical(space: 2.h),
+                                                  TextView(
+                                                    text:
+                                                        "${state.teachersModel.data[i].mobileNo}",
+                                                    color: colorBlack
+                                                        .withOpacity(0.6),
+                                                    textSize: 13.sp,
+                                                    textAlign: TextAlign.start,
+                                                    style:
+                                                        AppTextStyleEnum.medium,
+                                                    fontFamily: Family.medium,
+                                                    lineHeight: 1.3,
+                                                  ),
+                                                  spaceVertical(space: 2.h),
+                                                  TextView(
+                                                    text:
+                                                        "${state.teachersModel.data[i].email}",
+                                                    color: colorBlack
+                                                        .withOpacity(0.6),
+                                                    textSize: 13.sp,
+                                                    textAlign: TextAlign.start,
+                                                    style:
+                                                        AppTextStyleEnum.medium,
+                                                    fontFamily: Family.medium,
+                                                    lineHeight: 1.3,
+                                                  ),
+                                                  TextView(
+                                                    text:
+                                                    "${state.teachersModel.data[i].user.uniqueId}",
+                                                    color: colorBlack
+                                                        .withOpacity(0.6),
+                                                    textSize: 13.sp,
+                                                    textAlign: TextAlign.start,
+                                                    style:
+                                                    AppTextStyleEnum.medium,
+                                                    fontFamily: Family.medium,
+                                                    lineHeight: 1.3,
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                      ),
-                                spaceHorizontal(space: 10.w),
-                                Expanded(
-                                  child: Stack(
-                                    children: [
-                                      state.teachersList[i].status == "active"
-                                          ? Positioned(
-                                              right: 0,
-                                              child: Icon(
-                                                Icons.verified,
-                                                color: colorPrimary,
-                                              ))
-                                          : SizedBox.shrink(),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          TextView(
-                                            text:
-                                                "${state.teachersList[i].name.toUpperCase()}",
-                                            color: colorPrimary,
-                                            textSize: 15.sp,
-                                            textAlign: TextAlign.start,
-                                            style: AppTextStyleEnum.bold,
-                                            fontFamily: Family.medium,
-                                            lineHeight: 1.3,
-                                          ),
-                                          spaceVertical(space: 2.h),
-                                          TextView(
-                                            text:
-                                                "${state.teachersList[i].mobileNo}",
-                                            color: colorBlack.withOpacity(0.6),
-                                            textSize: 13.sp,
-                                            textAlign: TextAlign.start,
-                                            style: AppTextStyleEnum.medium,
-                                            fontFamily: Family.medium,
-                                            lineHeight: 1.3,
-                                          ),
-                                          spaceVertical(space: 2.h),
-                                          TextView(
-                                            text:
-                                                "${state.teachersList[i].email}",
-                                            color: colorBlack.withOpacity(0.6),
-                                            textSize: 13.sp,
-                                            textAlign: TextAlign.start,
-                                            style: AppTextStyleEnum.medium,
-                                            fontFamily: Family.medium,
-                                            lineHeight: 1.3,
-                                          ),
-                                          TextView(
-                                            text:
-                                                "${state.teachersList[i].villageMohalla}",
-                                            color: colorBlack.withOpacity(0.4),
-                                            textSize: 10.sp,
-                                            maxlines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            textAlign: TextAlign.start,
-                                            style: AppTextStyleEnum.medium,
-                                            fontFamily: Family.medium,
-                                            lineHeight: 1.3,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      });
+                                  Positioned(
+                                      right: 2,
+                                      bottom: 0,
+                                      child: TapWidget(
+                                        onTap: () {
+                                          //StaffUpdateScreen
+                                          context.pushScreen(
+                                              nextScreen: StaffUpdateScreen(
+                                                  staff: state
+                                                      .teachersModel.data[i]));
+                                        },
+                                        child: CircleAvatar(
+                                          radius: 20,
+                                          backgroundColor: Colors.transparent,
+                                          backgroundImage:
+                                              AssetImage(AppAssets.editBg),
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 10),
+                                            child: Icon(
+                                              Icons.edit,
+                                              size: 15,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      )),
+                                ],
+                              ),
+                            );
+                          }),
+                    );
             }
             return SizedBox.shrink();
           },
@@ -224,7 +284,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
       ]),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.pushScreen(nextScreen: TeacherRegisterScreen());
+          context.pushScreen(nextScreen: StaffRegisterScreen());
           // context.pushScreen(nextScreen: RegisterScreen());
         },
         child: Icon(Icons.add, color: colorWhite),
@@ -270,7 +330,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
                       },
                       builder: (context, state) {
                         if (state is TeacherGetSuccess) {
-                          return state.teachersList.isEmpty
+                          return state.teachersModel.data.isEmpty
                               ? Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 40),
@@ -287,7 +347,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
                               : ListView.builder(
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
-                                  itemCount: state.teachersList.length,
+                                  itemCount: state.teachersModel.data.length,
                                   itemBuilder: (c, i) {
                                     return Card(
                                       elevation: 10.h,
@@ -297,7 +357,8 @@ class _TeacherScreenState extends State<TeacherScreen> {
                                         padding: const EdgeInsets.all(10.0),
                                         child: Row(
                                           children: [
-                                            state.teachersList[i].image == ""
+                                            state.teachersModel.data[i].image ==
+                                                    ""
                                                 ? CircleAvatar(
                                                     radius: 45,
                                                     backgroundColor:
@@ -309,7 +370,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
                                                     backgroundColor:
                                                         Colors.transparent,
                                                     backgroundImage: NetworkImage(
-                                                        "${state.teachersList[i].image}"),
+                                                        "${state.teachersModel.data[i].image}"),
                                                   ),
                                             spaceHorizontal(space: 10.w),
                                             Expanded(
@@ -332,12 +393,13 @@ class _TeacherScreenState extends State<TeacherScreen> {
                                                     children: [
                                                       TextView(
                                                         text:
-                                                            "${state.teachersList[i].name.toUpperCase()} (${getDesignationsList().firstWhere(
+                                                            "${state.teachersModel.data[i].name.toUpperCase()} (${getDesignationsList().firstWhere(
                                                                   (element) =>
                                                                       element
                                                                           .id ==
                                                                       state
-                                                                          .teachersList[
+                                                                          .teachersModel
+                                                                          .data[
                                                                               i]
                                                                           .designation,
                                                                 ).name})",
@@ -354,7 +416,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
                                                       spaceVertical(space: 2.h),
                                                       TextView(
                                                         text:
-                                                            "${state.teachersList[i].mobileNo}",
+                                                            "${state.teachersModel.data[i].mobileNo}",
                                                         color: colorBlack
                                                             .withOpacity(0.6),
                                                         textSize: 13.sp,
@@ -369,7 +431,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
                                                       spaceVertical(space: 2.h),
                                                       TextView(
                                                         text:
-                                                            "${state.teachersList[i].email}",
+                                                            "${state.teachersModel.data[i].email}",
                                                         color: colorBlack
                                                             .withOpacity(0.6),
                                                         textSize: 13.sp,
@@ -383,7 +445,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
                                                       ),
                                                       TextView(
                                                         text:
-                                                            "${state.teachersList[i].villageMohalla}",
+                                                            "${state.teachersModel.data[i].villageMohalla}",
                                                         color: colorBlack
                                                             .withOpacity(0.4),
                                                         textSize: 10.sp,
@@ -447,7 +509,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.pushScreen(nextScreen: TeacherRegisterScreen());
+          context.pushScreen(nextScreen: StaffRegisterScreen());
         },
         child: Icon(Icons.add, color: colorWhite),
         backgroundColor: colorPrimary,

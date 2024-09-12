@@ -198,7 +198,7 @@ class _RegisterAddressScreenState extends State<RegisterAddressScreen> {
                             paddingHorizontal: 20.0,
                             hasViewHight: false,
                             labelText: "tehsil",
-                            hintText: "selectTehsil",
+                            hintText: "tehsilHere",
                             numberOfLines: 1,
                             hintFontWeight: FontWeight.w400,
                             hintTextColor: colorGray.withOpacity(0.6)),

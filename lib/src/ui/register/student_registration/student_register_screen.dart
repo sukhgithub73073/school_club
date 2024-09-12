@@ -21,19 +21,17 @@ import 'package:school_club/src/core/dialog_widgets/failure_message_dialog.dart'
 import 'package:school_club/src/core/dialog_widgets/success_message_dialog.dart';
 import 'package:school_club/src/core/drop_down/drop_list_model.dart';
 import 'package:school_club/src/core/text_view.dart';
-import 'package:school_club/src/data/blocs/cast_bloc/cast_bloc.dart';
 import 'package:school_club/src/data/blocs/classes_bloc/classes_bloc.dart';
 import 'package:school_club/src/data/blocs/groups_bloc/groups_bloc.dart';
 import 'package:school_club/src/data/blocs/image_pick_bloc/image_pick_bloc.dart';
 import 'package:school_club/src/data/blocs/pincode_bloc/pincode_bloc.dart';
 import 'package:school_club/src/data/blocs/register_bloc/register_bloc.dart';
-import 'package:school_club/src/data/models/group_class_model.dart';
 import 'package:school_club/src/data/models/pincode_model.dart';
 import 'package:school_club/src/enums/role_enum.dart';
+import 'package:school_club/src/enums/snack_type_enum.dart';
 import 'package:school_club/src/extension/app_extension.dart';
 import 'package:school_club/src/ui/dashboard/main_screen.dart';
 import 'package:school_club/src/ui/register/student_registration/student_data.dart';
-import 'package:school_club/src/ui/register/student_registration/take_image_screen.dart';
 import 'package:school_club/src/utility/app_data.dart';
 import 'package:school_club/src/utility/app_util.dart';
 import 'package:school_club/src/utility/date_time_util.dart';
@@ -47,11 +45,15 @@ class StudentRegisterScreen extends StatefulWidget {
 }
 
 class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
+  var classSingleSelectController =
+      SingleSelectController(DropListModel(id: "", name: ""));
+
   @override
   void initState() {
     super.initState();
     StudentData.clearStudentData();
     context.read<RegisterBloc>().add(GetSerialNoEvent());
+    context.read<ImagePickBloc>().add(ClearImagePickEvent());
   }
 
   @override
@@ -86,23 +88,18 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                             BlocConsumer<ImagePickBloc, ImagePickState>(
                               listener: (context, state) {},
                               builder: (context, state) {
-                                if (state is ImagePickRemoveBg) {
-                                  return Image.memory(state.file);
+                                if (state is ImagePickSuccess) {
+                                  StudentData.selectedImage = state.file;
+                                  return CircleAvatar(
+                                    radius: 100,
+                                    backgroundImage:
+                                        FileImage(File(state.file.path)),
+                                  );
                                 } else {
-                                  if (state is ImagePickSuccess) {
-                                    StudentData.selectedImage = state.file;
-                                    return CircleAvatar(
-                                      radius: 100,
-                                      backgroundImage:
-                                          FileImage(File(state.file.path)),
-                                    );
-                                  } else {
-                                    return CircleAvatar(
-                                      radius: 100,
-                                      backgroundImage:
-                                          AssetImage(AppAssets.logo),
-                                    );
-                                  }
+                                  return CircleAvatar(
+                                    radius: 100,
+                                    backgroundImage: AssetImage(AppAssets.logo),
+                                  );
                                 }
                               },
                             ),
@@ -278,7 +275,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                                       id: "${element.id}",
                                       name: "${element.groupName}"));
                                 });
-                                return CustomDropdown<DropListModel>.search(
+                                return CustomDropdown<DropListModel>(
                                   hintText: tr("selectGroup"),
                                   items: list,
                                   excludeSelected: false,
@@ -293,6 +290,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                                     );
 
                                     StudentData.selectedPreviosGroup = item;
+
                                     context
                                         .read<ClassesBloc>()
                                         .add(GetClassEvent(groupItem: data));
@@ -324,7 +322,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                                       id: "${element.id}",
                                       name: "${element.className}"));
                                 });
-                                return CustomDropdown<DropListModel>.search(
+                                return CustomDropdown<DropListModel>(
                                   hintText: tr("selectClass"),
                                   items: list,
                                   decoration: customDropdownDecoration,
@@ -371,6 +369,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                               hasViewHight: false,
                               labelText: "fatherName",
                               hintText: "fatherNameHere",
+                              prefix: Text("Mr ",style: TextStyle(color: colorBlack,fontWeight: FontWeight.bold),),
                               numberOfLines: 1,
                               hintFontWeight: FontWeight.w400,
                               hintTextColor: colorGray.withOpacity(0.6)),
@@ -383,6 +382,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                               hasViewHight: false,
                               labelText: "motherName",
                               hintText: "motherNameHere",
+                              prefix: Text("Mrs ",style: TextStyle(color: colorBlack,fontWeight: FontWeight.bold),),
                               numberOfLines: 1,
                               hintFontWeight: FontWeight.w400,
                               hintTextColor: colorGray.withOpacity(0.6)),
@@ -407,6 +407,10 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                                   CustomTextField(
                                       controller: StudentData.pincodeController,
                                       textInputAction: TextInputAction.next,
+                                      inputFormatters: [
+                                        LengthLimitingTextInputFormatter(6),
+                                        FilteringTextInputFormatter.digitsOnly,
+                                      ],
                                       keyboardType: TextInputType.number,
                                       paddingHorizontal: 20.0,
                                       hasViewHight: false,
@@ -487,21 +491,6 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                                         hintFontWeight: FontWeight.w400,
                                         hintTextColor:
                                             colorGray.withOpacity(0.6)),
-                                    spaceVertical(space: 20.h),
-
-                                    CustomTextField(
-                                        controller:
-                                            StudentData.tehsilController,
-                                        textInputAction: TextInputAction.next,
-                                        keyboardType: TextInputType.text,
-                                        paddingHorizontal: 20.0,
-                                        hasViewHight: false,
-                                        labelText: "selectTehsil",
-                                        hintText: "tehsil",
-                                        numberOfLines: 1,
-                                        hintFontWeight: FontWeight.w400,
-                                        hintTextColor:
-                                            colorGray.withOpacity(0.6)),
 
                                     // FormField<String>(
                                     //   builder: (FormFieldState<String> s) {
@@ -524,7 +513,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                                     //             color: Colors.grey,
                                     //           ),
                                     //           hint: Text(
-                                    //             tr("selectTehsil"),
+                                    //             tr("tehsilHere"),
                                     //             style: TextStyle(
                                     //               color: Colors.grey,
                                     //               fontSize: 16,
@@ -579,6 +568,19 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                               }
                             },
                           ),
+                          spaceVertical(space: 20.h),
+                          CustomTextField(
+                              controller: StudentData.tehsilController,
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.text,
+                              paddingHorizontal: 20.0,
+                              hasViewHight: false,
+                              labelText: "tehsil",
+                              hintText: "tehsilHere",
+                              numberOfLines: 1,
+                              hintFontWeight: FontWeight.w400,
+                              hintTextColor: colorGray.withOpacity(0.6)),
+
                           spaceVertical(space: 20.h),
                           CustomTextField(
                               controller: StudentData.villMohallaController,
@@ -681,106 +683,208 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                               }
                             },
                             builder: (context, state) {
-                              return Container(
-                                height: 40.h,
-                                width: double.infinity,
-                                decoration: BoxDecoration(color: colorPrimary),
-                                child: AppSimpleButton(
-                                  onDoneFuction: () async {
-                                    var map = {
-                                      'college_id':
-                                          '${AppData.userModel.data?.data.college.id ?? ""}',
-                                      "class_group_id":
-                                          StudentData.selectedPreviosGroup.id,
-                                      "class": StudentData
-                                              .selectedPreviosClass?.id ??
-                                          "",
-                                      "name": StudentData.nameController.text,
-                                      "mobile_no":
-                                          StudentData.mobileController.text,
-                                      "roll_no":
-                                          StudentData.rollNoController.text,
-                                      "serial_no":
-                                          StudentData.srnoController.text,
-                                      "father":
-                                          StudentData.nameControllerFather.text,
-                                      'session': DateTime.now().year,
-                                      'aadhaar_number': '',
-                                      "admission_date":
-                                          DateTimeUtil.getCurrentDate(),
-                                      "dob": StudentData.dobController.text,
-                                      'gender': 'Male',
-                                      "religion":
-                                          StudentData.selectedReligion?.name ??
-                                              "",
-                                      'caste_id': '',
-                                      'sub_caste_id': '',
-                                      'father_occupation': '',
-                                      'mother':
-                                          StudentData.nameControllerMother.text,
-                                      'mother_occupation': '',
-                                      "pin_code":
-                                          StudentData.pincodeController.text,
-                                      "district":
-                                          StudentData.districtController.text,
-                                      "state": StudentData.stateController.text,
-                                      "tehsil":
-                                          StudentData.tehsilController.text,
-                                      "village_mohalla": StudentData
-                                          .villMohallaController.text,
-                                      'guardian_name': '',
-                                      'relationship_with_student': '',
-                                      'guardian_address': '',
-                                      'guardian_pin_code': '',
-                                      'guardian_district': '',
-                                      'guardian_tehsil': '',
-                                      'guardian_village_mohalla': '',
-                                      'guardian_mobile': '',
-                                      'guardian_alternate_mobile': '',
-                                      'previous_school': '',
-                                      'previous_passed_class': '',
-                                      'group': '',
-                                      'time_period_of_residence': '',
-                                      'bank_name': '',
-                                      'ifsc_code': '',
-                                      'branch_address': "",
-                                      'account_number': "",
-                                      'account_holder_name': "",
-                                      'guardian_email': "",
-                                      'udise_pen': "",
-                                      'academic_year': "",
-                                      'disability_status': "",
-                                      'disability_type': "",
-                                      'disability_percentage': "",
-                                      'last_academic_result': "",
-                                      'obtained_marks': "",
-                                      'attended_days': "",
-                                      'student_blood_group': "",
-                                      'student_weight': "",
-                                      'student_height': "",
-                                      'image': "",
-                                      'student_aadhar_front': "",
-                                      'student_aadhar_back': "",
-                                      'father_aadhar_front': "",
-                                      'father_aadhar_back': "",
-                                      'mother_aadhar_front': "",
-                                      'mother_aadhar_back': "",
-                                      'student_tc': "",
-                                      'student_marksheet': "",
-                                      "TYPE": RoleEnum.student.name
-                                    };
+                              return state is RegisterLoading
+                                  ? SizedBox(child: CircularProgressIndicator())
+                                  : Container(
+                                      height: 40.h,
+                                      width: double.infinity,
+                                      decoration:
+                                          BoxDecoration(color: colorPrimary),
+                                      child: AppSimpleButton(
+                                        onDoneFuction: () async {
+                                          if (StudentData
+                                                  .selectedPreviosGroup ==
+                                              null) {
+                                            context.showSnackBar(
+                                                title: tr("error"),
+                                                message: tr("groupError"),
+                                                snackTypeEnum:
+                                                    SnackTypeEnum.error);
+                                          } else if (StudentData
+                                                  .selectedPreviosClass ==
+                                              null) {
+                                            context.showSnackBar(
+                                                title: tr("error"),
+                                                message: tr("classError"),
+                                                snackTypeEnum:
+                                                    SnackTypeEnum.error);
+                                          } else if (StudentData
+                                              .rollNoController.text.isEmpty) {
+                                            context.showSnackBar(
+                                                title: tr("error"),
+                                                message: tr("rollNoError"),
+                                                snackTypeEnum:
+                                                    SnackTypeEnum.error);
+                                          } else if (StudentData
+                                              .nameController.text.isEmpty) {
+                                            context.showSnackBar(
+                                                title: tr("error"),
+                                                message: tr("nameError"),
+                                                snackTypeEnum:
+                                                    SnackTypeEnum.error);
+                                          } else if (StudentData
+                                              .nameControllerFather
+                                              .text
+                                              .isEmpty) {
+                                            context.showSnackBar(
+                                                title: tr("error"),
+                                                message: tr("fatherNameError"),
+                                                snackTypeEnum:
+                                                    SnackTypeEnum.error);
+                                          }
+                                          // else if (StudentData
+                                          //     .nameControllerMother
+                                          //     .text
+                                          //     .isEmpty) {
+                                          //   context.showSnackBar(
+                                          //       title: tr("error"),
+                                          //       message: tr("motherNameError"),
+                                          //       snackTypeEnum:
+                                          //           SnackTypeEnum.error);
+                                          // }
+                                          else if (StudentData
+                                                  .pincodeController
+                                                  .text
+                                                  .length !=
+                                              6) {
+                                            context.showSnackBar(
+                                                title: tr("error"),
+                                                message: tr("pincodeError"),
+                                                snackTypeEnum:
+                                                    SnackTypeEnum.error);
+                                          } else if (StudentData
+                                              .tehsilController.text.isEmpty) {
+                                            context.showSnackBar(
+                                                title: tr("error"),
+                                                message: tr("tehsilError"),
+                                                snackTypeEnum:
+                                                    SnackTypeEnum.error);
+                                          } else if (StudentData
+                                              .villMohallaController
+                                              .text
+                                              .isEmpty) {
+                                            context.showSnackBar(
+                                                title: tr("error"),
+                                                message: tr("villMohallaError"),
+                                                snackTypeEnum:
+                                                    SnackTypeEnum.error);
+                                          } else if (StudentData
+                                                  .mobileController
+                                                  .text
+                                                  .length !=
+                                              10) {
+                                            context.showSnackBar(
+                                                title: tr("error"),
+                                                message: tr("mobileError"),
+                                                snackTypeEnum:
+                                                    SnackTypeEnum.error);
+                                          } else {
+                                            var map = {
+                                              'college_id':
+                                                  '${AppData.userModel.data?.data.college.id == 0 ? AppData.userModel.data?.data.staff.collegeId : AppData.userModel.data?.data.college.id}',
+                                              "class_group_id": StudentData
+                                                  .selectedPreviosGroup.id,
+                                              "class": StudentData
+                                                      .selectedPreviosClass
+                                                      ?.id ??
+                                                  "",
+                                              "name": StudentData
+                                                  .nameController.text,
+                                              "mobile_no": StudentData
+                                                  .mobileController.text,
+                                              "roll_no": StudentData
+                                                  .rollNoController.text,
 
-                                    log(jsonEncode(map));
+                                              "serial_no": StudentData
+                                                  .rollNoController.text,
 
-                                    context
-                                        .read<RegisterBloc>()
-                                        .add(DoRegisterEvent(map: map));
-                                  },
-                                  buttonBackgroundColor: colorPrimary,
-                                  nameText: "submit",
-                                  textSize: 18.sp,
-                                ),
-                              );
+                                              //"serial_no":"",
+                                              //
+                                              //  "serial_no": StudentData
+                                              //      .srnoController.text,
+
+
+                                              "father": StudentData
+                                                  .nameControllerFather.text,
+                                              'session': DateTime.now().year,
+                                              'aadhaar_number': '',
+                                              "admission_date":
+                                                  DateTimeUtil.getCurrentDate(),
+                                              "dob": "",
+                                              'gender': '-',
+                                              "religion": StudentData
+                                                      .selectedReligion?.name ??
+                                                  "",
+                                              'caste_id': '',
+                                              'sub_caste_id': '',
+                                              'father_occupation': '',
+                                              'mother': StudentData
+                                                  .nameControllerMother.text,
+                                              'mother_occupation': '',
+                                              "pin_code": StudentData
+                                                  .pincodeController.text,
+                                              "district": StudentData
+                                                  .districtController.text,
+                                              "state": StudentData
+                                                  .stateController.text,
+                                              "tehsil": StudentData
+                                                  .tehsilController.text,
+                                              "village_mohalla": StudentData
+                                                  .villMohallaController.text,
+                                              'guardian_name': '',
+                                              'relationship_with_student': '',
+                                              'guardian_address': '',
+                                              'guardian_pin_code': '',
+                                              'guardian_district': '',
+                                              'guardian_tehsil': '',
+                                              'guardian_village_mohalla': '',
+                                              'guardian_mobile': '',
+                                              'guardian_alternate_mobile': '',
+                                              'previous_school': '',
+                                              'previous_passed_class': '',
+                                              'group': '',
+                                              'time_period_of_residence': '',
+                                              'bank_name': '',
+                                              'ifsc_code': '',
+                                              'branch_address': "",
+                                              'account_number': "",
+                                              'account_holder_name': "",
+                                              'guardian_email': "",
+                                              'udise_pen': "",
+                                              'academic_year': "",
+                                              'disability_status': "",
+                                              'disability_type': "",
+                                              'disability_percentage': "",
+                                              'last_academic_result': "",
+                                              'obtained_marks': "",
+                                              'attended_days': "",
+                                              'student_blood_group': "",
+                                              'student_weight': "",
+                                              'student_height': "",
+                                              'image': "",
+                                              'student_aadhar_front': "",
+                                              'student_aadhar_back': "",
+                                              'father_aadhar_front': "",
+                                              'father_aadhar_back': "",
+                                              'mother_aadhar_front': "",
+                                              'mother_aadhar_back': "",
+                                              'student_tc': "",
+                                              'student_marksheet': "",
+                                              "TYPE": RoleEnum.student.name
+                                            };
+
+                                            log(jsonEncode(map));
+
+                                            context
+                                                .read<RegisterBloc>()
+                                                .add(DoRegisterEvent(map: map));
+                                          }
+                                        },
+                                        buttonBackgroundColor: colorPrimary,
+                                        nameText: "submit",
+                                        textSize: 18.sp,
+                                      ),
+                                    );
                             },
                           ),
                           spaceVertical(space: 10.h),

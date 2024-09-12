@@ -91,10 +91,7 @@ class _StudentDetailScreenState extends State<StudentDetailScreen> {
                 'Relationship with Student',
                 widget.student.guardian.relationshipWithStudent ?? ""
               ],
-              [
-                'Guardian Address',
-                widget.student.guardian.guardianAddress ?? ""
-              ],
+
             ]),
             _buildSectionHeader('Academic Details'),
             _buildInfoTable([

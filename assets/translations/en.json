@@ -110,7 +110,7 @@
   "timePeriodOfResidenceInState": "Time Period of Residence in State",
   "skip": "skip",
   "villMohalla": "Vill / Mohalla",
-  "selectTehsil": "Enter Tehsil",
+  "tehsilHere": "Enter Tehsil",
   "additionalInfo": "Additional Information",
   "udisePen": "Udise Pen",
   "selectBloodGroup": "Select Blood Group",
@@ -132,10 +132,22 @@
   "rollNoHere": "Roll No Here",
   "designations": "Designations",
   "staffList": "Staff List",
-  "selectTehsil": "Select Tehsil",
+  "tehsilHere": "Tehsil Here",
   "tehsil": "Tehsil",
   "loginId": "Login Id",
   "error": "Error",
+  "groupError": "Invalid group please select a group",
+  "classError": "Invalid class please select a class",
+  "rollNoError": "Invalid roll number please enter valid roll number",
   "nameError": "Invalid name please enter valid name",
-  "mobileError": "Invalid mobile number please enter valid 10 digit mobile number"
+  "fatherNameError": "Invalid father name please enter valid father name",
+  "motherNameError": "Invalid mother name please enter valid mother name",
+  "pincodeError": "Invalid pincode please enter valid 6 digit pincode",
+  "tehsilError": "Invalid tehsil please enter valid tehsil",
+  "villMohallaError": "Invalid Vill / Mohalla please enter valid Vill / Mohalla",
+  "emailError": "Invalid email address please enter valid email address",
+  "mobileError": "Invalid mobile number please enter valid 10 digit mobile number",
+
+  "createStaff": "Create Staff",
+  "updateStaff": "Update Staff"
 }

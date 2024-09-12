@@ -13,6 +13,17 @@ class GetStudentEvent extends StudentEvent {
   @override
   List<Object?> get props => [map];
 }
+
+class LoadMoreStudentEvent extends StudentEvent {
+  final Map<String, dynamic> map;
+
+  const LoadMoreStudentEvent({required this.map});
+
+  @override
+  List<Object?> get props => [map];
+}
+
+
 class ClearStudentEvent extends StudentEvent {
   final Map<String, dynamic> map;
 

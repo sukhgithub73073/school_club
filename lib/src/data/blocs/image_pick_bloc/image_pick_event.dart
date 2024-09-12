@@ -17,3 +17,9 @@ class CaptureImagePickEvent extends ImagePickEvent {
   @override
   List<Object?> get props => [];
 }
+class ClearImagePickEvent extends ImagePickEvent {
+  const ClearImagePickEvent();
+
+  @override
+  List<Object?> get props => [];
+}

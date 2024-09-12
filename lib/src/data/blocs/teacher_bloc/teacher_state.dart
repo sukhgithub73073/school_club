@@ -13,18 +13,24 @@ class TeacherGetLoading extends TeacherState {
   @override
   List<Object> get props => [];
 }
+
 class TeacherGetLoadingDismiss extends TeacherState {
   @override
   List<Object> get props => [];
 }
 
 class TeacherGetSuccess extends TeacherState {
-  final List<Datum> teachersList;
+  final TeachersModel teachersModel;
 
-  TeacherGetSuccess({required this.teachersList});
+  final bool loadMore;
+
+  TeacherGetSuccess({
+    required this.teachersModel,
+    required this.loadMore,
+  });
 
   @override
-  List<Object> get props => [teachersList];
+  List<Object> get props => [teachersModel];
 }
 
 class TeacherGetError extends TeacherState {
@@ -36,12 +42,11 @@ class TeacherGetError extends TeacherState {
   List<Object> get props => [error];
 }
 
-
-
 class TeacherCreateLoading extends TeacherState {
   @override
   List<Object> get props => [];
 }
+
 class TeacherCreateLoadingDismiss extends TeacherState {
   @override
   List<Object> get props => [];

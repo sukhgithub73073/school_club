@@ -1,6 +1,5 @@
 part of 'student_bloc.dart';
 
-
 abstract class StudentState extends Equatable {
   const StudentState();
 }
@@ -14,19 +13,24 @@ class StudentGetLoading extends StudentState {
   @override
   List<Object> get props => [];
 }
+
 class StudentGetLoadingDismiss extends StudentState {
   @override
   List<Object> get props => [];
 }
 
 class StudentGetSuccess extends StudentState {
+  final StudentsModel studentsModel ;
+  final bool loadMore;
 
-  final List<Datum> studentsList;
+  StudentGetSuccess({
+    required this.studentsModel,
+    required this.loadMore,
+  });
 
-  StudentGetSuccess({required this.studentsList});
 
   @override
-  List<Object> get props => [studentsList];
+  List<Object> get props => [studentsModel];
 }
 
 class StudentGetError extends StudentState {
@@ -38,12 +42,11 @@ class StudentGetError extends StudentState {
   List<Object> get props => [error];
 }
 
-
-
 class StudentCreateLoading extends StudentState {
   @override
   List<Object> get props => [];
 }
+
 class StudentCreateLoadingDismiss extends StudentState {
   @override
   List<Object> get props => [];

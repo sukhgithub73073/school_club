@@ -20,6 +20,7 @@ class ClassesBloc extends Bloc<ClassesEvent, ClassesState> {
     on<GetClassesByGroupEvent>(_getClassesByGroupApi);
     on<CreateClassesEvent>(_createClassesApi);
     on<GetClassEvent>(_getClassEvent);
+    on<EmptyClassEvent>(_emptyClassEvent);
   }
 
   Future<FutureOr<void>> _getClassesApi(
@@ -69,7 +70,13 @@ class ClassesBloc extends Bloc<ClassesEvent, ClassesState> {
   FutureOr<void> _getClassEvent(
       GetClassEvent event, Emitter<ClassesState> emit) {
     emit(ClassesCreateLoading());
-    print("Sdfdsfdffdfdsfdsf>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<,${event.groupItem.toJson()}") ;
+    print(
+        "Sdfdsfdffdfdsfdsf>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<,${event.groupItem.toJson()}");
     emit(ClassesGetSuccess(data: event.groupItem.classes!));
+  }
+
+  FutureOr<void> _emptyClassEvent(
+      EmptyClassEvent event, Emitter<ClassesState> emit) {
+    emit(ClassesGetSuccess(data: []));
   }
 }

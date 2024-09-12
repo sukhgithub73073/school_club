@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_storage/hive_storage.dart';
 import 'package:school_club/src/core/app_assets.dart';
 import 'package:school_club/src/core/app_colors.dart';
 import 'package:school_club/src/core/app_tap_widget.dart';
@@ -7,12 +8,14 @@ import 'package:school_club/src/core/app_text_style.dart';
 import 'package:school_club/src/core/text_view.dart';
 import 'package:school_club/src/data/blocs/login_bloc/login_bloc.dart';
 import 'package:school_club/src/data/blocs/login_bloc/login_bloc.dart';
+import 'package:school_club/src/data/blocs/role_bloc/role_bloc.dart';
 import 'package:school_club/src/extension/app_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:school_club/src/ui/about_us_screen/about_us_screen.dart';
+import 'package:school_club/src/ui/dashboard/staff/staff_screen.dart';
 import 'package:school_club/src/ui/dashboard/students/student_screen.dart';
-import 'package:school_club/src/ui/dashboard/teachers/teachers_screen.dart';
+
 import 'package:school_club/src/ui/login/login_screen.dart';
 import 'package:school_club/src/utility/app_data.dart';
 
@@ -45,11 +48,102 @@ class _DrawerScreenState extends State<DrawerScreen>
   }
 
   void setDrawerListArray() {
-    drawerList = <DrawerList>[
+    var roleState = context.read<RoleBloc>().state;
+    if (roleState is RolePrincipal) {
+      drawerList = principleMenuList();
+    } else if (roleState is RoleStaff) {
+      drawerList = staffMenuList();
+    }
+  }
+
+  principleMenuList() {
+    return <DrawerList>[
       DrawerList(
         labelName: tr("manageStudents"),
         icon: Icon(Icons.manage_accounts),
       ),
+      DrawerList(
+        //index: DrawerIndex.FeedBack,
+        labelName: tr('manageStaff'),
+        icon: Icon(Icons.groups),
+      ),
+
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('manageClasses'),
+      //   icon: Icon(Icons.group),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('manageSubject'),
+      //   icon: Icon(Icons.menu_book),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('timeTable'),
+      //   icon: Icon(Icons.lock_clock),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Share,
+      //   labelName: tr('attendance'),
+      //   icon: Icon(Icons.fingerprint),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('work'),
+      //   icon: Icon(Icons.auto_stories),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('ledger'),
+      //   icon: Icon(Icons.wallet),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('leave'),
+      //   icon: Icon(Icons.calendar_month),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('complaints'),
+      //   icon: Icon(Icons.notification_important),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('transport'),
+      //   icon: Icon(Icons.bus_alert),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('exam'),
+      //   icon: Icon(Icons.developer_board_sharp),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('document'),
+      //   icon: Icon(Icons.document_scanner_sharp),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('library'),
+      //   icon: Icon(Icons.my_library_books),
+      // ),
+      // DrawerList(
+      //   //index: DrawerIndex.Invite,
+      //   labelName: tr('hostel'),
+      //   icon: Icon(Icons.house_outlined),
+      // ),
+
+      DrawerList(
+        //index: DrawerIndex.About,
+        labelName: tr('aboutUs'),
+        icon: Icon(Icons.info),
+      )
+    ];
+  }
+
+  staffMenuList() {
+    return <DrawerList>[
       DrawerList(
         //index: DrawerIndex.FeedBack,
         labelName: tr('manageStaff'),
@@ -290,6 +384,7 @@ class _DrawerScreenState extends State<DrawerScreen>
   }
 
   void onTapped() {
+    getHiveStorage.write(key: "LOGIN_RESPONSE", value: "");
     context.pushReplacementScreen(nextScreen: LoginScreen());
   }
 
@@ -300,11 +395,12 @@ class _DrawerScreenState extends State<DrawerScreen>
         splashColor: Colors.grey.withOpacity(0.1),
         highlightColor: Colors.transparent,
         onTap: () {
+          context.back();
           if (listData.labelName == tr("manageStudents")) {
             context.pushScreen(nextScreen: StudentScreen());
-          }else if (listData.labelName == tr("manageStaff")) {
-            context.pushScreen(nextScreen: TeacherScreen());
-          }else if (listData.labelName == tr("aboutUs")) {
+          } else if (listData.labelName == tr("manageStaff")) {
+            context.pushScreen(nextScreen: StaffScreen());
+          } else if (listData.labelName == tr("aboutUs")) {
             context.pushScreen(nextScreen: AboutUsScreen());
           }
         },

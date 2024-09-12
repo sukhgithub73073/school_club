@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:hive_storage/hive_storage.dart';
 import 'package:school_club/src/data/models/response_model.dart';
 import 'package:school_club/src/data/models/user_model.dart';
 import 'package:school_club/src/data/network/api_status_code.dart';
@@ -20,6 +21,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   LoginBloc() : super(LoginInitial()) {
     on<DoLoginEvent>(_login);
+    on<UpdateLoginEvent>(_onUpdateLoginEvent);
   }
 
   Future<FutureOr<void>> _login(
@@ -27,13 +29,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       emit(LoginLoading());
       ResponseModel responseModel = await loginRepository.loginApi(event.map);
+      if (responseModel.status == "${RepoResponseStatus.success}") {
+        var loginResponse = jsonEncode(responseModel);
+        getHiveStorage.write(key: "LOGIN_RESPONSE", value: loginResponse);
 
-      var userModel = userModelFromJson(jsonEncode(responseModel.data));
-
-      if (userModel.status == "${RepoResponseStatus.success}") {
+        var userModel = userModelFromJson(loginResponse);
         AppData.userModel = userModel;
         AppData.authToken = userModel.data?.token ?? "";
-        emit(LoginSuccess(responseModel: responseModel));
+        emit(LoginSuccess(userModel: userModel));
       } else {
         emit(LoginError(error: responseModel.message));
       }
@@ -41,5 +44,16 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       print("$e>>>$t");
       emit(LoginError(error: e.toString()));
     }
+  }
+
+  Future<FutureOr<void>> _onUpdateLoginEvent(
+      UpdateLoginEvent event, Emitter<LoginState> emit) async {
+    emit(LoginLoading());
+    var loginResponse = await getHiveStorage.read<String>(
+        key: "LOGIN_RESPONSE", defaultValue: "");
+    var userModel = userModelFromJson(loginResponse ?? "");
+    AppData.userModel = userModel;
+    AppData.authToken = userModel.data?.token ?? "";
+    emit(LoginSuccess(userModel: userModel));
   }
 }

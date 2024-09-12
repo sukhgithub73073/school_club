@@ -25,7 +25,12 @@ class GetClassEvent extends ClassesEvent {
   @override
   List<Object?> get props => [groupItem];
 }
+class EmptyClassEvent extends ClassesEvent {
+  const EmptyClassEvent();
 
+  @override
+  List<Object?> get props => [];
+}
 
 class CreateClassesEvent extends ClassesEvent {
   final Map<String , dynamic> map ;

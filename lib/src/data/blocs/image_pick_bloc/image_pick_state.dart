@@ -8,7 +8,10 @@ final class ImagePickInitial extends ImagePickState {
   @override
   List<Object> get props => [];
 }
-
+final class ImagePickReset extends ImagePickState {
+  @override
+  List<Object> get props => [];
+}
 final class ImagePickLoading extends ImagePickState {
   @override
   List<Object> get props => [];
@@ -18,14 +21,6 @@ final class ImagePickSuccess extends ImagePickState {
   final XFile file;
 
   ImagePickSuccess({required this.file});
-
-  @override
-  List<Object> get props => [file];
-}
-final class ImagePickRemoveBg extends ImagePickState {
-  final Uint8List file;
-
-  ImagePickRemoveBg({required this.file});
 
   @override
   List<Object> get props => [file];

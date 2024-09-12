@@ -12,3 +12,10 @@ class DoLoginEvent extends LoginEvent {
   @override
   List<Object?> get props => [map];
 }
+
+class UpdateLoginEvent extends LoginEvent {
+  UpdateLoginEvent();
+
+  @override
+  List<Object?> get props => [];
+}

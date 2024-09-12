@@ -1,8 +1,5 @@
-import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
-import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,25 +16,19 @@ import 'package:school_club/src/core/app_text_style.dart';
 import 'package:school_club/src/core/common_space.dart';
 import 'package:school_club/src/core/dialog_widgets/failure_message_dialog.dart';
 import 'package:school_club/src/core/dialog_widgets/success_message_dialog.dart';
-import 'package:school_club/src/core/drop_down/drop_list_model.dart';
 import 'package:school_club/src/core/text_view.dart';
-import 'package:school_club/src/data/blocs/cast_bloc/cast_bloc.dart';
-import 'package:school_club/src/data/blocs/classes_bloc/classes_bloc.dart';
-import 'package:school_club/src/data/blocs/groups_bloc/groups_bloc.dart';
 import 'package:school_club/src/data/blocs/image_pick_bloc/image_pick_bloc.dart';
 import 'package:school_club/src/data/blocs/pincode_bloc/pincode_bloc.dart';
+import 'package:school_club/src/data/blocs/student_bloc/student_bloc.dart';
 import 'package:school_club/src/data/blocs/update_bloc/update_bloc.dart';
-import 'package:school_club/src/data/models/group_class_model.dart';
 import 'package:school_club/src/data/models/pincode_model.dart';
 import 'package:school_club/src/data/network/http_service.dart';
-import 'package:school_club/src/enums/role_enum.dart';
+import 'package:school_club/src/enums/snack_type_enum.dart';
 import 'package:school_club/src/extension/app_extension.dart';
 import 'package:school_club/src/ui/dashboard/main_screen.dart';
 import 'package:school_club/src/ui/register/student_registration/student_data.dart';
 import 'package:school_club/src/utility/app_data.dart';
 import 'package:school_club/src/utility/app_util.dart';
-import 'package:school_club/src/utility/date_time_util.dart';
-import 'package:school_club/src/utility/decoration_util.dart';
 
 class StudentUpdateScreen extends StatefulWidget {
   const StudentUpdateScreen({super.key});
@@ -50,6 +41,9 @@ class _StudentUpdateScreenState extends State<StudentUpdateScreen> {
   @override
   void initState() {
     super.initState();
+
+    context.read<ImagePickBloc>().add(ClearImagePickEvent());
+    StudentData.resetImage();
   }
 
   @override
@@ -84,29 +78,30 @@ class _StudentUpdateScreenState extends State<StudentUpdateScreen> {
                             BlocConsumer<ImagePickBloc, ImagePickState>(
                               listener: (context, state) {},
                               builder: (context, state) {
-                                {
-                                  if (state is ImagePickSuccess) {
-                                    StudentData.selectedImage = state.file;
-                                    return CircleAvatar(
-                                      radius: 100,
-                                      backgroundImage:
-                                          FileImage(File(state.file.path)),
-                                    );
-                                  } else {
-                                    return (StudentData
-                                                .selectedStudent?.image) !=
-                                            ""
-                                        ? CircleAvatar(
-                                            radius: 100,
-                                            backgroundImage: NetworkImage(
-                                                "${ApisEndpoints.imagesPathStudent}${StudentData.selectedStudent?.image}"),
-                                          )
-                                        : CircleAvatar(
-                                            radius: 100,
-                                            backgroundImage:
-                                                AssetImage(AppAssets.logo),
-                                          );
-                                  }
+                                print(
+                                    "selectedImage>>>>>>>>${state.toString()}");
+                                if (state is ImagePickSuccess) {
+                                  StudentData.selectedImage = state.file;
+
+                                  return CircleAvatar(
+                                    radius: 100,
+                                    backgroundImage:
+                                        FileImage(File(state.file.path)),
+                                  );
+                                } else {
+                                  StudentData.resetImage();
+                                  return (StudentData.selectedStudent?.image) !=
+                                          ""
+                                      ? CircleAvatar(
+                                          radius: 100,
+                                          backgroundImage: NetworkImage(
+                                              "${ApisEndpoints.imagesPathStudent}${StudentData.selectedStudent?.image}"),
+                                        )
+                                      : CircleAvatar(
+                                          radius: 100,
+                                          backgroundImage:
+                                              AssetImage(AppAssets.logo),
+                                        );
                                 }
                               },
                             ),
@@ -179,6 +174,12 @@ class _StudentUpdateScreenState extends State<StudentUpdateScreen> {
                               labelText: "rollNo",
                               hintText: "rollNoHere",
                               numberOfLines: 1,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter valid role number';
+                                }
+                                return null;
+                              },
                               hintFontWeight: FontWeight.w400,
                               hintTextColor: colorGray.withOpacity(0.6)),
                           spaceVertical(space: 20.h),
@@ -202,6 +203,7 @@ class _StudentUpdateScreenState extends State<StudentUpdateScreen> {
                               hasViewHight: false,
                               labelText: "fatherName",
                               hintText: "fatherNameHere",
+                              prefix: Text("Mr ",style: TextStyle(color: colorBlack,fontWeight: FontWeight.bold),),
                               numberOfLines: 1,
                               hintFontWeight: FontWeight.w400,
                               hintTextColor: colorGray.withOpacity(0.6)),
@@ -214,6 +216,7 @@ class _StudentUpdateScreenState extends State<StudentUpdateScreen> {
                               hasViewHight: false,
                               labelText: "motherName",
                               hintText: "motherNameHere",
+                              prefix: Text("Mrs ",style: TextStyle(color: colorBlack,fontWeight: FontWeight.bold),),
                               numberOfLines: 1,
                               hintFontWeight: FontWeight.w400,
                               hintTextColor: colorGray.withOpacity(0.6)),
@@ -318,20 +321,6 @@ class _StudentUpdateScreenState extends State<StudentUpdateScreen> {
                                         hintFontWeight: FontWeight.w400,
                                         hintTextColor:
                                             colorGray.withOpacity(0.6)),
-                                    spaceVertical(space: 20.h),
-                                    CustomTextField(
-                                        controller:
-                                            StudentData.tehsilController,
-                                        textInputAction: TextInputAction.next,
-                                        keyboardType: TextInputType.text,
-                                        paddingHorizontal: 20.0,
-                                        hasViewHight: false,
-                                        labelText: "selectTehsil",
-                                        hintText: "tehsil",
-                                        numberOfLines: 1,
-                                        hintFontWeight: FontWeight.w400,
-                                        hintTextColor:
-                                            colorGray.withOpacity(0.6)),
                                   ],
                                 );
                               } else {
@@ -339,6 +328,18 @@ class _StudentUpdateScreenState extends State<StudentUpdateScreen> {
                               }
                             },
                           ),
+                          spaceVertical(space: 20.h),
+                          CustomTextField(
+                              controller: StudentData.tehsilController,
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.text,
+                              paddingHorizontal: 20.0,
+                              hasViewHight: false,
+                              labelText: "tehsilHere",
+                              hintText: "tehsil",
+                              numberOfLines: 1,
+                              hintFontWeight: FontWeight.w400,
+                              hintTextColor: colorGray.withOpacity(0.6)),
                           spaceVertical(space: 20.h),
                           CustomTextField(
                               controller: StudentData.villMohallaController,
@@ -353,7 +354,7 @@ class _StudentUpdateScreenState extends State<StudentUpdateScreen> {
                               hintTextColor: colorGray.withOpacity(0.6)),
                           spaceVertical(space: 30.h),
                           CustomTextField(
-                              controller: StudentData.mobileGaurdianCtrl,
+                              controller: StudentData.mobileController,
                               textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.number,
                               paddingHorizontal: 20.0,
@@ -371,14 +372,21 @@ class _StudentUpdateScreenState extends State<StudentUpdateScreen> {
                           spaceVertical(space: 30.h),
                           BlocConsumer<UpdateBloc, UpdateState>(
                             listener: (context, state) {
+                              printLog(">>>>>>>>>>>>>>>>UpdateBloc><<<<<<<<<<<<<<${state.toString()}") ;
                               if (state is UpdateSuccess) {
                                 appDialog(
                                     context: context,
                                     child: SuccessDailog(
                                       title: "successfully",
                                       onTap: () {
-                                        context.pushReplacementScreen(
-                                            nextScreen: MainScreen());
+                                        context.back() ;
+                                        context
+                                            .read<StudentBloc>()
+                                            .add(GetStudentEvent(map: AppData.studentMap));
+                                        context.back() ;
+
+                                        // context.pushReplacementScreen(
+                                        //     nextScreen: MainScreen());
                                       },
                                       message:
                                           "Successfully update your record",
@@ -396,181 +404,282 @@ class _StudentUpdateScreenState extends State<StudentUpdateScreen> {
                               }
                             },
                             builder: (context, state) {
-                              return Container(
-                                height: 40.h,
-                                width: double.infinity,
-                                decoration: BoxDecoration(color: colorPrimary),
-                                child: AppSimpleButton(
-                                  onDoneFuction: () async {
-                                    var map = {
-                                      "roll_no":
-                                          StudentData.rollNoController.text,
-                                      "name": StudentData.nameController.text,
-                                      "father":
-                                          StudentData.nameControllerFather.text,
-                                      "mother":
-                                          StudentData.nameControllerMother.text,
-                                      "pin_code":
-                                          StudentData.pincodeController.text,
-                                      "district":
-                                          StudentData.selectedStudent?.district,
-                                      "state":
-                                          StudentData.selectedStudent?.state,
-                                      "tehsil":
-                                          StudentData.tehsilController.text,
-                                      "village_mohalla": StudentData
-                                          .villMohallaController.text,
-                                      "mobile_no":
-                                          StudentData.mobileGaurdianCtrl.text,
+                              return state is UpdateLoading
+                                  ? SizedBox(child: CircularProgressIndicator())
+                                  : Container(
+                                      height: 40.h,
+                                      width: double.infinity,
+                                      decoration:
+                                          BoxDecoration(color: colorPrimary),
+                                      child: AppSimpleButton(
+                                        onDoneFuction: () async {
+                                          if (StudentData
+                                              .rollNoController.text.isEmpty) {
+                                            context.showSnackBar(
+                                                title: tr("error"),
+                                                message: tr("rollNoError"),
+                                                snackTypeEnum:
+                                                    SnackTypeEnum.error);
+                                          } else if (StudentData
+                                              .nameController.text.isEmpty) {
+                                            context.showSnackBar(
+                                                title: tr("error"),
+                                                message: tr("nameError"),
+                                                snackTypeEnum:
+                                                    SnackTypeEnum.error);
+                                          } else if (StudentData
+                                              .nameControllerFather
+                                              .text
+                                              .isEmpty) {
+                                            context.showSnackBar(
+                                                title: tr("error"),
+                                                message: tr("fatherNameError"),
+                                                snackTypeEnum:
+                                                    SnackTypeEnum.error);
+                                          }
+                                          // else if (StudentData
+                                          //     .nameControllerMother
+                                          //     .text
+                                          //     .isEmpty) {
+                                          //   context.showSnackBar(
+                                          //       title: tr("error"),
+                                          //       message: tr("motherNameError"),
+                                          //       snackTypeEnum:
+                                          //           SnackTypeEnum.error);
+                                          // }
+                                          else if (StudentData
+                                                  .pincodeController
+                                                  .text
+                                                  .length !=
+                                              6) {
+                                            context.showSnackBar(
+                                                title: tr("error"),
+                                                message: tr("pincodeError"),
+                                                snackTypeEnum:
+                                                    SnackTypeEnum.error);
+                                          } else if (StudentData
+                                              .tehsilController.text.isEmpty) {
+                                            context.showSnackBar(
+                                                title: tr("error"),
+                                                message: tr("tehsilError"),
+                                                snackTypeEnum:
+                                                    SnackTypeEnum.error);
+                                          } else if (StudentData
+                                              .villMohallaController
+                                              .text
+                                              .isEmpty) {
+                                            context.showSnackBar(
+                                                title: tr("error"),
+                                                message: tr("villMohallaError"),
+                                                snackTypeEnum:
+                                                    SnackTypeEnum.error);
+                                          } else if (StudentData
+                                                  .mobileController
+                                                  .text
+                                                  .length !=
+                                              10) {
+                                            context.showSnackBar(
+                                                title: tr("error"),
+                                                message: tr("mobileError"),
+                                                snackTypeEnum:
+                                                    SnackTypeEnum.error);
+                                          } else {
+                                            print(
+                                                "sdddddddssssss>>>>>>>>${StudentData.selectedImage == null}");
 
-                                      'college_id':
-                                          '${StudentData.selectedStudent?.collegeId}',
-                                      "class_group_id": StudentData
-                                          .selectedStudent?.classGroupId,
-                                      "class": StudentData
-                                          .selectedStudent?.finalClassId,
+                                            var map = {
+                                              "roll_no": StudentData
+                                                  .rollNoController.text,
+                                              "name": StudentData
+                                                  .nameController.text,
+                                              "father": StudentData
+                                                  .nameControllerFather.text,
+                                              "mother": StudentData
+                                                  .nameControllerMother.text,
+                                              "pin_code": StudentData
+                                                  .pincodeController.text,
+                                              "district": StudentData
+                                                  .selectedStudent?.district,
+                                              "state": StudentData
+                                                  .selectedStudent?.state,
+                                              "tehsil": StudentData
+                                                  .tehsilController.text,
+                                              "village_mohalla": StudentData
+                                                  .villMohallaController.text,
+                                              "mobile_no": StudentData
+                                                  .mobileController.text,
 
-                                      "serial_no":
-                                          StudentData.selectedStudent?.serialNo,
-                                      "session":
-                                          StudentData.selectedStudent?.session,
-                                      //"application_no": "APP123",
-                                      "aadhaar_number": StudentData
-                                          .selectedStudent?.aadhaarNumber,
-                                      //"admission_date": DateTimeUtil.getCurrentDate(),
-                                      "dob": StudentData.selectedStudent?.dob
-                                          .toLocal(),
-                                      "gender": "",
-                                      "religion":
-                                          StudentData.selectedStudent?.religion,
-                                      "caste_id":
-                                          StudentData.selectedStudent?.casteId,
-                                      "sub_caste_id": StudentData
-                                          .selectedStudent?.subCasteId,
+                                              'college_id':
+                                                  '${StudentData.selectedStudent?.collegeId}',
+                                              "class_group_id": StudentData
+                                                  .selectedStudent
+                                                  ?.classGroupId,
+                                              "class": StudentData
+                                                  .selectedStudent
+                                                  ?.finalClassId,
 
-                                      "father_occupation": StudentData
-                                          .selectedStudent?.fatherOccupation,
+                                              "serial_no": StudentData
+                                                  .rollNoController.text,
 
-                                      "mother_occupation": StudentData
-                                          .selectedStudent?.motherOccupation,
+                                              // "serial_no": StudentData
+                                              //     .selectedStudent?.serialNo,
+                                              "session": StudentData
+                                                  .selectedStudent?.session,
+                                              //"application_no": "APP123",
+                                              "aadhaar_number": StudentData
+                                                  .selectedStudent
+                                                  ?.aadhaarNumber,
+                                              //"admission_date": DateTimeUtil.getCurrentDate(),
+                                              "dob": "",
+                                              "gender": "-",
+                                              "religion": StudentData
+                                                  .selectedStudent?.religion,
+                                              "caste_id": StudentData
+                                                  .selectedStudent?.casteId,
+                                              "sub_caste_id": StudentData
+                                                  .selectedStudent?.subCasteId,
 
-                                      "guardian_name": StudentData
-                                          .selectedStudent
-                                          ?.guardian
-                                          .guardianName,
-                                      "relationship_with_student": StudentData
-                                          .selectedStudent
-                                          ?.guardian
-                                          .relationshipWithStudent,
-                                      "guardian_mobile": StudentData
-                                          .selectedStudent
-                                          ?.guardian
-                                          .guardianMobile,
-                                      "guardian_pin_code": StudentData
-                                          .selectedStudent
-                                          ?.guardian
-                                          .guardianPinCode,
-                                      "guardian_district": StudentData
-                                          .selectedStudent
-                                          ?.guardian
-                                          .guardianDistrict,
-                                      "guardian_tehsil": StudentData
-                                          .selectedStudent
-                                          ?.guardian
-                                          .guardianTehsil,
-                                      "guardian_village_mohalla": StudentData
-                                          .selectedStudent
-                                          ?.guardian
-                                          .guardianVillageMohalla,
-                                      "guardian_address": "Guardian Address",
-                                      "guardian_alternate_mobile": StudentData
-                                          .selectedStudent
-                                          ?.guardian
-                                          .guardianAlternateMobile,
-                                      "guardian_email": StudentData
-                                          .selectedStudent
-                                          ?.guardian
-                                          .guardianEmail,
-                                      "previous_school": StudentData
-                                          .selectedStudent?.previousSchool,
-                                      "group": StudentData
-                                          .selectedStudent?.finalClassGroupName,
-                                      "previous_passed_class": StudentData
-                                          .selectedStudent
-                                          ?.details
-                                          .previousPassedClass,
-                                      "time_period_of_residence": StudentData
-                                          .selectedStudent
-                                          ?.details
-                                          .timePeriodOfResidence,
-                                      "academic_year": StudentData
-                                          .selectedStudent
-                                          ?.details
-                                          .academicYear,
-                                      "bank_name": StudentData
-                                          .selectedStudent?.details.bankName,
-                                      "ifsc_code": StudentData
-                                          .selectedStudent?.details.ifscCode,
-                                      "branch_address": StudentData
-                                          .selectedStudent
-                                          ?.details
-                                          .branchAddress,
-                                      "account_number": StudentData
-                                          .selectedStudent
-                                          ?.details
-                                          .accountNumber,
-                                      "account_holder_name": StudentData
-                                          .selectedStudent
-                                          ?.details
-                                          .accountHolderName,
-                                      "udise_pen": StudentData
-                                          .selectedStudent?.details.udisePen,
-                                      "disability_status": StudentData
-                                          .selectedStudent
-                                          ?.details
-                                          .disabilityStatus,
-                                      "disability_type": StudentData
-                                          .selectedStudent
-                                          ?.details
-                                          .disabilityType,
-                                      "disability_percentage": StudentData
-                                          .selectedStudent
-                                          ?.details
-                                          .disabilityPercentage,
-                                      "last_academic_result": StudentData
-                                          .selectedStudent
-                                          ?.details
-                                          .lastAcademicResult,
-                                      "obtained_marks": StudentData
-                                          .selectedStudent
-                                          ?.details
-                                          .obtainedMarks,
-                                      "attended_days": StudentData
-                                          .selectedStudent
-                                          ?.details
-                                          .attendedDays,
-                                      "student_blood_group": StudentData
-                                          .selectedStudent
-                                          ?.details
-                                          .studentBloodGroup,
-                                      "student_weight": StudentData
-                                          .selectedStudent
-                                          ?.details
-                                          .studentWeight,
-                                      "student_height": StudentData
-                                          .selectedStudent
-                                          ?.details
-                                          .studentHeight
-                                    };
-                                    context
-                                        .read<UpdateBloc>()
-                                        .add(UpdateStudentEvent(map: map));
-                                  },
-                                  buttonBackgroundColor: colorPrimary,
-                                  nameText: "submit",
-                                  textSize: 18.sp,
-                                ),
-                              );
+                                              "father_occupation": StudentData
+                                                  .selectedStudent
+                                                  ?.fatherOccupation,
+
+                                              "mother_occupation": StudentData
+                                                  .selectedStudent
+                                                  ?.motherOccupation,
+
+                                              "guardian_name": StudentData
+                                                  .selectedStudent
+                                                  ?.guardian
+                                                  .guardianName,
+                                              "relationship_with_student":
+                                                  StudentData
+                                                      .selectedStudent
+                                                      ?.guardian
+                                                      .relationshipWithStudent,
+                                              "guardian_mobile": StudentData
+                                                  .selectedStudent
+                                                  ?.guardian
+                                                  .guardianMobile,
+                                              "guardian_pin_code": StudentData
+                                                  .selectedStudent
+                                                  ?.guardian
+                                                  .guardianPinCode,
+                                              "guardian_district": StudentData
+                                                  .selectedStudent
+                                                  ?.guardian
+                                                  .guardianDistrict,
+                                              "guardian_tehsil": StudentData
+                                                  .selectedStudent
+                                                  ?.guardian
+                                                  .guardianTehsil,
+                                              "guardian_village_mohalla":
+                                                  StudentData
+                                                      .selectedStudent
+                                                      ?.guardian
+                                                      .guardianVillageMohalla,
+                                              "guardian_address":
+                                                  "Guardian Address",
+                                              "guardian_alternate_mobile":
+                                                  StudentData
+                                                      .selectedStudent
+                                                      ?.guardian
+                                                      .guardianAlternateMobile,
+                                              "guardian_email": StudentData
+                                                  .selectedStudent
+                                                  ?.guardian
+                                                  .guardianEmail,
+                                              "previous_school": StudentData
+                                                  .selectedStudent
+                                                  ?.previousSchool,
+                                              "group": StudentData
+                                                  .selectedStudent
+                                                  ?.finalClassGroupName,
+                                              "previous_passed_class":
+                                                  StudentData
+                                                      .selectedStudent
+                                                      ?.details
+                                                      .previousPassedClass,
+                                              "time_period_of_residence":
+                                                  StudentData
+                                                      .selectedStudent
+                                                      ?.details
+                                                      .timePeriodOfResidence,
+                                              "academic_year": StudentData
+                                                  .selectedStudent
+                                                  ?.details
+                                                  .academicYear,
+                                              "bank_name": StudentData
+                                                  .selectedStudent
+                                                  ?.details
+                                                  .bankName,
+                                              "ifsc_code": StudentData
+                                                  .selectedStudent
+                                                  ?.details
+                                                  .ifscCode,
+                                              "branch_address": StudentData
+                                                  .selectedStudent
+                                                  ?.details
+                                                  .branchAddress,
+                                              "account_number": StudentData
+                                                  .selectedStudent
+                                                  ?.details
+                                                  .accountNumber,
+                                              "account_holder_name": StudentData
+                                                  .selectedStudent
+                                                  ?.details
+                                                  .accountHolderName,
+                                              "udise_pen": StudentData
+                                                  .selectedStudent
+                                                  ?.details
+                                                  .udisePen,
+                                              "disability_status": StudentData
+                                                  .selectedStudent
+                                                  ?.details
+                                                  .disabilityStatus,
+                                              "disability_type": StudentData
+                                                  .selectedStudent
+                                                  ?.details
+                                                  .disabilityType,
+                                              "disability_percentage":
+                                                  StudentData
+                                                      .selectedStudent
+                                                      ?.details
+                                                      .disabilityPercentage,
+                                              "last_academic_result":
+                                                  StudentData
+                                                      .selectedStudent
+                                                      ?.details
+                                                      .lastAcademicResult,
+                                              "obtained_marks": StudentData
+                                                  .selectedStudent
+                                                  ?.details
+                                                  .obtainedMarks,
+                                              "attended_days": StudentData
+                                                  .selectedStudent
+                                                  ?.details
+                                                  .attendedDays,
+                                              "student_blood_group": StudentData
+                                                  .selectedStudent
+                                                  ?.details
+                                                  .studentBloodGroup,
+                                              "student_weight": StudentData
+                                                  .selectedStudent
+                                                  ?.details
+                                                  .studentWeight,
+                                              "student_height": StudentData
+                                                  .selectedStudent
+                                                  ?.details
+                                                  .studentHeight
+                                            };
+                                            context.read<UpdateBloc>().add(
+                                                UpdateStudentEvent(map: map));
+                                          }
+                                        },
+                                        buttonBackgroundColor: colorPrimary,
+                                        nameText: "submit",
+                                        textSize: 18.sp,
+                                      ),
+                                    );
                             },
                           ),
                           spaceVertical(space: 10.h),

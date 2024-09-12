@@ -19,6 +19,7 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
 
   StudentBloc() : super(StudentInitial()) {
     on<GetStudentEvent>(_getStudentApi);
+    on<LoadMoreStudentEvent>(_loadMoreStudentApi);
     on<ClearStudentEvent>(_clearStudentApi);
     on<SearchStudentEvent>(_searchStudentApi);
     on<CreateStudentEvent>(_createStudentApi);
@@ -32,12 +33,30 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
       emit(StudentGetLoadingDismiss());
       StudentsModel studentsModel =
           StudentsModel.fromJson(responseModel.data["students"]);
-      if (event.map["page"] == 1) {
-        AppData.studentList.clear();
-      }
 
       AppData.studentList.addAll(studentsModel.data);
-      emit(StudentGetSuccess(studentsList: AppData.studentList));
+      emit(StudentGetSuccess(
+          studentsModel: studentsModel,
+          loadMore: studentsModel.data.length == 20));
+    } catch (e, t) {
+      print(">>>>>>>>>>>>>>>>>>>>>>>>$t");
+      emit(StudentGetError(error: e.toString()));
+    }
+  }
+
+  FutureOr<void> _loadMoreStudentApi(
+      LoadMoreStudentEvent event, Emitter<StudentState> emit) async {
+    try {
+      if (state is! StudentGetSuccess) return;
+      final cast = state as StudentGetSuccess;
+      List<Datum> list = cast.studentsModel.data ?? <Datum>[];
+      var responseModel = await studentRepository.getStudentApi(event.map);
+      StudentsModel studentsModel =
+          StudentsModel.fromJson(responseModel.data["students"]);
+      list.addAll(studentsModel.data);
+      emit(StudentGetSuccess(
+          studentsModel: studentsModel.copyWith(data: list),
+          loadMore: studentsModel.data.length == 20));
     } catch (e, t) {
       print(">>>>>>>>>>>>>>>>>>>>>>>>$t");
       emit(StudentGetError(error: e.toString()));
@@ -46,19 +65,41 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
 
   Future<FutureOr<void>> _searchStudentApi(
       SearchStudentEvent event, Emitter<StudentState> emit) async {
+
+
     try {
       emit(StudentGetLoading());
-      var filterList = AppData.studentList
-          .where(
-            (element) => element.name.contains(event.map["query"]),
-          )
-          .toList();
+      var responseModel = await studentRepository.getStudentApi(event.map);
       emit(StudentGetLoadingDismiss());
-      emit(StudentGetSuccess(studentsList: filterList));
+      StudentsModel studentsModel =
+      StudentsModel.fromJson(responseModel.data["students"]);
+
+      AppData.studentList.addAll(studentsModel.data);
+      emit(StudentGetSuccess(
+          studentsModel: studentsModel,
+          loadMore: studentsModel.data.length == 20));
     } catch (e, t) {
       print(">>>>>>>>>>>>>>>>>>>>>>>>$t");
       emit(StudentGetError(error: e.toString()));
     }
+    //
+    //
+    // try {
+    //   emit(StudentGetLoading());
+    //   var filterList = AppData.studentList
+    //       .where(
+    //         (element) => element.name.contains(event.map["query"]),
+    //       )
+    //       .toList();
+    //   StudentsModel studentsModel = StudentsModel(data: filterList);
+    //
+    //   emit(StudentGetLoadingDismiss());
+    //   emit(StudentGetSuccess(
+    //       studentsModel: studentsModel, loadMore: filterList.length == 20));
+    // } catch (e, t) {
+    //   print(">>>>>>>>>>>>>>>>>>>>>>>>$t");
+    //   emit(StudentGetError(error: e.toString()));
+    // }
   }
 
   Future<FutureOr<void>> _createStudentApi(
@@ -80,6 +121,8 @@ class StudentBloc extends Bloc<StudentEvent, StudentState> {
   FutureOr<void> _clearStudentApi(
       ClearStudentEvent event, Emitter<StudentState> emit) {
     emit(StudentCreateLoading());
-    emit(StudentGetSuccess(studentsList: []));
+    StudentsModel studentsModel = StudentsModel(data: []);
+
+    emit(StudentGetSuccess(studentsModel: studentsModel, loadMore: false));
   }
 }

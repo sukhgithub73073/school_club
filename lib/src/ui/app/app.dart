@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:get/get.dart';
 import 'package:school_club/src/core/app_bloc_providers.dart';
 import 'package:school_club/src/core/app_strings.dart';
 import 'package:school_club/src/core/app_theme.dart';
@@ -8,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school_club/src/ui/splash/splash_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:upgrader/upgrader.dart';
+
 
 class MyApp extends StatelessWidget {
   final String fontFamily = "Montserrat";
@@ -31,7 +34,7 @@ class MyApp extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          return MaterialApp(
+          return GetMaterialApp(
             title: AppStrings.appName,
             debugShowCheckedModeBanner: false,
             theme: AppTheme.theme,

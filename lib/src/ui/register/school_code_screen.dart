@@ -14,7 +14,7 @@ import 'package:school_club/src/data/blocs/role_bloc/role_bloc.dart';
 import 'package:school_club/src/extension/app_extension.dart';
 import 'package:school_club/src/ui/dashboard/main_screen.dart';
 import 'package:school_club/src/ui/register/register_screen.dart';
-import 'package:school_club/src/ui/register/teacher_register_screen.dart';
+import 'package:school_club/src/ui/register/staff_registration/staff_register_screen.dart';
 import 'package:school_club/src/utility/validation_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -92,8 +92,8 @@ class _SchoolCodeScreenState extends State<SchoolCodeScreen> {
                         listener: (context, state) {
                           if (state is DetailSuccess) {
                             context.pushReplacementScreen(
-                                nextScreen: roleState is RoleTeacher
-                                    ? TeacherRegisterScreen()
+                                nextScreen: roleState is RoleStaff
+                                    ? StaffRegisterScreen()
                                     : RegisterScreen());
                           }
                         },

@@ -8,13 +8,15 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:school_club/src/ui/app/app.dart';
 import 'package:hive_storage/hive_storage.dart';
+import 'package:upgrader/upgrader.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //await dotenv.load(fileName: ".env");
+  await Upgrader.clearSavedSettings();
   await EasyLocalization.ensureInitialized();
   await HiveStorageImp.hiveInjector();
-
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await ScreenUtil.ensureScreenSize();
   await AppInjector.init(appRunner: () => runApp(EasyLocalization(
@@ -22,6 +24,5 @@ Future<void> main() async {
       path: 'assets/translations',
       startLocale: Locale('en'),
       fallbackLocale: Locale('en'),
-
       child: SafeArea(bottom: true,top: false, child: MyApp()))));
 }

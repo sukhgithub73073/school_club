@@ -8,6 +8,7 @@ class AppAssets {
   static const String userPlaceholder = "assets/images/user_placeholder.png";
   static const String changeLanguageIcon = "assets/images/change_language_icon.png";
   static const String editBg = "assets/images/edit_bg.png";
+  static const String deleteBg = "assets/images/delete_bg.png";
 
 
 

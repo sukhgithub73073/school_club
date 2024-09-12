@@ -9,6 +9,8 @@ import 'package:school_club/src/core/app_strings.dart';
 import 'package:school_club/src/core/dialog_widgets/failure_message_dialog.dart';
 import 'package:school_club/src/core/dialog_widgets/success_message_dialog.dart';
 import 'package:school_club/src/core/drop_down/drop_list_model.dart';
+import 'package:school_club/src/data/blocs/classes_bloc/classes_bloc.dart';
+import 'package:school_club/src/data/blocs/groups_bloc/groups_bloc.dart';
 import 'package:school_club/src/data/blocs/image_pick_bloc/image_pick_bloc.dart';
 import 'package:school_club/src/data/blocs/pincode_bloc/pincode_bloc.dart';
 import 'package:school_club/src/data/blocs/register_bloc/register_bloc.dart';
@@ -39,14 +41,14 @@ import 'package:school_club/src/core/custom_clipper.dart';
 import 'package:school_club/src/core/text_view.dart';
 import 'package:school_club/src/extension/app_extension.dart';
 
-class TeacherRegisterScreen extends StatefulWidget {
-  TeacherRegisterScreen({super.key});
+class StaffRegisterScreen extends StatefulWidget {
+  StaffRegisterScreen({super.key});
 
   @override
-  State<TeacherRegisterScreen> createState() => _TeacherRegisterScreenState();
+  State<StaffRegisterScreen> createState() => _StaffRegisterScreenState();
 }
 
-class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
+class _StaffRegisterScreenState extends State<StaffRegisterScreen> {
   var nameController = TextEditingController(text: "");
   var mobileController = TextEditingController(text: "");
   var fatherController = TextEditingController(text: "");
@@ -66,6 +68,7 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
   void initState() {
     super.initState();
     StudentData.resetImage();
+    context.read<ImagePickBloc>().add(ClearImagePickEvent());
   }
 
   @override
@@ -101,23 +104,19 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
                               BlocConsumer<ImagePickBloc, ImagePickState>(
                                 listener: (context, state) {},
                                 builder: (context, state) {
-                                  if (state is ImagePickRemoveBg) {
-                                    return Image.memory(state.file);
+                                  if (state is ImagePickSuccess) {
+                                    StudentData.selectedImage = state.file;
+                                    return CircleAvatar(
+                                      radius: 100,
+                                      backgroundImage:
+                                          FileImage(File(state.file.path)),
+                                    );
                                   } else {
-                                    if (state is ImagePickSuccess) {
-                                      StudentData.selectedImage = state.file;
-                                      return CircleAvatar(
-                                        radius: 100,
-                                        backgroundImage:
-                                            FileImage(File(state.file.path)),
-                                      );
-                                    } else {
-                                      return CircleAvatar(
-                                        radius: 100,
-                                        backgroundImage:
-                                            AssetImage(AppAssets.logo),
-                                      );
-                                    }
+                                    return CircleAvatar(
+                                      radius: 100,
+                                      backgroundImage:
+                                          AssetImage(AppAssets.logo),
+                                    );
                                   }
                                 },
                               ),
@@ -209,18 +208,6 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
                                 hintTextColor: colorGray.withOpacity(0.6)),
                             spaceVertical(space: 20.h),
                             CustomTextField(
-                                controller: fatherController,
-                                textInputAction: TextInputAction.next,
-                                keyboardType: TextInputType.text,
-                                paddingHorizontal: 20.0,
-                                hasViewHight: false,
-                                labelText: "fatherName",
-                                hintText: "fatherNameHere",
-                                numberOfLines: 1,
-                                hintFontWeight: FontWeight.w400,
-                                hintTextColor: colorGray.withOpacity(0.6)),
-                            spaceVertical(space: 20.h),
-                            CustomTextField(
                                 controller: emailController,
                                 textInputAction: TextInputAction.next,
                                 keyboardType: TextInputType.text,
@@ -228,6 +215,18 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
                                 hasViewHight: false,
                                 labelText: "email",
                                 hintText: "emailHere",
+                                numberOfLines: 1,
+                                hintFontWeight: FontWeight.w400,
+                                hintTextColor: colorGray.withOpacity(0.6)),
+                            spaceVertical(space: 20.h),
+                            CustomTextField(
+                                controller: fatherController,
+                                textInputAction: TextInputAction.next,
+                                keyboardType: TextInputType.text,
+                                paddingHorizontal: 20.0,
+                                hasViewHight: false,
+                                labelText: "fatherName",
+                                hintText: "fatherNameHere",
                                 numberOfLines: 1,
                                 hintFontWeight: FontWeight.w400,
                                 hintTextColor: colorGray.withOpacity(0.6)),
@@ -287,6 +286,68 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
                                 selectedDesignations = item;
                               },
                             ),
+                            // BlocConsumer<GroupsBloc, GroupsState>(
+                            //   listener: (context, state) {},
+                            //   builder: (context, state) {
+                            //     if (state is GroupsSuccess) {
+                            //       printLog(
+                            //           "builder >>>>>>>>>>>>>>>>>${state is GroupsSuccess}");
+                            //       List<DropListModel> list = [];
+                            //       state.data.forEach((element) {
+                            //         list.add(DropListModel(
+                            //             id: "${element.id}",
+                            //             name: "${element.groupName}"));
+                            //       });
+                            //       return CustomDropdown<DropListModel>(
+                            //         hintText: tr("selectGroup"),
+                            //         items: list,
+                            //         excludeSelected: false,
+                            //         decoration: customDropdownDecoration,
+                            //         onChanged: (item) {
+                            //           AppData.studentMap["class_group_id"] =
+                            //               item!.id;
+                            //
+                            //           var data = state.data.firstWhere(
+                            //             (element) =>
+                            //                 element.id.toString() == item!.id,
+                            //           );
+                            //           context
+                            //               .read<ClassesBloc>()
+                            //               .add(GetClassEvent(groupItem: data));
+                            //         },
+                            //       );
+                            //     } else {
+                            //       return SizedBox.shrink();
+                            //     }
+                            //   },
+                            // ),
+                            // spaceVertical(space: 10.h),
+                            // BlocConsumer<ClassesBloc, ClassesState>(
+                            //   listener: (context, state) {},
+                            //   builder: (context, state) {
+                            //     if (state is ClassesGetSuccess) {
+                            //       printLog(
+                            //           "builder >>>>>>>>>>>>>>>>>${state is GroupsSuccess}");
+                            //       List<DropListModel> list = [];
+                            //       state.data.forEach((element) {
+                            //         list.add(DropListModel(
+                            //             id: "${element.id}",
+                            //             name: "${element.className}"));
+                            //       });
+                            //       return CustomDropdown<DropListModel>(
+                            //         hintText: tr("selectClass"),
+                            //         items: list,
+                            //         decoration: customDropdownDecoration,
+                            //         excludeSelected: false,
+                            //         onChanged: (item) {
+                            //           AppData.studentMap["class_id"] = item!.id;
+                            //         },
+                            //       );
+                            //     } else {
+                            //       return SizedBox.shrink();
+                            //     }
+                            //   },
+                            // ),
                             spaceVertical(space: 20.h),
                             BlocConsumer<PincodeBloc, PincodeState>(
                               listener: (context, state) {
@@ -390,7 +451,7 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
                                           keyboardType: TextInputType.text,
                                           paddingHorizontal: 20.0,
                                           hasViewHight: false,
-                                          labelText: "selectTehsil",
+                                          labelText: "tehsilHere",
                                           hintText: "tehsil",
                                           numberOfLines: 1,
                                           hintFontWeight: FontWeight.w400,
@@ -442,70 +503,87 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
                                 }
                               },
                               builder: (context, state) {
-                                return Container(
-                                  height: 40.h,
-                                  width: double.infinity,
-                                  decoration:
-                                      BoxDecoration(color: colorPrimary),
-                                  child: AppSimpleButton(
-                                    onDoneFuction: () async {
-                                      if (nameController.text.isEmpty) {
-                                        context.showSnackBar(
-                                            title: tr("error"),
-                                            message: tr("nameError"),
-                                            snackTypeEnum: SnackTypeEnum.error);
-                                      } else if (mobileController.text.length !=
-                                          10) {
-                                        context.showSnackBar(
-                                            title: tr("error"),
-                                            message: tr("mobileError"),
-                                            snackTypeEnum: SnackTypeEnum.error);
-                                      } else {
-                                        var map = {
-                                          'college_id':
-                                              '${AppData.userModel.data?.data.college.id ?? ""}',
-                                          'user_id':
-                                              '${AppData.userModel.data?.data.id ?? ""}',
-                                          'session': "${DateTime.now().year}",
-                                          'name': nameController.text,
-                                          'dob': dobController.text,
-                                          'gender': '',
-                                          'father': fatherController.text,
-                                          'designation':
-                                              selectedDesignations == null
-                                                  ? "CLASS TEACHER"
-                                                  : selectedDesignations?.name,
-                                          'qualification': '',
-                                          'email': emailController.text,
-                                          'mobile_no': mobileController.text,
-                                          'alternate_mobile_no': "",
-                                          'pin_code': pincodeController.text,
-                                          'state': stateController.text,
-                                          'district': districtController.text,
-                                          'tehsil': tehsilController.text,
-                                          'village_mohalla':
-                                              villMohallaController.text,
-                                          'religion': '',
-                                          'caste_id': '',
-                                          'sub_caste_id': '',
-                                          'bank_name': '',
-                                          'ifsc_code': '',
-                                          'status': 'Active',
-                                          'account_number': '',
-                                          'confirm_account_number': '',
-                                          'account_holder_name': '',
-                                          "TYPE": RoleEnum.teacher.name
-                                        };
-                                        context
-                                            .read<RegisterBloc>()
-                                            .add(DoRegisterEvent(map: map));
-                                      }
-                                    },
-                                    buttonBackgroundColor: colorPrimary,
-                                    nameText: "register",
-                                    textSize: 18.sp,
-                                  ),
-                                );
+                                return state is RegisterLoading
+                                    ? SizedBox(
+                                        child: CircularProgressIndicator())
+                                    : Container(
+                                        height: 40.h,
+                                        width: double.infinity,
+                                        decoration:
+                                            BoxDecoration(color: colorPrimary),
+                                        child: AppSimpleButton(
+                                          onDoneFuction: () async {
+                                            if (nameController.text.isEmpty) {
+                                              context.showSnackBar(
+                                                  title: tr("error"),
+                                                  message: tr("nameError"),
+                                                  snackTypeEnum:
+                                                      SnackTypeEnum.error);
+                                            } else if (mobileController
+                                                    .text.length !=
+                                                10) {
+                                              context.showSnackBar(
+                                                  title: tr("error"),
+                                                  message: tr("mobileError"),
+                                                  snackTypeEnum:
+                                                      SnackTypeEnum.error);
+                                            } else if (emailController
+                                                .text.isEmpty) {
+                                              context.showSnackBar(
+                                                  title: tr("error"),
+                                                  message: tr("emailError"),
+                                                  snackTypeEnum:
+                                                      SnackTypeEnum.error);
+                                            } else {
+                                              var map = {
+                                                'college_id':
+                                                    '${AppData.userModel.data?.data.college.id == 0 ? AppData.userModel.data?.data.staff.collegeId : AppData.userModel.data?.data.college.id}',
+                                                'user_id':
+                                                    '${AppData.userModel.data?.data.id ?? ""}',
+                                                'session':
+                                                    "${DateTime.now().year}",
+                                                'name': nameController.text,
+                                                'email': emailController.text,
+                                                'dob': dobController.text,
+                                                'gender': '',
+                                                'father': fatherController.text,
+                                                'designation':
+                                                    selectedDesignations == null
+                                                        ? "CLASS TEACHER"
+                                                        : selectedDesignations
+                                                            ?.name,
+                                                'qualification': '',
+                                                'mobile_no':
+                                                    mobileController.text,
+                                                'alternate_mobile_no': "",
+                                                'pin_code':
+                                                    pincodeController.text,
+                                                'state': stateController.text,
+                                                'district':
+                                                    districtController.text,
+                                                'tehsil': tehsilController.text,
+                                                'village_mohalla':
+                                                    villMohallaController.text,
+                                                'religion': '',
+                                                'caste_id': '',
+                                                'sub_caste_id': '',
+                                                'bank_name': '',
+                                                'ifsc_code': '',
+                                                'status': 'Active',
+                                                'account_number': '',
+                                                'confirm_account_number': '',
+                                                'account_holder_name': '',
+                                                "TYPE": RoleEnum.staff.name
+                                              };
+                                              context.read<RegisterBloc>().add(
+                                                  DoRegisterEvent(map: map));
+                                            }
+                                          },
+                                          buttonBackgroundColor: colorPrimary,
+                                          nameText: "register",
+                                          textSize: 18.sp,
+                                        ),
+                                      );
                               },
                             ),
                             spaceVertical(space: 10.h),
@@ -513,6 +591,29 @@ class _TeacherRegisterScreenState extends State<TeacherRegisterScreen> {
                         ),
                       )
                     ]),
+                Positioned(
+                  top: 5.h,
+                  left: 5.w,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(color: colorWhite, Icons.arrow_back),
+                        onPressed: () {
+                          context.back();
+                        },
+                      ),
+                      TextView(
+                        text: "createStaff",
+                        color: colorWhite,
+                        textSize: 16.sp,
+                        textAlign: TextAlign.center,
+                        style: AppTextStyleEnum.medium,
+                        fontFamily: Family.medium,
+                        lineHeight: 1.3,
+                      )
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

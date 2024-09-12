@@ -16,6 +16,13 @@ class StudentsModel {
     required this.data,
   });
 
+  StudentsModel copyWith({
+    List<Datum>? data,
+  }) =>
+      StudentsModel(
+        data: data ?? this.data,
+      );
+
   factory StudentsModel.fromJson(Map<String, dynamic> json) => StudentsModel(
         data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
       );
@@ -148,12 +155,15 @@ class Datum {
         classGroupId: json["class_group_id"] ?? "",
         datumClass: json["class"] ?? "",
         serialNo: json["serial_no"] ?? "",
-        rollNo: (json["roll_no"]??"").toString(),
-        admissionDate: DateTime.parse(json["admission_date"] =="" ? DateTime.now().toString():json["admission_date"]),
+        rollNo: (json["roll_no"] ?? "").toString(),
+        admissionDate: DateTime.parse(json["admission_date"] == ""
+            ? DateTime.now().toString()
+            : json["admission_date"]),
         mobileNo: json["mobile_no"] ?? "",
         alternateMobileNo: json["alternate_mobile_no"] ?? "",
         name: json["name"] ?? "",
-        dob: DateTime.parse(json["dob"] =="" ? DateTime.now().toString():json["dob"]),
+        dob: DateTime.parse(
+            json["dob"] == "" ? DateTime.now().toString() : json["dob"]),
         gender: json["gender"] ?? "",
         image: json["image"] ?? "",
         imagePng: json["image_png"] ?? "",
@@ -275,7 +285,6 @@ class Attachments {
   String studentTc;
   String studentMarksheet;
 
-
   Attachments({
     required this.id,
     required this.studentId,
@@ -288,7 +297,6 @@ class Attachments {
     required this.motherAadharBack,
     required this.studentTc,
     required this.studentMarksheet,
-
   });
 
   factory Attachments.fromJson(Map<String, dynamic> json) => Attachments(
@@ -303,7 +311,6 @@ class Attachments {
         motherAadharBack: json["mother_aadhar_back"] ?? "",
         studentTc: json["student_tc"] ?? "",
         studentMarksheet: json["student_marksheet"] ?? "",
-
       );
 
   Map<String, dynamic> toJson() => {
@@ -318,7 +325,6 @@ class Attachments {
         "mother_aadhar_back": motherAadharBack,
         "student_tc": studentTc,
         "student_marksheet": studentMarksheet,
-
       };
 }
 
@@ -414,11 +420,11 @@ class Details {
   });
 
   factory Details.fromJson(Map<String, dynamic> json) => Details(
-        id: json["id"]??0,
-        studentId: json["student_id"]??0,
-        collegeId: json["college_id"]??0,
-        academicYear: json["academic_year"]??"",
-        applicationNo: json["application_no"]??0,
+        id: json["id"] ?? 0,
+        studentId: json["student_id"] ?? 0,
+        collegeId: json["college_id"] ?? 0,
+        academicYear: json["academic_year"] ?? "",
+        applicationNo: json["application_no"] ?? 0,
         previousSchoolName: json["previous_school_name"] ?? "",
         previousPassedClass: json["previous_passed_class"] ?? "",
         group: json["group"] ?? "",
@@ -512,8 +518,8 @@ class Guardian {
   });
 
   factory Guardian.fromJson(Map<String, dynamic> json) => Guardian(
-        id: json["id"]??0,
-        studentId: json["student_id"]??0,
+        id: json["id"] ?? 0,
+        studentId: json["student_id"] ?? 0,
         guardianName: json["guardian_name"] ?? "",
         guardianMobile: json["guardian_mobile"] ?? "",
         guardianAlternateMobile: json["guardian_alternate_mobile"] ?? "",

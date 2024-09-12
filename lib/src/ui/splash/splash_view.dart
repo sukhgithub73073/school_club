@@ -2,6 +2,7 @@ import 'package:school_club/src/core/app_assets.dart';
 import 'package:school_club/src/core/app_colors.dart';
 import 'package:school_club/src/core/app_image_view.dart';
 import 'package:school_club/src/data/blocs/language_bloc/language_bloc.dart';
+import 'package:school_club/src/data/blocs/login_bloc/login_bloc.dart';
 import 'package:school_club/src/data/blocs/role_bloc/role_bloc.dart';
 import 'package:school_club/src/enums/role_enum.dart';
 import 'package:school_club/src/extension/app_extension.dart';
@@ -31,10 +32,26 @@ class _SplashViewState extends State<SplashView> {
         context
             .read<LanguageBloc>()
             .add(ChangeLanguageEvent(locale: locale ?? "en"));
-        context
-            .read<RoleBloc>()
-            .add(ChangeRoleEvent(roleEnum: RoleEnum.principle));
-        context.pushReplacementScreen(nextScreen: LoginScreen());
+
+        //UpdateLoginEvent
+        var loginResponse = await getHiveStorage.read<String>(
+            key: "LOGIN_RESPONSE", defaultValue: "");
+        if (loginResponse == "") {
+          context.pushReplacementScreen(nextScreen: LoginScreen());
+        } else {
+          var CURRENT_ROLE = await getHiveStorage.read<String>(
+              key: "CURRENT_ROLE", defaultValue: "");
+
+          context.read<RoleBloc>().add(ChangeRoleEvent(
+              roleEnum: CURRENT_ROLE == RoleEnum.principle.name
+                  ? RoleEnum.principle
+                  : CURRENT_ROLE == RoleEnum.staff.name
+                      ? RoleEnum.staff
+                      : RoleEnum.student));
+          context.read<LoginBloc>().add(UpdateLoginEvent());
+
+          context.pushReplacementScreen(nextScreen: MainScreen());
+        }
       });
     });
 

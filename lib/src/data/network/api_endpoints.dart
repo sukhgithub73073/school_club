@@ -20,6 +20,7 @@ class ApisEndpoints {
   static String getSerialNoUrl = "$baseUrl/get-sr-no/";
   static String createStudentUrl = "$baseUrl/create-student";
   static String updateStudentUrl = "$baseUrl/update-student/";
+  static String updateStaffUrl = "$baseUrl/update-staff/";
   static String createStaffUrl = "$baseUrl/create-staff";
   static String getStudentUrl = "$baseUrl/get-student-data";
   static String getStaffUrl = "$baseUrl/get-staff-data";

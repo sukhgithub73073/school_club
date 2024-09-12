@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'dart:convert';
 
-DropListModel dropListModelFromJson(String str) => DropListModel.fromJson(json.decode(str));
+DropListModel dropListModelFromJson(String str) =>
+    DropListModel.fromJson(json.decode(str));
 
 String dropListModelToJson(DropListModel data) => json.encode(data.toJson());
 
@@ -15,7 +16,7 @@ class DropListModel with CustomDropdownListFilter {
 
   @override
   String toString() {
-    return name;
+    return name == "" ? name : name.toUpperCase();
   }
 
   @override
@@ -24,13 +25,12 @@ class DropListModel with CustomDropdownListFilter {
   }
 
   factory DropListModel.fromJson(Map<String, dynamic> json) => DropListModel(
-    name: json["name"],
-    id: json["id"].toString(),
-  );
+        name: json["name"],
+        id: json["id"].toString(),
+      );
 
   Map<String, dynamic> toJson() => {
-    "name": name,
-    "id": id,
-  };
-
+        "name": name,
+        "id": id,
+      };
 }

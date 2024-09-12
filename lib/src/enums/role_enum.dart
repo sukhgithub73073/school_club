@@ -1,1 +1,1 @@
-enum RoleEnum { principle, teacher, student }
+enum RoleEnum { principle, staff, student }

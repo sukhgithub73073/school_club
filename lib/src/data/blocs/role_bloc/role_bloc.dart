@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:hive_storage/hive_storage.dart';
 import 'package:school_club/src/data/models/response_model.dart';
 import 'package:school_club/src/enums/role_enum.dart';
 import 'package:school_club/src/utility/app_util.dart';
@@ -17,30 +18,31 @@ class RoleBloc extends Bloc<RoleEvent, RoleState> {
   }
 
   FutureOr<void> _doChangeRole(ChangeRoleEvent event, Emitter<RoleState> emit) {
+    getHiveStorage.write(key: "CURRENT_ROLE", value: event.roleEnum.name);
     emit(RoleLoading());
     if (event.roleEnum == RoleEnum.principle) {
-      emit(RolePrincipal(responseModel: ResponseModel(status: "",data: null,errors: null,message: "")));
-    } else if (event.roleEnum == RoleEnum.teacher) {
-      emit(RoleTeacher(responseModel: ResponseModel(status: "",data: null,errors: null,message: "")));
+      emit(RolePrincipal());
+    } else if (event.roleEnum == RoleEnum.staff) {
+      emit(RoleStaff());
     } else {
-      emit(RoleStudent(responseModel: ResponseModel(status: "",data: null,errors: null,message: "")));
+      emit(RoleStudent());
     }
   }
 
-  FutureOr<void> _updateRoleData(UpdateRoleEventData event, Emitter<RoleState> emit) {
-    printLog(">>>>>>>>>>>>>>>>>>>") ;
+  FutureOr<void> _updateRoleData(
+      UpdateRoleEventData event, Emitter<RoleState> emit) {
+    printLog(">>>>>>>>>>>>>>>>>>>");
     try {
       emit(RoleLoading());
       if (event.roleEnum == RoleEnum.principle) {
-            emit(RolePrincipal(responseModel: event.responseModel));
-          } else if (event.roleEnum == RoleEnum.teacher) {
-            emit(RoleTeacher(responseModel: event.responseModel));
-          } else {
-            emit(RoleStudent(responseModel: event.responseModel));
-          }
+        emit(RolePrincipal());
+      } else if (event.roleEnum == RoleEnum.staff) {
+        emit(RoleStaff());
+      } else {
+        emit(RoleStudent());
+      }
     } catch (e) {
       printLog(">>>>>>>>>>>>>>>Exception>$e");
-
     }
   }
 }

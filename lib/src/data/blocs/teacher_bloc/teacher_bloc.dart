@@ -18,6 +18,7 @@ class TeacherBloc extends Bloc<TeacherEvent, TeacherState> {
 
   TeacherBloc() : super(TeacherInitial()) {
     on<GetTeacherEvent>(_getTeacherApi);
+    on<LoadMoreTeacherEvent>(_loadMoreTeacherApi);
     on<CreateTeacherEvent>(_createTeacherApi);
   }
 
@@ -28,7 +29,7 @@ class TeacherBloc extends Bloc<TeacherEvent, TeacherState> {
       var responseModel = await teacherRepository.getTeacherApi(event.map);
       emit(TeacherGetLoadingDismiss());
       TeachersModel teachersModel = TeachersModel.fromJson(responseModel.data["staffs"]) ;
-      emit(TeacherGetSuccess(teachersList: teachersModel.data));
+      emit(TeacherGetSuccess(teachersModel: teachersModel,loadMore: teachersModel.data.length > 19));
     } catch (e ,t) {
       print("ssssssssssss$t") ;
       emit(TeacherGetError(error: e.toString()));
@@ -51,5 +52,25 @@ class TeacherBloc extends Bloc<TeacherEvent, TeacherState> {
     } catch (e) {
       emit(TeacherCreateError(error: e.toString()));
     }
+  }
+  FutureOr<void> _loadMoreTeacherApi(LoadMoreTeacherEvent event, Emitter<TeacherState> emit) async {
+
+    try {
+      if (state is! TeacherGetSuccess) return;
+      final cast = state as TeacherGetSuccess;
+      List<Datum> list = cast.teachersModel.data ?? <Datum>[];
+      var responseModel = await teacherRepository.getTeacherApi(event.map);
+      TeachersModel studentsModel =
+      TeachersModel.fromJson(responseModel.data["staffs"]);
+      list.addAll(studentsModel.data);
+      emit(TeacherGetSuccess(
+          teachersModel: studentsModel.copyWith(data: list),
+          loadMore: studentsModel.data.length == 20));
+    } catch (e, t) {
+      print(">>>>>>>>>>>>>>>>>>>>>>>>$t");
+      emit(TeacherGetError(error: e.toString()));
+    }
+
+
   }
 }

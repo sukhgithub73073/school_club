@@ -12,3 +12,11 @@ class UpdateStudentEvent extends UpdateEvent {
   @override
   List<Object?> get props => [map];
 }
+class UpdateStaffEvent extends UpdateEvent {
+  final Map<String, dynamic> map;
+
+  const UpdateStaffEvent({required this.map});
+
+  @override
+  List<Object?> get props => [map];
+}

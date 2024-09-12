@@ -10,11 +10,7 @@ abstract class LoginRepository {
 class LoginRepositoryImp extends LoginRepository {
   @override
   Future<ResponseModel> loginApi(Map<String, dynamic> map) async {
-    var responseModel =
-        await ResponseModel(status: "", data: null, errors: null, message: "");
-    responseModel.data = await HttpService()
+    return await HttpService()
         .postRequest(fullUrl: ApisEndpoints.loginUrl, body: map);
-
-    return responseModel;
   }
 }

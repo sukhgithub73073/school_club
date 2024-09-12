@@ -87,7 +87,9 @@ class StudentData{
 
   static void resetImage() {
     selectedImage = null ;
+    print("selectedImageselectedImage${selectedImage==null}");
   }
+
   static void clearStudentData() {
     selectedImage = null ;
     nameController.clear();
@@ -174,6 +176,7 @@ class StudentData{
     aadharControllerMother.text = student.motherAadhar ;
 
     pincodeController.text = student.pinCode;
+    tehsilController.text = student.tehsil;
     villMohallaController.text = student.villageMohalla;
 
     nameGaurdianCtrl.text = student.guardian.guardianName ;

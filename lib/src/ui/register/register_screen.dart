@@ -89,9 +89,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             BlocConsumer<ImagePickBloc, ImagePickState>(
                               listener: (context, state) {},
                               builder: (context, state) {
-                                if (state is ImagePickRemoveBg) {
-                                  return Image.memory(state.file);
-                                } else {
+
                                   if (state is ImagePickSuccess) {
                                     return CircleAvatar(
                                       radius: 100,
@@ -105,7 +103,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           AssetImage(AppAssets.logo),
                                     );
                                   }
-                                }
+
                               },
                             ),
                             Positioned(

@@ -30,6 +30,7 @@ class _StudentFilterDrawerState extends State<StudentFilterDrawer> {
   List<DropListModel> sessionList = [
     DropListModel(name: '2020-2021', id: "1"),
   ];
+  var classSingleSelectController = SingleSelectController(DropListModel(id: "",name: "")) ;
 
   @override
   Widget build(BuildContext context) {
@@ -71,10 +72,11 @@ class _StudentFilterDrawerState extends State<StudentFilterDrawer> {
                         list.add(DropListModel(
                             id: "${element.id}", name: "${element.groupName}"));
                       });
-                      return CustomDropdown<DropListModel>.search(
+                      return CustomDropdown<DropListModel>(
                         hintText: tr("selectGroup"),
                         items: list,
                         excludeSelected: false,
+
                         decoration: customDropdownDecoration,
                         onChanged: (item) {
                           AppData.studentMap["class_group_id"] = item!.id;
@@ -82,7 +84,7 @@ class _StudentFilterDrawerState extends State<StudentFilterDrawer> {
                           var data = state.data.firstWhere(
                             (element) => element.id.toString() == item!.id,
                           );
-
+                          classSingleSelectController.clear() ;
                           context
                               .read<ClassesBloc>()
                               .add(GetClassEvent(groupItem: data));
@@ -105,9 +107,10 @@ class _StudentFilterDrawerState extends State<StudentFilterDrawer> {
                         list.add(DropListModel(
                             id: "${element.id}", name: "${element.className}"));
                       });
-                      return CustomDropdown<DropListModel>.search(
+                      return CustomDropdown<DropListModel>(
                         hintText: tr("selectClass"),
                         items: list,
+
                         decoration: customDropdownDecoration,
                         excludeSelected: false,
                         onChanged: (item) {

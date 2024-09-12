@@ -14,12 +14,27 @@ class UpdateBloc extends Bloc<UpdateEvent, UpdateState> {
 
   UpdateBloc() : super(UpdateInitial()) {
     on<UpdateStudentEvent>(_updateStudent);
+    on<UpdateStaffEvent>(_updateStaff);
   }
 
   Future<FutureOr<void>> _updateStudent(UpdateStudentEvent event, Emitter<UpdateState> emit) async {
     emit(UpdateLoading());
     try {
       var responseModel = await registerRepository.updateStudentApi(event.map);
+      if (responseModel.status == "${RepoResponseStatus.success}") {
+        emit(UpdateSuccess());
+      } else {
+        emit(UpdateError(error: responseModel.message));
+      }
+    } catch (e) {
+      emit(UpdateError(error: e.toString()));
+    }
+  }
+
+  Future<FutureOr<void>> _updateStaff(UpdateStaffEvent event, Emitter<UpdateState> emit) async {
+    emit(UpdateLoading());
+    try {
+      var responseModel = await registerRepository.updateStaffApi(event.map);
       if (responseModel.status == "${RepoResponseStatus.success}") {
         emit(UpdateSuccess());
       } else {

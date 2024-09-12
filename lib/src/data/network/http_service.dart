@@ -2,13 +2,18 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
+import 'package:get/route_manager.dart';
+import 'package:school_club/src/all_getters/all_getter.dart';
 import 'package:school_club/src/data/models/response_model.dart';
 import 'package:school_club/src/data/network/api_status_code.dart';
+import 'package:school_club/src/extension/app_extension.dart';
+import 'package:school_club/src/ui/login/login_screen.dart';
 import 'package:school_club/src/utility/app_data.dart';
 import 'package:school_club/src/utility/app_util.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:image/image.dart' as img;
 
 part 'api_endpoints.dart';
 
@@ -55,15 +60,35 @@ class HttpService {
       );
       printLog("Dio Response : $fullUrl ${response.data}");
       responseModel.data = response.data;
-    } on SocketException catch (e) {
-      blocLog(bloc: "Error message for", msg: "$fullUrl: ${e.message}");
-      blocLog(bloc: "Error Status Code ", msg: "SocketException");
-      throw SocketException(e.message);
-    } on DioError catch (e) {
-      blocLog(bloc: "Error message for", msg: "$fullUrl: ${e.message}");
-      blocLog(bloc: "Error response for $fullUrl ", msg: "${e.response?.data}");
-      blocLog(bloc: "Error Status Code ", msg: "${e.response?.statusCode}");
+    } on DioException catch (e) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx and is also not 304.
+      if (e.response != null) {
+        print("<<<<<<<<<<<<<<<<GET FORM>>>>>>>>>>>>>>>>>>${e.response!.data}");
+        //responseModel = ResponseModel.fromJson(e.response!.data);
+        responseModel.status = "error";
+        responseModel.errors = "error";
+        responseModel.data = {};
+        responseModel.message = e.response!.data["message"];
+        if (responseModel.message == "Token expired") {
+          print(
+              "<<<<<<<<<<<<<<<<>>>>>>>>>>asdsssssssssssssssssssssssssssssssssssssssssssssssss");
+          Get.offAll(LoginScreen());
+          // if (globalBuildContextExist)
+          //   globalBuildContext.pushReplacementScreen(nextScreen: LoginScreen());
+        }
+        print(e.response!.headers);
+        print(e.response!.requestOptions);
+      } else {
+        responseModel.status = "error";
+        responseModel.errors = "error";
+        responseModel.data = {};
+        responseModel.message = "Server Error";
+
+        print(e.message);
+      }
     }
+
     return responseModel;
   }
 
@@ -96,15 +121,35 @@ class HttpService {
       );
       printLog("Dio Response : $fullUrl ${response.data}");
       responseModel.data = response.data;
-    } on SocketException catch (e) {
-      blocLog(bloc: "Error message for", msg: "$fullUrl: ${e.message}");
-      blocLog(bloc: "Error Status Code ", msg: "SocketException");
-      throw SocketException(e.message);
-    } on DioError catch (e) {
-      blocLog(bloc: "Error message for", msg: "$fullUrl: ${e.message}");
-      blocLog(bloc: "Error response for $fullUrl ", msg: "${e.response?.data}");
-      blocLog(bloc: "Error Status Code ", msg: "${e.response?.statusCode}");
+    } on DioException catch (e) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx and is also not 304.
+      if (e.response != null) {
+        print("<<<<<<<<<<<<<<<<GET>>>>>>>>>>>>>>>>>>${e.response!.data}");
+        //responseModel = ResponseModel.fromJson(e.response!.data);
+        responseModel.status = "error";
+        responseModel.errors = "error";
+        responseModel.data = {};
+        responseModel.message = e.response!.data["message"];
+        if (responseModel.message == "Token expired") {
+          print(
+              "<<<<<<<<<<<<<<<<>>>>>>>>>>asdsssssssssssssssssssssssssssssssssssssssssssssssss");
+          Get.offAll(LoginScreen());
+          // if (globalBuildContextExist)
+          //   globalBuildContext.pushReplacementScreen(nextScreen: LoginScreen());
+        }
+        print(e.response!.headers);
+        print(e.response!.requestOptions);
+      } else {
+        responseModel.status = "error";
+        responseModel.errors = "error";
+        responseModel.data = {};
+        responseModel.message = "Server Error";
+
+        print(e.message);
+      }
     }
+
     return responseModel;
   }
 
@@ -130,17 +175,51 @@ class HttpService {
 
     var data = FormData.fromMap(body);
     var dio = Dio();
-    Response response = await dio.request(
-      fullUrl,
-      options: Options(
-        method: 'POST',
-        headers: headers,
-      ),
-      data: data,
-    );
 
-    responseModel = ResponseModel.fromJson(response.data);
-    printLog("Dio Response : $fullUrl ${response.data}");
+    try {
+      Response response = await dio.request(
+        fullUrl,
+        options: Options(
+          method: 'POST',
+          headers: headers,
+        ),
+        data: data,
+      );
+      responseModel = ResponseModel.fromJson(response.data);
+      print("Dio Response : $fullUrl ${response.data}");
+    } on DioException catch (e) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx and is also not 304.
+      if (e.response != null) {
+        print("<<<<<<<<<<<<<<<<POST>>>>>>>>>>>>>>>>>>${e.response!.data}");
+        //responseModel = ResponseModel.fromJson(e.response!.data);
+        responseModel.status = "error";
+        responseModel.errors = "error";
+        responseModel.data = {};
+        responseModel.message = e.response!.data["message"];
+        print(
+            "<<<<<<<<<<<<<<<<responseModel.message>>>>>>>>>>>>>>>>>>${responseModel.message}");
+
+        if (responseModel.message == "Token expired") {
+          print(
+              "<<<<<<<<<<<<<<<<responseModglobalBuildContextExist>>>>>>>>>>>>>>>>${globalBuildContextExist}");
+          Get.offAll(LoginScreen());
+
+          // if (globalBuildContextExist)
+          //   globalBuildContext.pushReplacementScreen(nextScreen: LoginScreen());
+        }
+        print(e.response!.headers);
+        print(e.response!.requestOptions);
+      } else {
+        responseModel.status = "error";
+        responseModel.errors = "error";
+        responseModel.data = {};
+        responseModel.message = "Server Error";
+
+        print(e.message);
+      }
+    }
+
     return responseModel;
   }
 
@@ -174,14 +253,24 @@ class HttpService {
     if (files != null) {
       for (var file in files) {
         String fileName = file.path.split('/').last;
-        data.files.add(
-          MapEntry(
-            'image',
-            await MultipartFile.fromFile(file.path, filename: fileName),
-          ),
-        );
+        //var imageBytes = await file.readAsBytes();
+        // img.Image? image = img.decodeImage(imageBytes);
+        // if (image != null && (image.width > 800 || image.height > 800)) {
+        //   image = img.copyResize(image, width: 800);
+        // }
+        // var compressedImage = img.encodeJpg(image!, quality: 90);
+        data.files.add(MapEntry(
+          'image',
+          await MultipartFile.fromFile(file.path, filename: fileName),
+        )
+            // : MapEntry(
+            //     'image',
+            //     MultipartFile.fromBytes(imageBytes, filename: fileName),
+            //   ),
+            );
       }
     }
+
     var dio = Dio();
 
     try {
@@ -195,14 +284,14 @@ class HttpService {
       responseModel = ResponseModel.fromJson(response.data);
       print("Dio Response : $fullUrl ${response.data}");
     } on DioException catch (e) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx and is also not 304.
       if (e.response != null) {
-        print("<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>${e.response!.data}");
-        //responseModel = ResponseModel.fromJson(e.response!.data);
+        print(
+            "<<<<<<<<<<<<<<<<POST MULTIPART>>>>>>>>>>>>>>>>>>${e.response!.data}");
         responseModel.status = "Error";
         responseModel.message = e.response!.data["message"];
-
+        if (responseModel.message == "Token expired") {
+          Get.offAll(LoginScreen());
+        }
         print(e.response!.headers);
         print(e.response!.requestOptions);
       } else {

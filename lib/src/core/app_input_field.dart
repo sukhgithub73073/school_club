@@ -15,6 +15,7 @@ class CustomTextField extends StatelessWidget {
   final Color? borderColor;
   final Widget? preffixicon;
   final Widget? suffixicon;
+  final Widget? prefix;
   final Color? hintTextColor;
   final Color? prefixIconColor;
   final int? numberOfLines;
@@ -38,6 +39,7 @@ class CustomTextField extends StatelessWidget {
   final EdgeInsets? contentPadding;
   final String? error;
   final GestureTapCallback? onTab;
+  final  validator;
 
   const CustomTextField({
     super.key,
@@ -48,6 +50,7 @@ class CustomTextField extends StatelessWidget {
     this.obsecureText,
     this.borderColor,
     this.preffixicon,
+    this.prefix,
     this.hintTextColor,
     this.prefixIconColor,
     this.numberOfLines,
@@ -71,6 +74,7 @@ class CustomTextField extends StatelessWidget {
     this.hasViewHight = true,
     this.contentPadding,
     this.error,
+    this.validator,
   });
 
   @override
@@ -82,11 +86,13 @@ class CustomTextField extends StatelessWidget {
       color: Colors.white,
       child: TextFormField(
         initialValue: initialValue,
+
         onChanged: onChanged,
         onFieldSubmitted: onFieldSubmitted,
         inputFormatters: inputFormatters,
         controller: controller,
         keyboardType: keyboardType,
+        validator: validator,
         textInputAction: textInputAction,
         enabled: enabled,
         obscureText: obsecureText ?? false,
@@ -110,6 +116,7 @@ class CustomTextField extends StatelessWidget {
             errorText: error != null && error!.trim().length > 0 ? error : null,
             prefixIcon: preffixicon,
             suffixIcon: suffixicon,
+            prefix: prefix,
             contentPadding: contentPadding ??
                 (paddingHorizontal == 0
                     ? EdgeInsets.zero

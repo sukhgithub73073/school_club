@@ -1,7 +1,12 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:school_club/src/core/app_colors.dart';
+import 'package:school_club/src/core/app_text_style.dart';
+import 'package:school_club/src/core/text_view.dart';
 import 'package:school_club/src/enums/snack_type_enum.dart';
+import 'package:get/get.dart';
 
 extension NavigatorContext on BuildContext {
   back() {
@@ -25,18 +30,32 @@ extension NavigatorContext on BuildContext {
       {required String title,
       required String message,
       required SnackTypeEnum snackTypeEnum}) {
-    AnimatedSnackBar(
-      builder: ((context) {
-        return MaterialAnimatedSnackBar(
-          titleText: '${title}',
-          messageText: '${message}',
-          type: snackTypeEnum == SnackTypeEnum.error
-              ? AnimatedSnackBarType.error
-              : snackTypeEnum == SnackTypeEnum.warning
-                  ? AnimatedSnackBarType.warning
-                  : AnimatedSnackBarType.success,
-        );
-      }),
-    ).show(this);
+    Get.closeAllSnackbars();
+    Get.snackbar(
+      title,
+      message,
+      snackPosition: SnackPosition.TOP,
+      titleText: TextView(
+        text: title,
+        color: colorWhite,
+        textSize: 16.sp,
+        textAlign: TextAlign.start,
+        style: AppTextStyleEnum.medium,
+        fontFamily: Family.medium,
+        lineHeight: 1.3,
+      ),
+      messageText: TextView(
+        text: message,
+        color: colorWhite,
+        textSize: 14.sp,
+        textAlign: TextAlign.start,
+        style: AppTextStyleEnum.medium,
+        fontFamily: Family.regular,
+        lineHeight: 1.3,
+      ),
+      backgroundColor: snackTypeEnum == SnackTypeEnum.success ? colorPrimary : colorRed,
+    );
+
+
   }
 }

@@ -1,4 +1,5 @@
-import 'dart:math';
+import 'dart:developer';
+import 'dart:math' as math;
 
 import 'package:school_club/src/core/drop_down/drop_list_model.dart';
 import 'package:flutter/foundation.dart';
@@ -247,7 +248,8 @@ void printLog(dynamic msg) {
 
 void _printLog(dynamic msg) {
   if (kDebugMode) {
-    debugPrint(msg.toString());
+    log(msg.toString()) ;
+    //debugPrint(msg.toString());
   }
 }
 
@@ -262,6 +264,6 @@ String getRandomId({required String text}) {
       .where((word) => word.isNotEmpty)
       .map((word) => word[0])
       .join('');
-  String randomNumber = "${Random().nextInt(90000) + 10000}";
+  String randomNumber = "${math.Random().nextInt(90000) + 10000}";
   return acronym + randomNumber.toString();
 }
